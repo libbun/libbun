@@ -1,23 +1,23 @@
 package libbun.parser.ssa;
 
-import java.util.ArrayList;
 
 import libbun.parser.ast.ZNode;
 import libbun.util.Field;
+import libbun.util.ZArray;
 
 
 public class Variable {
 	@Field public String Name;
 	@Field public int Index;
-	@Field private final ArrayList<ZNode> Defs;
-	@Field private final ArrayList<ZNode> Uses;
+	@Field private final ZArray<ZNode> Defs;
+	@Field private final ZArray<ZNode> Uses;
 	@Field public final ZNode Node;
 	public Variable(String Name, ZNode Node) {
 		this.Name = Name;
 		this.Node = Node;
 		this.Index = -1;
-		this.Defs = new ArrayList<ZNode>();
-		this.Uses = new ArrayList<ZNode>();
+		this.Defs = new ZArray<ZNode>(new ZNode[0]);
+		this.Uses = new ZArray<ZNode>(new ZNode[0]);
 	}
 
 	public void Use(ZNode Node) {

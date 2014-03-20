@@ -17,8 +17,10 @@ enum VariableState {
 }
 
 /**
- * Super-naive liner SSA(Static Single Assignment) form transformer
- * @author masahiro ide
+ * @see
+ * Brandis, M. M. and Moessenboeck, H.: Single-pass Generation of Static
+ * Single-assignment Form for Structured Languages, ACM Trans.
+ * Program. Lang. Syst., Vol. 16, No. 6, pp. 1684-1698
  *
  */
 public class SSATransformer2 extends ZASTTransformer {
