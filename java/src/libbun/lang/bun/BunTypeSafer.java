@@ -715,6 +715,9 @@ public class BunTypeSafer extends ZTypeChecker {
 			this.CheckTypeAt(Node, ZLetVarNode._InitValue, DeclType);
 			@Var ZType ConstType = Node.InitValueNode().Type;
 			Node.SetAstType(ZLetVarNode._NameInfo, ConstType);
+			if(DeclType.IsVarType()) {
+				Node.SetDeclType(ConstType);
+			}
 			Node.GlobalName = this.Generator.NameGlobalSymbol(Node.GetName(), Node.IsExport());
 			Node.GetNameSpace().SetDebugSymbol(Node.GetName(), Node);
 			this.ReturnTypeNode(Node, ZType.VoidType);
