@@ -157,7 +157,7 @@ public abstract class ZNode {
 	}
 
 	public final boolean IsTopLevel() {
-		@Var @Nullable ZNode Cur = this;
+		@Var @Nullable ZNode Cur = this.ParentNode;
 		while(Cur != null) {
 			if(Cur instanceof ZFunctionNode) {
 				return false;
