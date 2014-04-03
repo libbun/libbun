@@ -11,15 +11,10 @@ public class PythonStatementPatternFunction extends ZMatchFunction {
 	@Override
 	public ZNode Invoke(ZNode ParentNode, ZTokenContext TokenContext,
 			ZNode LeftNode) {
-		@Var boolean Rememberd = TokenContext.SetParseFlag(ZTokenContext._AllowSkipIndent);
-		//		@Var ZAnnotationNode AnnotationNode = (ZAnnotationNode)TokenContext.ParsePattern(ParentNode, "$Annotation$", ZTokenContext.Optional2);
+		@Var boolean Remembered = TokenContext.SetParseFlag(ZTokenContext._AllowSkipIndent);
 		TokenContext.SetParseFlag(ZTokenContext._NotAllowSkipIndent);
 		@Var ZNode StmtNode = ExpressionPatternFunction._DispatchPattern(ParentNode, TokenContext, null, true, true);
-		//		if(AnnotationNode != null) {
-		//			AnnotationNode.Append(StmtNode);
-		//			StmtNode = AnnotationNode;
-		//		}
-		TokenContext.SetParseFlag(Rememberd);
+		TokenContext.SetParseFlag(Remembered);
 		return StmtNode;
 	}
 
