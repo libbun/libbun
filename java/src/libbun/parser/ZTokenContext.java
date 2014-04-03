@@ -284,9 +284,9 @@ public final class ZTokenContext {
 
 	public ZNode MatchPattern(ZNode ParentNode, int Index, String PatternName, boolean IsRequired, boolean AllowSkipIndent) {
 		if(!ParentNode.IsErrorNode()) {
-			@Var boolean Rememberd = this.SetParseFlag(AllowSkipIndent);
+			@Var boolean Remembered = this.SetParseFlag(AllowSkipIndent);
 			@Var ZNode ParsedNode = this.ParsePattern(ParentNode, PatternName, IsRequired);
-			this.SetParseFlag(Rememberd);
+			this.SetParseFlag(Remembered);
 			if(ParsedNode != null) {
 				if(Index == ZNode._NestedAppendIndex) {
 					if(!(ParsedNode instanceof ZEmptyNode)) {
@@ -313,7 +313,7 @@ public final class ZTokenContext {
 		return this.MatchPattern(ParentNode, Index, PatternName, IsRequired, ZTokenContext._NotAllowSkipIndent);
 	}
 
-	public ZNode MatchOptionaPattern(ZNode ParentNode, int Index, boolean AllowNewLine, String TokenText, String PatternName) {
+	public ZNode MatchOptionalPattern(ZNode ParentNode, int Index, boolean AllowNewLine, String TokenText, String PatternName) {
 		if(!ParentNode.IsErrorNode()) {
 			if(this.MatchToken(TokenText)) {
 				return this.MatchPattern(ParentNode, Index, PatternName, ZTokenContext._Optional, ZTokenContext._NotAllowSkipIndent);
@@ -323,7 +323,7 @@ public final class ZTokenContext {
 	}
 
 	public ZNode MatchNtimes(ZNode ParentNode, String StartToken, String PatternName, String DelimToken, String StopToken) {
-		@Var boolean Rememberd = this.SetParseFlag(true);
+		@Var boolean Remembered = this.SetParseFlag(true);
 		@Var boolean IsRequired =   ZTokenContext._Optional;
 		if(StartToken != null) {
 			ParentNode = this.MatchToken(ParentNode, StartToken, ZTokenContext._Required);
@@ -355,7 +355,7 @@ public final class ZTokenContext {
 		if(StopToken != null) {
 			ParentNode = this.MatchToken(ParentNode, StopToken, ZTokenContext._Required);
 		}
-		this.SetParseFlag(Rememberd);
+		this.SetParseFlag(Remembered);
 		return ParentNode;
 	}
 
