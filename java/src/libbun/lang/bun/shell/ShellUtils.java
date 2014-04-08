@@ -43,7 +43,9 @@ public class ShellUtils {
 		BNode Node = new BStringNode(ParentNode, null, "");
 		BSyntax Pattern = TokenContext.NameSpace.GetRightSyntaxPattern("+");
 		BToken PlusToken = new BToken(new BSource(Token.GetFileName(), Token.GetLineNumber(), "+", TokenContext), 0, "+".length());
-		for(BNode CurrentNode : NodeList.ArrayValues) {
+		int size = NodeList.size();
+		for(int i = 0; i < size; i++) {
+			BNode CurrentNode = BArray.GetIndex(NodeList, i);
 			BBinaryNode BinaryNode = new BBinaryNode(ParentNode, PlusToken, Node, Pattern.SyntaxFlag);
 			BinaryNode.SetNode(BBinaryNode._Right, CurrentNode);
 			Node = BinaryNode;
