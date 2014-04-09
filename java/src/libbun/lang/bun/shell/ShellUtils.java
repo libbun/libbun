@@ -38,11 +38,10 @@ public class ShellUtils {
 	}
 
 	public static BNode _ToNode(BNode ParentNode, BTokenContext TokenContext, BArray<BNode> NodeList) {
-		//BToken Token = TokenContext.GetToken();
 		BNode Node = new BunStringNode(ParentNode, null, "");
-		//		BSyntax Pattern = TokenContext.NameSpace.GetRightSyntaxPattern("+");
-		//		BToken PlusToken = new BToken(new BSource(Token.GetFileName(), Token.GetLineNumber(), "+", TokenContext), 0, "+".length());
-		for(BNode CurrentNode : NodeList.ArrayValues) {
+		int size = NodeList.size();
+		for(int i = 0; i < size; i++) {
+			BNode CurrentNode = BArray.GetIndex(NodeList, i);
 			BunAddNode BinaryNode = new BunAddNode(ParentNode, null, Node);
 			BinaryNode.SetNode(BinaryOperatorNode._Right, CurrentNode);
 			Node = BinaryNode;
