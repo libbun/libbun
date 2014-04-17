@@ -30,6 +30,7 @@ import libbun.ast.BunBlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.ast.decl.BunClassNode;
+import libbun.ast.decl.BunDefineNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.TopLevelNode;
@@ -414,10 +415,14 @@ public abstract class LibBunGenerator extends BunVisitor {
 		@Var BTokenContext TokenContext = new BTokenContext(this, this.RootGamma, FileName, LineNumber, ScriptText);
 		TokenContext.SkipEmptyStatement();
 		@Var BToken SkipToken = null;
+		@Var int j = 0;
 		while(TokenContext.HasNext()) {
 			TokenContext.SetParseFlag(BTokenContext._NotAllowSkipIndent);
 			SkipToken = TokenContext.GetToken();
 			@Var BNode StmtNode = TokenContext.ParsePattern(TopBlockNode, "$Statement$", BTokenContext._Required);
+			if(!(StmtNode instanceof BunDefineNode)) {
+				TopBlockNode.InsertListAt(j++, StmtNode);
+			}
 			if(StmtNode.IsErrorNode()) {
 				TokenContext.SkipError(SkipToken);
 			}
