@@ -30,17 +30,18 @@ import libbun.ast.BunBlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.ast.decl.BunClassNode;
+import libbun.ast.decl.BunDefineNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.error.ErrorNode;
 import libbun.ast.literal.BunNullNode;
 import libbun.ast.literal.DefaultValueNode;
-import libbun.parser.LibBunLangInfo;
-import libbun.parser.LibBunLogger;
-import libbun.parser.LibBunGamma;
-import libbun.parser.BunVisitor;
 import libbun.parser.BToken;
 import libbun.parser.BTokenContext;
+import libbun.parser.BunVisitor;
+import libbun.parser.LibBunGamma;
+import libbun.parser.LibBunLangInfo;
+import libbun.parser.LibBunLogger;
 import libbun.parser.LibBunTypeChecker;
 import libbun.type.BClassType;
 import libbun.type.BFormFunc;
@@ -407,10 +408,14 @@ public abstract class LibBunGenerator extends BunVisitor {
 		@Var BTokenContext TokenContext = new BTokenContext(this, this.RootGamma, FileName, LineNumber, ScriptText);
 		TokenContext.SkipEmptyStatement();
 		@Var BToken SkipToken = null;
+		@Var int j = 0;
 		while(TokenContext.HasNext()) {
 			TokenContext.SetParseFlag(BTokenContext._NotAllowSkipIndent);
 			SkipToken = TokenContext.GetToken();
 			@Var BNode StmtNode = TokenContext.ParsePattern(TopBlockNode, "$Statement$", BTokenContext._Required);
+			if(!(StmtNode instanceof BunDefineNode)) {
+				TopBlockNode.InsertListAt(j++, StmtNode);
+			}
 			if(StmtNode.IsErrorNode()) {
 				TokenContext.SkipError(SkipToken);
 			}
