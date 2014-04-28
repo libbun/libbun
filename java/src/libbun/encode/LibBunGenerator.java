@@ -163,7 +163,7 @@ public abstract class LibBunGenerator extends BunVisitor {
 	}
 
 	protected final String NameMethod(BType ClassType, String MethodName) {
-		return "_" + this.NameClass(ClassType) + "_" + MethodName;
+		return this.NameClass(ClassType) + "." + MethodName;
 	}
 
 	protected final boolean IsMethod(String FuncName, BFuncType FuncType) {
