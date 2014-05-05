@@ -1,4 +1,4 @@
-package libbun.encode.playground;
+package libbun.encode.release;
 
 import libbun.ast.BNode;
 import libbun.ast.BunBlockNode;
