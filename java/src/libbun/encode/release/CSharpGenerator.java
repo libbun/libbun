@@ -1,3 +1,27 @@
+// ***************************************************************************
+// Copyright (c) 2013, JST/CREST DEOS project authors. All rights reserved.
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// *  Redistributions of source code must retain the above copyright notice,
+//    this list of conditions and the following disclaimer.
+// *  Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+// TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// **************************************************************************
+
 package libbun.encode.release;
 
 import libbun.ast.BNode;
@@ -75,6 +99,7 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 	@BField private final BArray<BunFunctionNode> ExportFunctionList = new BArray<BunFunctionNode>(new BunFunctionNode[4]);
 	@BField private final static String NameSpaceName = "LibBunGenerated";
 	@BField private final static String MainClassName = "LibBunMain";
+	@BField private boolean IsMainClassOpened = false;
 
 	public CSharpGenerator() {
 		super(new LibBunLangInfo("C#-5.0", "cs"));
@@ -85,8 +110,31 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 		this.SetNativeType(BType.VarType, "dynamic");
 		this.LoadInlineLibrary("inline.cs", "//");
 		this.SetReservedName("this", "@this");
-		this.Source.Append("namespace ", CSharpGenerator.NameSpaceName);
+		this.Source.AppendNewLine("namespace ", CSharpGenerator.NameSpaceName);
 		this.Source.OpenIndent(" {");
+	}
+
+	protected CSharpGenerator(String LangVersion) {
+		super(new LibBunLangInfo(LangVersion, "cs"));
+		this.LoadInlineLibrary("inline.cs", "//");
+		this.SetReservedName("this", "@this");
+		this.Source.AppendNewLine("namespace ", CSharpGenerator.NameSpaceName);
+		this.Source.OpenIndent(" {");
+	}
+
+	private void OpenMainClass(){
+		if(!this.IsMainClassOpened){
+			this.Source.AppendNewLine("public static partial class ", CSharpGenerator.MainClassName, " {");
+			this.Source.OpenIndent();
+			this.IsMainClassOpened = true;
+		}
+	}
+
+	private void CloseMainClass(){
+		if(this.IsMainClassOpened){
+			this.Source.CloseIndent("}");
+			this.IsMainClassOpened = false;
+		}
 	}
 
 	@Override protected void GenerateImportLibrary(String LibName) {
@@ -94,6 +142,7 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override @ZenMethod protected void Finish(String FileName) {
+		this.CloseMainClass();
 		this.Source.CloseIndent("}"); // end of namespace
 		this.Source.AppendLineFeed();
 	}
@@ -105,7 +154,11 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 		else {
 			this.ImportLibrary("System.Collections.Generic");
 			this.Source.Append("new ", this.GetCSharpTypeName(Node.Type, false));
-			this.GenerateListNode("{", Node, ", ", "}");
+			if(Node.GetListSize() > 0) {
+				this.GenerateListNode("{ ", Node, ", ", " }");
+			}else{
+				this.Source.Append("()");
+			}
 		}
 	}
 
@@ -202,17 +255,6 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 		if(Type instanceof BClassType) {
 			return this.NameClass(Type);
 		}
-		if(Boxing) {
-			if(Type.IsIntType()) {
-				return "Int64";
-			}
-			if(Type.IsFloatType()) {
-				return "Double";
-			}
-			if(Type.IsBooleanType()) {
-				return "Bool";
-			}
-		}
 		return this.GetNativeTypeName(Type);
 	}
 
@@ -304,8 +346,7 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 		@Var BunLetVarNode FirstParam = Node.GetListSize() == 0 ? null : (BunLetVarNode)Node.GetListAt(0);
 		@Var boolean IsInstanceMethod = FirstParam != null && FirstParam.GetGivenName().equals("this");
 
-		this.GenerateClass("public static", CSharpGenerator.MainClassName, Node.GetFuncType());
-		this.Source.OpenIndent(" { ");
+		this.OpenMainClass();
 		this.Source.AppendNewLine("public static ");
 		this.GenerateTypeName(Node.ReturnType());
 		this.Source.Append(" ");
@@ -318,7 +359,6 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 
 		this.GenerateExpression(Node.BlockNode());
 
-		this.Source.CloseIndent("}");
 		return FuncName;
 	}
 
@@ -336,7 +376,7 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 		else {
 			this.Source.AppendNewLine("partial class ", ClassName);
 		}
-		if(!SuperType.Equals(BClassType._ObjectType) && !SuperType.IsFuncType()) {
+		if(SuperType != null && !SuperType.Equals(BClassType._ObjectType) && !SuperType.IsFuncType()) {
 			this.Source.Append(" : ");
 			this.GenerateTypeName(SuperType);
 		}
@@ -359,6 +399,7 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 	@Override public void VisitClassNode(BunClassNode Node) {
 		@Var BType SuperType = Node.ClassType.GetSuperType();
 		@Var String ClassName = this.NameClass(Node.ClassType);
+		this.CloseMainClass();
 		this.GenerateClass("public", ClassName, SuperType);
 		this.Source.OpenIndent(" {");
 		@Var int i = 0;
@@ -562,14 +603,12 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 			}
 		}
 		else if(Node.IsTopLevel()) {
-			this.GenerateClass("public static", CSharpGenerator.MainClassName, BClassType._ObjectType);
-			this.Source.OpenIndent("{");
+			this.OpenMainClass();
 			this.Source.AppendNewLine("public static ");
 			this.GenerateTypeName(Node.GetAstType(BunLetVarNode._InitValue));
 			this.Source.Append(" ", Node.GetUniqueName(this), " = ");
 			this.GenerateExpression(Node.InitValueNode());
 			this.Source.Append(";");
-			this.Source.CloseIndent("}");
 		}
 		else {
 			this.Source.Append(this.GetCSharpTypeName(Node.DeclType(), false), " ", Node.GetUniqueName(this));

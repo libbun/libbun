@@ -569,6 +569,7 @@ public class LibBunSystem {
 		ClassMap.put("c",   libbun.encode.playground.CGenerator.class);
 		ClassMap.put("cl",  libbun.encode.playground.CommonLispGenerator.class);
 		ClassMap.put("cs",  libbun.encode.release.CSharpGenerator.class);
+		ClassMap.put("csharp-playground",  libbun.encode.playground.CSharpGenerator.class);
 		ClassMap.put("erl", libbun.encode.erlang.ErlangGenerator.class);
 
 		ClassMap.put("hs",  libbun.encode.haskell.HaskellSourceGenerator.class);

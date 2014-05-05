@@ -4,7 +4,7 @@ assert: Func<boolean,String,void>
  bun,java: assert($[0])
  c:   assert.h~assert($[0])
  cl:  (assert $[0])
- cs:  Debug.Assert($[0])
+ cs,csharp-playground:  Debug.Assert($[0])
  py:  assert $[0], $[1]
  javascript-playground:  console.assert($[0], $[1])
  js:  console.assert($[0], $[1])
@@ -15,7 +15,7 @@ println: Func<String,void>
  bun:  println($[0])
  c:    stdio.h~printf("%s\n", $[0])
  cl:   ~(format t "~a~%" $[0])
- cs:   Console.WriteLine($[0])
+ cs,csharp-playground:   Console.WriteLine($[0])
  java: System.out.println($[0])
  javascript-playground:   console.log($[0])
  js:   console.log($[0])
@@ -27,7 +27,7 @@ print: Func<String,void>
  bun:  print($[0])
  c:    stdio.h~puts($[0])
  cl:   ~(format t "~a" $[0])
- cs:   Console.Write($[0])
+ cs,csharp-playground:   Console.Write($[0])
  java: System.out.print($[0])
  javascript-playground:   console.log($[0])
  js:   console.log($[0])
@@ -40,7 +40,7 @@ _: Func<boolean,String>
  bun:  ((String)$[0])
  c:    ~(($[0])?"true":"false")
  cl:   ~(format nil "~a" $[0])
- cs:   ($[0]).ToString()
+ cs,csharp-playground:   ($[0]).ToString()
  java: String.valueOf($[0])
  javascript-playground:   String($[0])
  js:   String($[0])
@@ -53,7 +53,7 @@ _: Func<int,float>
  bun:  ((float)$[0])
  c:    ((double)$[0])
  cl:   (coerce $[0] 'float)
- cs:   ((double)$[0])
+ cs,csharp-playground:   ((double)$[0])
  java: ((double)$[0])
  javascript-playground:   $[0]
  js:   $[0]
@@ -65,7 +65,7 @@ _: Func<int,String>
  bun: ((String)$[0])
  c:   @i2s~libbun_i2s($[0])
  cl:  ~(format nil "~a" $[0])
- cs:  ($[0]).ToString()
+ cs,csharp-playground:  ($[0]).ToString()
  java: String.valueOf($[0])
  javascript-playground:   String($[0])
  js: String($[0])
@@ -83,6 +83,7 @@ _: Func<float,int>
  c:    ((long)$[0])
  cl:   (round $[0])
  cs:   ((long)$[0])
+ csharp-playground:   ((int)$[0])
  java: ((long)$[0])
  javascript-playground:  $[0]
  js:   $[0]
@@ -94,11 +95,11 @@ _: Func<float,String>
  bun:   ((String)$[0])
  c:    @f2s~libbun_f2s($[0])
  cl:   ~(format nil "~a" $[0])
+ cs,csharp-playground:   ($[0]).ToString()
  java: String.valueOf($[0])
- py:   (u'%.5f' % ($[0]))
  javascript-playground:   String($[0])
  js:   String($[0])
- cs:   ($[0]).ToString()
+ py:   (u'%.5f' % ($[0]))
  lua:  tostring($[0])
  sml:  (Real.toString $[0])
 
@@ -108,6 +109,9 @@ _: Func<String,int>
  bun: ((int)$[0])
  c:   @s2i~libbun_s2i($[0])
  cl:  (parse-integer $[0])
+ cs,csharp-playground:  Int32.Parse($[0])
+ js:  parseInt($[0], 10)
+ javascript-playground:  parseInt($[0], 10)
  lua: tonumber($[0])
  sml: (IntInf.fromString $[0])
 
@@ -115,6 +119,9 @@ _: Func<String,float>
  bun: ((float)$[0])
  c:   @s2f~libbun_s2f($[0])
  cl:  (read-from-string $[0])
+ cs,csharp-playground:  Double.Parse($[0])
+ js:  parseFloat($[0])
+ javascript-playground:  parseFloat($[0])
  lua: tonumber($[0])
  sml: (Real.fromString $[0])
 
@@ -129,7 +136,7 @@ size: Func<String,int>
  bun:  $[0].size()
  c:    string.h~strlen($[0])
  cl:   (length $[0])
- cs:   $[0].Length
+ cs,csharp-playground:   $[0].Length
  java: $[0].length()
  javascript-playground:   $[0].length
  js:   $[0].length
@@ -137,7 +144,7 @@ size: Func<String,int>
  py:   len($[0])
 
 equals: Func<String,String,boolean>
- bun,py,javascript-playground,js,cs:  $[0] == $[1]
+ bun,py,javascript-playground,js,cs,csharp-playground:  $[0] == $[1]
  c:  (strcmp($[0], $[1]) == 0)
  cl: (string= $[0] $[1])
  java: $[0].equals($[1])
@@ -146,7 +153,7 @@ startsWith: Func<String,String,boolean>
  bun,java:  $[0].startsWith($[1])
  c:    @startsWith~libbun_startsWith($[0], $[1], 0)
  cl:   (and (>= (length $[0]) (length $[1])) (string= (subseq $[0] 0 (length $[1])) $[1]))
- cs:   $[0].StartsWith($[1])
+ cs,csharp-playground:   $[0].StartsWith($[1])
  javascript-playground:   ($[0].lastIndexOf($[1], 0) === 0)
  js:   ($[0].lastIndexOf($[1], 0) === 0)
  lua:  (string.sub($[0], 1, string.len($[1]))==$[1])
@@ -156,7 +163,7 @@ endsWith: Func<String,String,boolean>
  bun,java:  $[0].endsWith($[1])
  c:    @endsWith~libbun_endsWith($[0], $[1])
  cl:   (let ((spos (- (length $[0]) (length $[1])))) (and (>= spos 0) (string= (subseq $[0] spos (length $[0])) $[1])))
- cs:   $[0].EndsWith($[1])
+ cs,csharp-playground:   $[0].EndsWith($[1])
  javascript-playground:   ($[0].slice(- $[1].length) === $[1])
  js:   ($[0].slice(- $[1].length) === $[1])
  lua:  ($[1]=='' or string.sub($[0],-string.len($[1]))==$[1])
@@ -167,7 +174,7 @@ substring: Func<String,int,String>
  bun,java,javascript-playground,js: $[0].substring($[1])
  c:  @substring~libbun_substring($[0], $[1], strlen($[0]))
  cl: (subseq $[0] $[1])
- cs: $[0].Substring($[1])
+ cs,csharp-playground: $[0].Substring($[1])
  lua: string.sub($[0], $[1] + 1)
  py:  $[0][$[1]:] 
 
@@ -176,7 +183,7 @@ substring: Func<String,int,int,String>
  bun,java,javascript-playground,js: $[0].substring($[1],$[2])
  c:  @substring~libbun_substring($[0], $[1], $[2])
  cl: (subseq $[0] $[1] $[2])
- cs: $[0].Substring($[1], $[2])
+ cs,csharp-playground: $[0].Substring($[1], $[2])
  lua: string.sub($[0], $[1] + 1, $[2])
  py:  $[0][$[1]:$[2]]
 
@@ -185,7 +192,7 @@ indexOf: Func<String,String,int>
  bun,java,javascript-playground,js: $[0].indexOf($[1])
  c:   @TODO~TODO(0)
  cl:  (or (search $[1] $[0]) -1)
- cs:  $[0].IndexOf($[1])
+ cs,csharp-playground:  $[0].IndexOf($[1])
  lua: @indexOf~libbun_indexOf($[0], $[1])
  py:  $[0].find($[1])
 
@@ -193,15 +200,15 @@ lastIndexOf: Func<String,String,int>
  #: s.lastIndexOf(x) returns the position of the last found occurrence of $x
  bun,java,javascript-playground,js: $[0].lastIndexOf($[1]) 
  c:   @TODO~TODO(0)
+ cs,csharp-playground:  $[0].LastIndexOf($[1])
  py:  $[0].rfind($[1])
- cs:  $[0].LastIndexOf($[1])
 
 toLowerCase: Func<String,String>
  #: s.toLowerCase() converts a string $s to lowercase letters
  bun,java,javascript-playground,js: $[0].toLowerCase($[1]) 
  c:   @TODO~TODO(NULL)
  cl:  (string-uppercase $[0])
- cs:  $[0].ToLowerCase($[1]) 
+ cs,csharp-playground:  $[0].ToLowerCase($[1]) 
  py:  $[0].lower()
 
 toUpperCase: Func<String,String>
@@ -209,7 +216,7 @@ toUpperCase: Func<String,String>
  bun,java,javascript-playground,js: $[0].toUpperCase($[1]) 
  c:   @TODO~TODO(NULL)
  cl:  (string-downcase $[0])
- cs:  $[0].ToUpperCase($[1]) 
+ cs,csharp-playground:  $[0].ToUpperCase($[1]) 
  py:  $[0].upper()
 
 #codeAt
@@ -218,6 +225,7 @@ replace: Func<String,String,String,String>
  bun,javascript-playground,js: $[0].replace($[1], $[2])
  c:   @TODO~TODO(NULL)
  cl:  cl-ppcre~(cl-ppcre:regex-replace-all $[1] $[0] $[2])
+ cs,csharp-playground:  $[0].Replace($[1], $[2])
  java: $[0].replaceAll($[1], $[2])
  
 #split
@@ -226,6 +234,7 @@ trim: Func<String,String>
  bun,javascript-playground,js: $[0].trim()
  c:   @TODO~TODO(NULL)
  cl: (string-trim '(#\Space) $[0])
+ cs,csharp-playground:  $[0].Trim()
  java: $[0].trim()
  c:   @trim~libbun_trim($[0])
 
@@ -235,7 +244,7 @@ _: Func<α[],String>
  bun: ((String)$[0])
  c:   @TODO~TODO(NULL)
  cl:  ~(format nil "~a" $[0])
- cs:  string.Join(string.Empty, $[0])
+ cs,csharp-playground:  string.Join(string.Empty, $[0])
  py:  unicode($[0])
  javascript-playground:  $[0].join('')
  js:  $[0].join('')
@@ -245,7 +254,7 @@ size: Func<α[],int>
  bun: $[0].size()
  c:   @TODO~TODO(0)
  cl:  (length $[0])
- cs:  $[0].Count
+ cs,csharp-playground:  $[0].Count
  javascript-playground,js:  $[0].length
  lua: #$[0]
  py:  len($[0])
@@ -256,7 +265,7 @@ size: Func<α[],int,void>
  bun: $[0].size($[1])
  c:   @TODO~TODO(0)
  cl:  (FIXME)
- cs:  $[0].Count
+ cs,csharp-playground:  $[0].Count
  javascript-playground,js:  $[0].size
  py:  @arraysize~libbun_arraysize($[0], $[1], None)
  c:   @arraysize~libbun_ArraySetLength($[0], $[1])
@@ -265,13 +274,15 @@ get: Func<α[],int,α>
  #: a.$$() tests the existence of the specified key in this array
  bun,javascript-playground,js,lua,py: $[0][$[1]]
  cs:  $[0][(int)$[1]]
+ csharp-playground:  $[0][$[1]]
  c:   @TODO~TODO(NULL)
  java: $[0].get($[1])
  
 set: Func<α[],int,α,void>
  bun,javascript-playground,js,lua,py: $[0][$[1]] = $[2]
- cs:  $[0][(int)$[1]] = $[2]
  c:   @TODO~TODO(void)
+ cs:  $[0][(int)$[1]] = $[2]
+ csharp-playground:  $[0][$[1]] = $[2]
  java: $[0].set($[1], $[2])
 
 add: Func<α[],α,void>
@@ -279,7 +290,7 @@ add: Func<α[],α,void>
  bun: $[0].add($[1])
  c:   @TODO~TODO(void)
  cl: (vector-push $[1])
- cs: $[0].Add($[1])
+ cs,csharp-playground: $[0].Add($[1])
  javascript-playground,js: $[0].push($[1])
  lua: table.insert($[0],$[1])
  py: $[0].append($[1])
@@ -287,7 +298,7 @@ add: Func<α[],α,void>
 insert: Func<α[],int,α,void>
  #: a.$$(n,x) inserts a new element at the specified position in this array
  bun: $[0].insert($[1], $[2])
- cs:  $[0].Insert($[1], $[2])
+ cs,csharp-playground:  $[0].Insert($[1], $[2])
  javascript-playground,js:  $[0].splice($[1], 0, $[2])
  lua: table.insert($[0], $[1] + 1, $[2])
  py:  $[0].insert($[1], $[2])
@@ -295,7 +306,7 @@ insert: Func<α[],int,α,void>
 remove: Func<α[],int,α>
  #: a.$$(n) removes the element at the specified position in this array
  bun: $[0].remove($[1])
- cs:  $[0].RemoveAt($[1])
+ cs,csharp-playground:  $[0].RemoveAt($[1])
  javascript-playground,js:  $[0].splice($[1], 0)
  lua: table.remove($[0], $[1] + 1)
  py:  $[0].remove($[1])
@@ -304,7 +315,7 @@ pop: Func<α[],α>
  #: a.$$(n) removes the last element in this array
  bun,py,javascript-playground,js: $[0].pop($[1])
  cl:  (vector-pop $[0])
- cs:  @ArrayPop~Lib.ArrayPop($[0])
+ cs,csharp-playground:  @ArrayPop~Lib.ArrayPop($[0])
 
 # boolean[]
 size: Func<boolean[],int,void>
@@ -335,29 +346,30 @@ hasKey: Func<Map<α>,String,boolean>
  #: a.$$() tests the existence of the specified key in this array
  bun: $[0].hasKey($[1])
  cl:  (gethash $[1] $[0])
- cs:  $[0].ContainsKey($[1])
+ cs,csharp-playground:  $[0].ContainsKey($[1])
  lua: (not ($[0][$[1]] == nil))
  py:  $[0].has_key($[1])
  js:  ($[1] in $[0])
  
 get: Func<Map<α>,String,α>
  #: a.$$() tests the existence of the specified key in this array
- bun,cs,py,javascript-playground,js: $[0][$[1]]
+ bun,cs,csharp-playground,py,javascript-playground,js: $[0][$[1]]
  cl:  (gethash $[1] $[0])
 
 get: Func<Map<α>,String,α,α>
  #: a.$$() tests the existence of the specified key in this array
  bun: $[0].get($[1],$[2])
+ cs,csharp-playground:  ($[0].ContainsKey($[1]) ? $[0][$[1]] : $[2])
  javascript-playground:  $[1][$[2]]
  js:  @mapget~libbun_mapget($[0],$[1],$[2])
  py:  @mapget~libbun_mapget($[0],$[1],$[2])
 
 set: Func<Map<α>,String,α,void>
- bun,cs,javascript-playground,js,py: $[0][$[1]] = $[2]
+ bun,cs,csharp-playground,javascript-playground,js,py: $[0][$[1]] = $[2]
 
 keys: Func<Map<α>,String[]>
  bun,py: $[0].keys()
- cs:  $[0].Keys
+ cs,csharp-playground:  $[0].Keys
  javascript-playground,js:  Object.keys($[0])
 
 #Object
@@ -365,7 +377,7 @@ _: Func<Object,String>
  #: Converts an object to a string
  bun:  ((String)$[0])
  cl:   ~(format nil "~a" $[0])
- cs:   $[0].ToString()
+ cs,csharp-playground:   $[0].ToString()
  java: $[0].toString()
  javascript-playground,js:   String($[0])
  py:   unicode($[0])

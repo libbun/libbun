@@ -4,7 +4,6 @@ define print "console.log($[0])": Func<String,void>
 define _ "String($[0])": Func<boolean,String>
 define _ "$[0]": Func<int,float>
 define _ "String($[0])": Func<int,String>
-define / "@intdiv~libbun_intdiv($[0], $[1])": Func<int,int,int>
 define _ "$[0]": Func<float,int>
 define _ "String($[0])": Func<float,String>
 define _ "parseInt($[0], 10)": Func<String,int>
@@ -30,13 +29,9 @@ define add "$[0].push($[1])": Func<α[],α,void>
 define insert "$[0].splice($[1], 0, $[2])": Func<α[],int,α,void>
 define remove "$[0].splice($[1], 0)": Func<α[],int,α>
 define pop "$[0].pop($[1])": Func<α[],α>
-define size "@arraysize~libbun_arraysize($[0], $[1], false)": Func<boolean[],int,void>
-define size "@arraysize~libbun_arraysize($[0], $[1], 0)": Func<int[],int,void>
-define size "@arraysize~libbun_arraysize($[0], $[1], 0.0)": Func<float[],int,void>
 define _ "JSON.stringify($[0])": Func<Map<α>,String>
-define hasKey "($[1] in $[0])": Func<Map<α>,String,boolean>
 define get "$[0][$[1]]": Func<Map<α>,String,α>
-define get "@mapget~libbun_mapget($[0],$[1],$[2])": Func<Map<α>,String,α,α>
+define get "$[1][$[2]]": Func<Map<α>,String,α,α>
 define set "$[0][$[1]] = $[2]": Func<Map<α>,String,α,void>
 define keys "Object.keys($[0])": Func<Map<α>,String[]>
 define _ "String($[0])": Func<Object,String>
