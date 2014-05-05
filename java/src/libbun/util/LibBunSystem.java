@@ -573,7 +573,8 @@ public class LibBunSystem {
 
 		ClassMap.put("hs",  libbun.encode.haskell.HaskellSourceGenerator.class);
 		ClassMap.put("java", libbun.encode.playground.JavaGenerator.class);
-		ClassMap.put("js",  libbun.encode.playground.JavaScriptGenerator.class);
+		ClassMap.put("js",  libbun.encode.release.JavaScriptGenerator.class);
+		ClassMap.put("javascript-playground",  libbun.encode.playground.JavaScriptGenerator.class);
 
 		ClassMap.put("lua",  libbun.encode.devel.LuaGenerator.class);
 

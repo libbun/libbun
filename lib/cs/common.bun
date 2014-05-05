@@ -20,7 +20,7 @@ define _ "string.Join(string.Empty, $[0])": Func<α[],String>
 define size "$[0].Count": Func<α[],int>
 define size "$[0].Count": Func<α[],int,void>
 define get "$[0][(int)$[1]]": Func<α[],int,α>
-define set "$[0][$[1]] = $[2]": Func<α[],int,α,void>
+define set "$[0][(int)$[1]] = $[2]": Func<α[],int,α,void>
 define add "$[0].Add($[1])": Func<α[],α,void>
 define insert "$[0].Insert($[1], $[2])": Func<α[],int,α,void>
 define remove "$[0].RemoveAt($[1])": Func<α[],int,α>

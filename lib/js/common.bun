@@ -17,6 +17,8 @@ define indexOf "$[0].indexOf($[1])": Func<String,String,int>
 define lastIndexOf "$[0].lastIndexOf($[1]) ": Func<String,String,int>
 define toLowerCase "$[0].toLowerCase($[1]) ": Func<String,String>
 define toUpperCase "$[0].toUpperCase($[1]) ": Func<String,String>
+define replace "$[0].replace($[1], $[2])": Func<String,String,String,String>
+define trim "$[0].trim()": Func<String,String>
 define _ "$[0].join('')": Func<α[],String>
 define size "$[0].length": Func<α[],int>
 define size "$[0].size": Func<α[],int,void>

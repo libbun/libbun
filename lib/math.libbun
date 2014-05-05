@@ -3,7 +3,7 @@
 
 math-E: float
  bun: math~math::E
- js: Math.E
+ javascript-playground,js: Math.E
  c:   math.h~M_E
  cl:  (exp 1)
  cs: System~Math.E
@@ -12,7 +12,7 @@ math-E: float
 
 math-PI: float
  bun: math~math::PI
- js: Math.PI
+ javascript-playground,js: Math.PI
  c:   math.h~M_PI
  cl:  pi
  cs: System~Math.PI
@@ -22,7 +22,7 @@ math-PI: float
 math-abs: Func<int,int>
  #: abs(x) returns the absolute value of x
  bun: math~math::abs($[0])
- js: Math.abs($[0])
+ javascript-playground,js: Math.abs($[0])
  c:   <stdlib.h>~labs($[0])
  cl:  (abs $[0])
  cs: System~Math.Abs($[0])
@@ -32,7 +32,7 @@ math-abs: Func<int,int>
 math-abs: Func<float,float>
  #: abs(x) returns the absolute value of x
  bun: math~math::abs($[0])
- js: Math.abs($[0])
+ javascript-playground,js: Math.abs($[0])
  c:   math.h~fabs($[0])
  cl:  (abs $[0])
  cs: System~Math.Abs($[0])
@@ -42,7 +42,7 @@ math-abs: Func<float,float>
 math-sin: Func<float,float>
  #: sin(x) returns the sine of $x ($x is in radians)
  bun: math~math::sin($[0])
- js: Math.sin($[0])
+ javascript-playground,js: Math.sin($[0])
  c:   math.h~sin($[0])
  cl:  (sin $[0])
  cs: System~Math.Sin($[0])
@@ -52,7 +52,7 @@ math-sin: Func<float,float>
 math-cos: Func<float,float>
  #: cos(x) returns the cosine of $x ($x is in radians)
  bun: math~math::cos($[0])
- js: Math.cos($[0])
+ javascript-playground,js: Math.cos($[0])
  c:   math.h~cos($[0])
  cl:  (cos $[0])
  cs: System~Math.Cos($[0])
@@ -62,7 +62,7 @@ math-cos: Func<float,float>
 math-tan: Func<float,float>
  #: sin(x) Returns the tangent of $x
  bun: math~math::tan($[0])
- js: Math.tan($[0])
+ javascript-playground,js: Math.tan($[0])
  c:   math.h~tan($[0])
  cl:  (tan $[0])
  cs: System~Math.Tan($[0])
@@ -72,7 +72,7 @@ math-tan: Func<float,float>
 math-sqrt: Func<float,float>
  #: sqrt(x) returns the square root of x
  bun: math~math::sqrt($[0])
- js: Math.sqrt($[0])
+ javascript-playground,js: Math.sqrt($[0])
  c:   math.h~sqrt($[0])
  cl:  (sqrt $[0])
  cs: System~Math.Sqrt($[0])
@@ -82,7 +82,7 @@ math-sqrt: Func<float,float>
 math-acos: Func<float,float>
  #: acos(x) returns the arccosine of $x, in radians
  bun: math~math::acos($[0])
- js: Math.acos($[0])
+ javascript-playground,js: Math.acos($[0])
  c:   math.h~acos($[0])
  cl:  (acos $[0])
  cs: System~Math.Acos($[0])
@@ -92,7 +92,7 @@ math-acos: Func<float,float>
 math-asin: Func<float,float>
  #: asin(x) returns the arcsine of $x, in radians
  bun: math~math::asin($[0])
- js: Math.asin($[0])
+ javascript-playground,js: Math.asin($[0])
  c:   math.h~asin($[0])
  cl:  (asin $[0])
  cs: System~Math.Asin($[0])
@@ -102,7 +102,7 @@ math-asin: Func<float,float>
 math-atan: Func<float,float>
  #: atan(x) returns the arctangent of $x as a numeric value between -math::PI/2 and math::PI/2 radians
  bun: math~math::atan($[0])
- js: Math.atan($[0])
+ javascript-playground,js: Math.atan($[0])
  c:   math.h~atan($[0])
  cl:  (atan $[0])
  cs: System~Math.Atan($[0])
@@ -112,7 +112,7 @@ math-atan: Func<float,float>
 math-atan2: Func<float,float>
  #: atan2(x,y) returns the arctangent of the quotient of its arguments
  bun: math~math::atan2($[0], $[1])
- js: Math.atan2($[0])
+ javascript-playground,js: Math.atan2($[0])
  c:   math.h~atan2($[0], $[1])
  cl:  (atan $[0] $[1])
  cs: System~Math.Atan2($[0], $[1])
@@ -122,7 +122,7 @@ math-atan2: Func<float,float>
 math-ceil: Func<float,float>
  #: ceil(x) returns x, rounded upwards to the nearest integer
  bun: math~math::ceil($[0])
- js: Math.ceil($[0])
+ javascript-playground,js: Math.ceil($[0])
  c:   math.h~ceil($[0])
  cl:  (ceiling $[0])
  cs: System~Math.Ceil($[0])
@@ -133,7 +133,7 @@ math-ceil: Func<float,float>
 math-round: Func<float,float>
  #: round(x) returns x, rounded downwards to the nearest integer
  bun: math~math::round($[0])
- js: Math.round($[0])
+ javascript-playground,js: Math.round($[0])
  c:   math.h~round($[0])
  cl:  (round $[0])
  cs: System~Math.Round($[0])
@@ -143,7 +143,7 @@ math-round: Func<float,float>
 math-floor: Func<float,float>
  #: floor(x) returns x, rounded downwards to the nearest integer
  bun: math~math::floor($[0])
- js: Math.floor($[0])
+ javascript-playground,js: Math.floor($[0])
  c:   math.h~floor($[0])
  cl:  (floor $[0])
  cs: System~Math.Floor($[0])
@@ -153,7 +153,7 @@ math-floor: Func<float,float>
 math-exp: Func<float,float>
  #: exp(x) returns the value of Ex
  bun: math~math::exp($[0])
- js: Math.exp($[0])
+ javascript-playground,js: Math.exp($[0])
  c:   math.h~exp($[0])
  cl:  (exp $[0])
  cs: System~Math.Exp($[0])
@@ -163,7 +163,7 @@ math-exp: Func<float,float>
 math-log: Func<float,float>
  #: log(x) returns the natural logarithm (base E) of $x
  bun: math~math::log($[0])
- js: Math.log($[0])
+ javascript-playground,js: Math.log($[0])
  c:   math.h~log($[0])
  cl:  (log $[0])
  cs: System~Math.Log($[0])
@@ -173,7 +173,7 @@ math-log: Func<float,float>
 math-max: Func<float,float,float>
  #: max(x,y) returns the number with the highest value
  bun: math~math::max($[0], $[1])
- js: Math.max($[0], $[1])
+ javascript-playground,js: Math.max($[0], $[1])
  c:   libbun.h~libbun_fmax($[0], $[1])
  cl:  (max $[0] $[1])
  cs: System~Math.Max($[0], $[1])
@@ -183,7 +183,7 @@ math-max: Func<float,float,float>
 math-min: Func<float,float,float>
  #: min(x,y) returns the number with the lowest value
  bun: math~math::min($[0], $[1])
- js: Math.min($[0], $[1])
+ javascript-playground,js: Math.min($[0], $[1])
  c:   libbun.h~libbun_fmin($[0], $[1])
  cl:  (min $[0] $[1])
  cs: System~Math.Min($[0], $[1])
@@ -193,7 +193,7 @@ math-min: Func<float,float,float>
 math-max: Func<int,int,int>
  #: max(x,y) returns the number with the highest value
  bun: math~math::max($[0], $[1])
- js: Math.max($[0], $[1])
+ javascript-playground,js: Math.max($[0], $[1])
  c:   libbun.h~libbun_imax($[0], $[1])
  cl:  (max $[0] $[1])
  cs: System~Math.Max($[0], $[1])
@@ -203,7 +203,7 @@ math-max: Func<int,int,int>
 math-min: Func<int,int,int>
  #: min(x,y) returns the number with the lowest value
  bun: math~math::min($[0], $[1])
- js: Math.min($[0], $[1])
+ javascript-playground,js: Math.min($[0], $[1])
  c:   libbun.h~libbun_imin($[0], $[1])
  cl:  (min $[0] $[1])
  cs: System~Math.Min($[0], $[1])
@@ -213,7 +213,7 @@ math-min: Func<int,int,int>
 math-pow: Func<float,float,float>
  #: pow(x,y) returns the value of $x to the power of $y
  bun: math~math::pow($[0], $[1])
- js: Math.pow($[0], $[1])
+ javascript-playground,js: Math.pow($[0], $[1])
  c:   math.h~pow($[0], $[1])
  cl:  (expt $[0] $[1])
  cs: System~Math.Pow($[0], $[1])
@@ -223,7 +223,7 @@ math-pow: Func<float,float,float>
 math-random: Func<float,float>
  #: random() returns a random number between 0 and 1
  bun: math~math::round($[0])
- js: Math.random($[0])
+ javascript-playground,js: Math.random($[0])
  c:   libbun.h~libbun_random($[0])
  cl:  (random 1.0)
  cs: @Random~Lib.Random($[0])

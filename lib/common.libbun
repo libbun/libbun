@@ -6,6 +6,7 @@ assert: Func<boolean,String,void>
  cl:  (assert $[0])
  cs:  Debug.Assert($[0])
  py:  assert $[0], $[1]
+ javascript-playground:  console.assert($[0], $[1])
  js:  console.assert($[0], $[1])
  lua: assert($[0], $[1])
  sml: (SMLUnit.Assert.assertTrue $[0])
@@ -16,6 +17,7 @@ println: Func<String,void>
  cl:   ~(format t "~a~%" $[0])
  cs:   Console.WriteLine($[0])
  java: System.out.println($[0])
+ javascript-playground:   console.log($[0])
  js:   console.log($[0])
  py:   print $[0]
  lua:  print($[0])
@@ -27,6 +29,7 @@ print: Func<String,void>
  cl:   ~(format t "~a" $[0])
  cs:   Console.Write($[0])
  java: System.out.print($[0])
+ javascript-playground:   console.log($[0])
  js:   console.log($[0])
  py:   print $[0],
  lua:  print($[0])
@@ -39,6 +42,7 @@ _: Func<boolean,String>
  cl:   ~(format nil "~a" $[0])
  cs:   ($[0]).ToString()
  java: String.valueOf($[0])
+ javascript-playground:   String($[0])
  js:   String($[0])
  py:   (u'true' if $[0] else u'false')
  lua:  tostring($[0])
@@ -51,6 +55,7 @@ _: Func<int,float>
  cl:   (coerce $[0] 'float)
  cs:   ((double)$[0])
  java: ((double)$[0])
+ javascript-playground:   $[0]
  js:   $[0]
  py:   float($[0])
  lua:  $[0]
@@ -62,6 +67,7 @@ _: Func<int,String>
  cl:  ~(format nil "~a" $[0])
  cs:  ($[0]).ToString()
  java: String.valueOf($[0])
+ javascript-playground:   String($[0])
  js: String($[0])
  py:  unicode($[0])
  lua: tostring($[0])
@@ -78,6 +84,7 @@ _: Func<float,int>
  cl:   (round $[0])
  cs:   ((long)$[0])
  java: ((long)$[0])
+ javascript-playground:  $[0]
  js:   $[0]
  py:   int($[0])
  lua:  math.floor($[0])
@@ -89,6 +96,7 @@ _: Func<float,String>
  cl:   ~(format nil "~a" $[0])
  java: String.valueOf($[0])
  py:   (u'%.5f' % ($[0]))
+ javascript-playground:   String($[0])
  js:   String($[0])
  cs:   ($[0]).ToString()
  lua:  tostring($[0])
@@ -123,12 +131,13 @@ size: Func<String,int>
  cl:   (length $[0])
  cs:   $[0].Length
  java: $[0].length()
+ javascript-playground:   $[0].length
  js:   $[0].length
  lua:  #$[0]
  py:   len($[0])
 
 equals: Func<String,String,boolean>
- bun,py,js,cs:  $[0] == $[1]
+ bun,py,javascript-playground,js,cs:  $[0] == $[1]
  c:  (strcmp($[0], $[1]) == 0)
  cl: (string= $[0] $[1])
  java: $[0].equals($[1])
@@ -138,6 +147,7 @@ startsWith: Func<String,String,boolean>
  c:    @startsWith~libbun_startsWith($[0], $[1], 0)
  cl:   (and (>= (length $[0]) (length $[1])) (string= (subseq $[0] 0 (length $[1])) $[1]))
  cs:   $[0].StartsWith($[1])
+ javascript-playground:   ($[0].lastIndexOf($[1], 0) === 0)
  js:   ($[0].lastIndexOf($[1], 0) === 0)
  lua:  (string.sub($[0], 1, string.len($[1]))==$[1])
  py:   $[0].startswith($[1])
@@ -147,13 +157,14 @@ endsWith: Func<String,String,boolean>
  c:    @endsWith~libbun_endsWith($[0], $[1])
  cl:   (let ((spos (- (length $[0]) (length $[1])))) (and (>= spos 0) (string= (subseq $[0] spos (length $[0])) $[1])))
  cs:   $[0].EndsWith($[1])
+ javascript-playground:   ($[0].slice(- $[1].length) === $[1])
  js:   ($[0].slice(- $[1].length) === $[1])
  lua:  ($[1]=='' or string.sub($[0],-string.len($[1]))==$[1])
  py:   $[0].endswith($[1])
 
 substring: Func<String,int,String>
  #: s.substring(x) extracts the substring from a string $s, between $x and the end of $s
- bun,java,js: $[0].substring($[1])
+ bun,java,javascript-playground,js: $[0].substring($[1])
  c:  @substring~libbun_substring($[0], $[1], strlen($[0]))
  cl: (subseq $[0] $[1])
  cs: $[0].Substring($[1])
@@ -162,7 +173,7 @@ substring: Func<String,int,String>
 
 substring: Func<String,int,int,String>
  #: s.substring(x,y) extracts the substring from a string $s, between $x and $y
- bun,java,js: $[0].substring($[1],$[2])
+ bun,java,javascript-playground,js: $[0].substring($[1],$[2])
  c:  @substring~libbun_substring($[0], $[1], $[2])
  cl: (subseq $[0] $[1] $[2])
  cs: $[0].Substring($[1], $[2])
@@ -171,7 +182,7 @@ substring: Func<String,int,int,String>
 
 indexOf: Func<String,String,int>
  #: s.indexOf(x) returns the position of the first found occurrence of $x
- bun,java,js: $[0].indexOf($[1])
+ bun,java,javascript-playground,js: $[0].indexOf($[1])
  c:   @TODO~TODO(0)
  cl:  (or (search $[1] $[0]) -1)
  cs:  $[0].IndexOf($[1])
@@ -180,14 +191,14 @@ indexOf: Func<String,String,int>
 
 lastIndexOf: Func<String,String,int>
  #: s.lastIndexOf(x) returns the position of the last found occurrence of $x
- bun,java,js: $[0].lastIndexOf($[1]) 
+ bun,java,javascript-playground,js: $[0].lastIndexOf($[1]) 
  c:   @TODO~TODO(0)
  py:  $[0].rfind($[1])
  cs:  $[0].LastIndexOf($[1])
 
 toLowerCase: Func<String,String>
  #: s.toLowerCase() converts a string $s to lowercase letters
- bun,java,js: $[0].toLowerCase($[1]) 
+ bun,java,javascript-playground,js: $[0].toLowerCase($[1]) 
  c:   @TODO~TODO(NULL)
  cl:  (string-uppercase $[0])
  cs:  $[0].ToLowerCase($[1]) 
@@ -195,7 +206,7 @@ toLowerCase: Func<String,String>
 
 toUpperCase: Func<String,String>
  #: s.toUpperCase() converts a string $s to uppercase letters
- bun,java,js: $[0].toUpperCase($[1]) 
+ bun,java,javascript-playground,js: $[0].toUpperCase($[1]) 
  c:   @TODO~TODO(NULL)
  cl:  (string-downcase $[0])
  cs:  $[0].ToUpperCase($[1]) 
@@ -204,7 +215,7 @@ toUpperCase: Func<String,String>
 #codeAt
 
 replace: Func<String,String,String,String>
- bun: $[0].replace($[1], $[2])
+ bun,javascript-playground,js: $[0].replace($[1], $[2])
  c:   @TODO~TODO(NULL)
  cl:  cl-ppcre~(cl-ppcre:regex-replace-all $[1] $[0] $[2])
  java: $[0].replaceAll($[1], $[2])
@@ -212,7 +223,7 @@ replace: Func<String,String,String,String>
 #split
 
 trim: Func<String,String>
- bun: $[0].trim()
+ bun,javascript-playground,js: $[0].trim()
  c:   @TODO~TODO(NULL)
  cl: (string-trim '(#\Space) $[0])
  java: $[0].trim()
@@ -226,6 +237,7 @@ _: Func<α[],String>
  cl:  ~(format nil "~a" $[0])
  cs:  string.Join(string.Empty, $[0])
  py:  unicode($[0])
+ javascript-playground:  $[0].join('')
  js:  $[0].join('')
   
 size: Func<α[],int>
@@ -234,7 +246,7 @@ size: Func<α[],int>
  c:   @TODO~TODO(0)
  cl:  (length $[0])
  cs:  $[0].Count
- js:  $[0].length
+ javascript-playground,js:  $[0].length
  lua: #$[0]
  py:  len($[0])
  c:   @arraysize~libbun_ArrayLength($[0])
@@ -245,19 +257,19 @@ size: Func<α[],int,void>
  c:   @TODO~TODO(0)
  cl:  (FIXME)
  cs:  $[0].Count
- js:  $[0].size
+ javascript-playground,js:  $[0].size
  py:  @arraysize~libbun_arraysize($[0], $[1], None)
  c:   @arraysize~libbun_ArraySetLength($[0], $[1])
  
 get: Func<α[],int,α>
  #: a.$$() tests the existence of the specified key in this array
- bun,js,lua,py: $[0][$[1]]
+ bun,javascript-playground,js,lua,py: $[0][$[1]]
  cs:  $[0][(int)$[1]]
  c:   @TODO~TODO(NULL)
  java: $[0].get($[1])
  
 set: Func<α[],int,α,void>
- bun,js,lua,py: $[0][$[1]] = $[2]
+ bun,javascript-playground,js,lua,py: $[0][$[1]] = $[2]
  cs:  $[0][(int)$[1]] = $[2]
  c:   @TODO~TODO(void)
  java: $[0].set($[1], $[2])
@@ -268,7 +280,7 @@ add: Func<α[],α,void>
  c:   @TODO~TODO(void)
  cl: (vector-push $[1])
  cs: $[0].Add($[1])
- js: $[0].push($[1])
+ javascript-playground,js: $[0].push($[1])
  lua: table.insert($[0],$[1])
  py: $[0].append($[1])
 
@@ -276,7 +288,7 @@ insert: Func<α[],int,α,void>
  #: a.$$(n,x) inserts a new element at the specified position in this array
  bun: $[0].insert($[1], $[2])
  cs:  $[0].Insert($[1], $[2])
- js:  $[0].splice($[1], 0, $[2])
+ javascript-playground,js:  $[0].splice($[1], 0, $[2])
  lua: table.insert($[0], $[1] + 1, $[2])
  py:  $[0].insert($[1], $[2])
 
@@ -284,13 +296,13 @@ remove: Func<α[],int,α>
  #: a.$$(n) removes the element at the specified position in this array
  bun: $[0].remove($[1])
  cs:  $[0].RemoveAt($[1])
- js:  $[0].splice($[1], 0)
+ javascript-playground,js:  $[0].splice($[1], 0)
  lua: table.remove($[0], $[1] + 1)
  py:  $[0].remove($[1])
 
 pop: Func<α[],α>
  #: a.$$(n) removes the last element in this array
- bun,py,js: $[0].pop($[1])
+ bun,py,javascript-playground,js: $[0].pop($[1])
  cl:  (vector-pop $[0])
  cs:  @ArrayPop~Lib.ArrayPop($[0])
 
@@ -316,7 +328,7 @@ size: Func<float[],int,void>
 _: Func<Map<α>,String>
  #: Converts this map to a string
  bun: ((String)$[0])
- js:  JSON.stringify($[0])
+ javascript-playground,js:  JSON.stringify($[0])
  py:  unicode($[0])
 
 hasKey: Func<Map<α>,String,boolean>
@@ -330,22 +342,23 @@ hasKey: Func<Map<α>,String,boolean>
  
 get: Func<Map<α>,String,α>
  #: a.$$() tests the existence of the specified key in this array
- bun,cs,py,js: $[0][$[1]]
+ bun,cs,py,javascript-playground,js: $[0][$[1]]
  cl:  (gethash $[1] $[0])
 
 get: Func<Map<α>,String,α,α>
  #: a.$$() tests the existence of the specified key in this array
  bun: $[0].get($[1],$[2])
+ javascript-playground:  $[1][$[2]]
  js:  @mapget~libbun_mapget($[0],$[1],$[2])
  py:  @mapget~libbun_mapget($[0],$[1],$[2])
 
 set: Func<Map<α>,String,α,void>
- bun,cs,js,py: $[0][$[1]] = $[2]
+ bun,cs,javascript-playground,js,py: $[0][$[1]] = $[2]
 
 keys: Func<Map<α>,String[]>
  bun,py: $[0].keys()
  cs:  $[0].Keys
- js:  Object.keys($[0])
+ javascript-playground,js:  Object.keys($[0])
 
 #Object
 _: Func<Object,String>
@@ -354,7 +367,7 @@ _: Func<Object,String>
  cl:   ~(format nil "~a" $[0])
  cs:   $[0].ToString()
  java: $[0].toString()
- js:   String($[0])
+ javascript-playground,js:   String($[0])
  py:   unicode($[0])
 
  
