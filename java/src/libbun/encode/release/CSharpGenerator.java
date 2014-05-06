@@ -102,22 +102,22 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 	@BField private boolean IsMainClassOpened = false;
 
 	public CSharpGenerator() {
-		super(new LibBunLangInfo("C#-5.0", "cs"));
+		this("C#-5.0");
 		this.SetNativeType(BType.BooleanType, "bool");
 		this.SetNativeType(BType.IntType, "long");
 		this.SetNativeType(BType.FloatType, "double");
 		this.SetNativeType(BType.StringType, "string");
 		this.SetNativeType(BType.VarType, "dynamic");
-		this.LoadInlineLibrary("inline.cs", "//");
-		this.SetReservedName("this", "@this");
-		this.Source.AppendNewLine("namespace ", CSharpGenerator.NameSpaceName);
-		this.Source.OpenIndent(" {");
 	}
 
 	protected CSharpGenerator(String LangVersion) {
 		super(new LibBunLangInfo(LangVersion, "cs"));
 		this.LoadInlineLibrary("inline.cs", "//");
 		this.SetReservedName("this", "@this");
+		this.ImportLibrary("System");
+		this.ImportLibrary("System.Diagnostics");
+		this.ImportLibrary("System.Linq");
+		this.ImportLibrary("System.Text");
 		this.Source.AppendNewLine("namespace ", CSharpGenerator.NameSpaceName);
 		this.Source.OpenIndent(" {");
 	}
@@ -149,11 +149,11 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 
 	@Override public void VisitArrayLiteralNode(BunArrayLiteralNode Node) {
 		if(Node.GetListSize() == 0) {
-			this.Source.Append("new ", this.GetCSharpTypeName(Node.Type, false), "()");
+			this.AppendCSharpTypeName("new ", Node.Type, "()");
 		}
 		else {
 			this.ImportLibrary("System.Collections.Generic");
-			this.Source.Append("new ", this.GetCSharpTypeName(Node.Type, false));
+			this.AppendCSharpTypeName("new ", Node.Type, "");
 			if(Node.GetListSize() > 0) {
 				this.GenerateListNode("{ ", Node, ", ", " }");
 			}else{
@@ -163,7 +163,7 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitMapLiteralNode(BunMapLiteralNode Node) {
-		this.Source.Append("new ", this.GetCSharpTypeName(Node.Type, false));
+		this.AppendCSharpTypeName("new ", Node.Type, "");
 		if(Node.GetListSize() > 0) {
 			@Var int i = 0;
 			this.Source.OpenIndent(" {");
@@ -235,33 +235,37 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 		}
 	}
 
-	private String GetCSharpTypeName(BType Type, boolean Boxing) {
-		this.ImportLibrary("System");
-		this.ImportLibrary("System.Diagnostics");
-		this.ImportLibrary("System.Collections.Generic");
-		this.ImportLibrary("System.Linq");
-		this.ImportLibrary("System.Text");
+	protected final void AppendCSharpTypeName(String Prefix, BType Type, String Suffix) {
+		this.Source.Append(Prefix);
+		this.GenerateTypeName(Type);
+		this.Source.Append(Suffix);
+	}
+
+	@Override
+	protected void GenerateTypeName(BType Type) {
 		if(Type.IsArrayType()) {
 			this.ImportLibrary("System.Collections.Generic");
-			return "List<" + this.GetCSharpTypeName(Type.GetParamType(0), true) + ">";
+			this.AppendCSharpTypeName("List<", Type.GetParamType(0), ">");
 		}
-		if(Type.IsMapType()) {
+		else if(Type.IsMapType()) {
 			this.ImportLibrary("System.Collections.Generic");
-			return "Dictionary<string," + this.GetCSharpTypeName(Type.GetParamType(0), true) + ">";
+			this.AppendCSharpTypeName("Dictionary<string, ", Type.GetParamType(0), ">");
 		}
-		if(Type instanceof BFuncType) {
-			return this.GetFuncTypeClass((BFuncType)Type);
+		else if(Type instanceof BFuncType) {
+			this.AppendFuncTypeClass((BFuncType)Type);
 		}
-		if(Type instanceof BClassType) {
-			return this.NameClass(Type);
+		else if(Type instanceof BClassType) {
+			this.Source.Append(this.NameClass(Type));
 		}
-		return this.GetNativeTypeName(Type);
+		else{
+			this.Source.Append(this.GetNativeTypeName(Type));
+		}
 	}
 
 
 	@BField private final BunMap<String> FuncNameMap = new BunMap<String>(null);
 
-	String GetFuncTypeClass(BFuncType FuncType) {
+	String AppendFuncTypeClass(BFuncType FuncType) {
 		@Var String ClassName = this.FuncNameMap.GetOrNull(FuncType.GetUniqueName());
 		if(ClassName == null){
 			@Var LibBunSourceBuilder MainBuilder = this.Source;
@@ -291,16 +295,6 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 			this.FuncNameMap.put(FuncType.GetUniqueName(), ClassName);
 		}
 		return ClassName;
-	}
-
-	@Override protected void GenerateTypeName(BType Type) {
-		this.GetNativeTypeName(Type.GetRealType());
-		if(Type instanceof BFuncType) {
-			this.Source.Append(this.GetFuncTypeClass((BFuncType)Type));
-		}
-		else {
-			this.Source.Append(this.GetCSharpTypeName(Type.GetRealType(), false));
-		}
 	}
 
 	@Override public void VisitFunctionNode(BunFunctionNode Node) {
@@ -594,12 +588,23 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 		this.Source.CloseIndent("}");
 	}
 
+	protected void VisitLocalVariableDecl(BunLetVarNode Node){
+		if(Node.DeclType().IsFuncType()){
+			this.GenerateTypeName(Node.DeclType());
+		}else{
+			this.Source.Append("var");
+		}
+		this.Source.Append(" ", Node.GetUniqueName(this));
+		this.GenerateExpression(" = ", Node.InitValueNode(), ";");
+	}
+
 	@Override public void VisitLetNode(BunLetVarNode Node) {
 		if(Node.IsParamNode()) {
 			if(Node.Type.Equals(BType.VarType) && ((BunFunctionNode)Node.ParentNode).FuncName() == null){
 				this.Source.Append(Node.GetUniqueName(this));
 			}else{
-				this.Source.Append(this.GetCSharpTypeName(Node.DeclType(), false), " ", Node.GetUniqueName(this));
+				this.GenerateTypeName(Node.DeclType());
+				this.Source.Append(" ", Node.GetUniqueName(this));
 			}
 		}
 		else if(Node.IsTopLevel()) {
@@ -611,16 +616,14 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 			this.Source.Append(";");
 		}
 		else {
-			this.Source.Append(this.GetCSharpTypeName(Node.DeclType(), false), " ", Node.GetUniqueName(this));
-			this.GenerateExpression(" = ", Node.InitValueNode(), "");
+			this.VisitLocalVariableDecl(Node);
 		}
 	}
 
 	@Override
 	public void VisitVarBlockNode(BunVarBlockNode Node) {
 		@Var BunLetVarNode VarNode = Node.VarDeclNode();
-		this.Source.AppendNewLine(this.GetCSharpTypeName(VarNode.DeclType(), false), " ", VarNode.GetUniqueName(this));
-		this.GenerateExpression(" = ", VarNode.InitValueNode(), ";");
+		this.VisitLocalVariableDecl(VarNode);
 		this.VisitStmtList(Node);
 	}
 
