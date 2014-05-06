@@ -42,7 +42,6 @@ public class JavaScriptGenerator extends libbun.encode.release.JavaScriptGenerat
 		this.SetNativeType(BType.StringType, "String");
 		this.SetNativeType(BType.VarType, "Object");
 		this.LoadInlineLibrary("inline.js", "//");
-		this.ImportLibrary("playground");
 		this.SetReservedName("this", "self");
 	}
 
