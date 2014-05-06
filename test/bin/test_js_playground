@@ -1,0 +1,4 @@
+#!/bin/bash
+
+OUTDIR=test/w TARGET=javascript-playground test/bin/buntest test/bun/*.bun
+
