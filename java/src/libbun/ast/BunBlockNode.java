@@ -25,8 +25,8 @@
 package libbun.ast;
 
 import libbun.ast.decl.BunLetVarNode;
-import libbun.parser.LibBunGamma;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.LibBunGamma;
+import libbun.parser.classic.LibBunVisitor;
 import libbun.util.BField;
 import libbun.util.Nullable;
 import libbun.util.Var;

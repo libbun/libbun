@@ -26,7 +26,7 @@ package libbun.ast.decl;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BClassType;
 import libbun.type.BType;
 import libbun.util.BField;

@@ -3,8 +3,8 @@ package libbun.lang.lisp;
 import libbun.ast.BNode;
 import libbun.ast.GroupNode;
 import libbun.lang.konoha.ContinuePatternFunction;
-import libbun.parser.BTokenContext;
-import libbun.parser.LibBunGamma;
+import libbun.parser.classic.BTokenContext;
+import libbun.parser.classic.LibBunGamma;
 import libbun.util.BMatchFunction;
 import libbun.util.Var;
 

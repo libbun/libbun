@@ -9,7 +9,7 @@ import libbun.ast.error.ErrorNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.statement.BunBreakNode;
 import libbun.ast.statement.BunWhileNode;
-import libbun.parser.LibBunTypeChecker;
+import libbun.parser.classic.LibBunTypeChecker;
 import libbun.type.BType;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;

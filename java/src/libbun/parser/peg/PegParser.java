@@ -1,8 +1,6 @@
 package libbun.parser.peg;
 
-import libbun.parser.BToken;
-import libbun.parser.LibBunLogger;
-import libbun.parser.ParserSource;
+import libbun.parser.classic.LibBunLogger;
 import libbun.util.BArray;
 import libbun.util.BunMap;
 import libbun.util.LibBunSystem;
@@ -40,14 +38,14 @@ public final class PegParser {
 		if(text == null) {
 			LibBunSystem._Exit(1, "file not found: " + file);
 		}
-		ParserContext sourceContext = new ParserContext(this, new ParserSource(file, 1, text, this.logger), 0, text.length());
-		BToken token = sourceContext.newToken();
+		PegContext sourceContext = new PegContext(this, new PegSource(file, 1, text), 0, text.length());
+		PegToken token = sourceContext.newToken();
 		for(;sourceContext.sliceQuotedTextUntil(token, '\n', "");) {
 			int loc = token.indexOf("<-");
 			if(loc > 0) {
 				String name = token.substring(0,loc).trim();
-				ParserContext sub = token.newParserContext(this, loc+2);
-				Peg e = Peg._ParsePegExpr(sub);
+				PegContext sub = token.newParserContext(this, loc+2);
+				Peg e = Peg._ParsePegExpr(name, sub);
 				if(e != null) {
 					this.setPegRule(name, e);
 				}
@@ -94,7 +92,7 @@ public final class PegParser {
 			}
 		}
 		//System.out.println("'"+ key + "' <- " + e + " ## first_chars=" + e.firstChars());
-		e.serialNumber = this.priorityCount;
+		e.priority = this.priorityCount;
 		this.priorityCount = this.priorityCount + 1;
 		this.insertOrderedPeg(this.pegMap, key, e);
 	}
@@ -115,20 +113,20 @@ public final class PegParser {
 		if(top instanceof PegChoice) {
 			Peg e1 = ((PegChoice) top).firstExpr;
 			Peg e2 = ((PegChoice) top).secondExpr;
-			if(e1.serialNumber == added.serialNumber || e2.serialNumber == added.serialNumber) {
+			if(e1.priority == added.priority || e2.priority == added.priority) {
 				return top;// drop same priority;
 			}
-			if(added.serialNumber > e1.serialNumber) {
-				return new PegChoice(null, added, top);
+			if(added.priority > e1.priority) {
+				return new PegChoice(null, null, added, top);
 			}
 			((PegChoice) top).secondExpr = this.insert(e2, added);
 			return top;
 		}
-		if(added.serialNumber > top.serialNumber) {
-			return new PegChoice(null, added, top);
+		if(added.priority > top.priority) {
+			return new PegChoice(null, null, added, top);
 		}
-		if(added.serialNumber < top.serialNumber) {
-			return new PegChoice(null, top, added);
+		if(added.priority < top.priority) {
+			return new PegChoice(null, null, top, added);
 		}
 		return top; // drop same priority;
 	}

@@ -1,4 +1,4 @@
-package libbun.parser;
+package libbun.parser.classic;
 
 import libbun.util.BArray;
 import libbun.util.BField;

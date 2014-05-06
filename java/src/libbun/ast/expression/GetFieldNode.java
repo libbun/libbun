@@ -26,7 +26,7 @@ package libbun.ast.expression;
 
 import libbun.ast.BNode;
 import libbun.ast.literal.BunTypeNode;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.LibBunVisitor;
 import libbun.util.BField;
 import libbun.util.Var;
 

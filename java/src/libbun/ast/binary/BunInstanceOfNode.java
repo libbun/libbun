@@ -26,7 +26,7 @@ package libbun.ast.binary;
 
 import libbun.ast.BNode;
 import libbun.lang.bun.BunPrecedence;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BType;
 
 //E.g., $ExprNode instanceof TypeInfo

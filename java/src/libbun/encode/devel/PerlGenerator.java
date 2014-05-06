@@ -55,7 +55,7 @@ import libbun.ast.unary.BunNotNode;
 import libbun.ast.unary.BunPlusNode;
 import libbun.ast.unary.UnaryOperatorNode;
 import libbun.encode.LibBunSourceGenerator;
-import libbun.parser.LibBunLangInfo;
+import libbun.parser.classic.LibBunLangInfo;
 
 public class PerlGenerator extends LibBunSourceGenerator {
 

@@ -25,8 +25,8 @@
 package libbun.ast.unary;
 
 import libbun.ast.BNode;
-import libbun.parser.BunVisitor;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.BunVisitor;
+import libbun.parser.classic.LibBunVisitor;
 
 public class BunNotNode extends UnaryOperatorNode {
 	public BunNotNode(BNode ParentNode) {

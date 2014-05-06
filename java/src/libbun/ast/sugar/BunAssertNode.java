@@ -6,7 +6,7 @@ import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.ast.expression.FuncCallNode;
 import libbun.ast.literal.BunStringNode;
-import libbun.parser.LibBunTypeChecker;
+import libbun.parser.classic.LibBunTypeChecker;
 import libbun.type.BFormFunc;
 import libbun.type.BFuncType;
 import libbun.type.BType;

@@ -19,8 +19,8 @@ import libbun.ast.statement.BunWhileNode;
 import libbun.ast.sugar.BunContinueNode;
 import libbun.ast.sugar.BunDoWhileNode;
 import libbun.ast.sugar.BunForInNode;
-import libbun.parser.BTokenContext;
-import libbun.parser.LibBunGamma;
+import libbun.parser.classic.BTokenContext;
+import libbun.parser.classic.LibBunGamma;
 import libbun.util.BMatchFunction;
 import libbun.util.Var;
 

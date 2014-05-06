@@ -1,44 +1,41 @@
 package libbun.parser.peg;
 
 import libbun.ast.BNode;
-import libbun.ast.error.ErrorNode;
-import libbun.parser.BToken;
-import libbun.parser.ParserSource;
 import libbun.util.BArray;
 import libbun.util.BField;
 import libbun.util.BunMap;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
-public final class ParserContext  {
-	@BField public final  ParserSource source;
-	@BField private int   currentPosition = 0;
+public final class PegContext  {
+	@BField public final      PegSource source;
+	@BField private int       sourcePosition = 0;
 	@BField private final int endPosition;
 	@BField public  PegParser    parser;
 	@BField private final boolean IsAllowSkipIndent = false;
 
 	public final BArray<Log> logStack = new BArray<Log>(new Log[64]);
 	int stackTop = 0;
-	BToken debugToken ;
+	PegToken debugToken ;
 
-	public ParserContext(PegParser Parser, ParserSource Source, int StartIndex, int EndIndex) {
-		this.parser = Parser;
+	public PegContext(PegParser parser, PegSource Source, int StartIndex, int EndIndex) {
+		this.parser = parser;
 		this.source = Source;
-		this.currentPosition = StartIndex;
+		this.sourcePosition = StartIndex;
 		this.endPosition = EndIndex;
 		this.debugToken = this.newToken(StartIndex, EndIndex);
 	}
 
-	ParserContext(PegParser Parser, String source) {
-		this(Parser, new ParserSource("", 0, source, null), 0, source.length());
+	PegContext(PegParser Parser, String source) {
+		this(Parser, new PegSource("", 0, source), 0, source.length());
 	}
 
-	public ParserContext subContext(int startIndex, int endIndex) {
-		return new ParserContext(this.parser, this.source, startIndex, endIndex);
+	public PegContext subContext(int startIndex, int endIndex) {
+		return new PegContext(this.parser, this.source, startIndex, endIndex);
 	}
 
 	@Override public String toString() {
-		BToken token = this.newToken(this.currentPosition, this.endPosition);
+		PegToken token = this.newToken(this.sourcePosition, this.endPosition);
 		return token.GetText();
 	}
 
@@ -49,19 +46,19 @@ public final class ParserContext  {
 	//	}
 
 	public int getPosition() {
-		return this.currentPosition;
+		return this.sourcePosition;
 	}
 
 	public void rollback(int pos) {
-		if(pos == 0 && this.currentPosition > pos) {
+		if(pos == 0 && this.sourcePosition > pos) {
 			System.out.println("backtracking");
 			new Exception().printStackTrace();
 		}
-		this.currentPosition = pos;
+		this.sourcePosition = pos;
 	}
 
 	public final boolean hasChar() {
-		return this.currentPosition < this.endPosition;
+		return this.sourcePosition < this.endPosition;
 	}
 
 	public final char charAt(int n) {
@@ -70,13 +67,13 @@ public final class ParserContext  {
 
 	public final char getChar() {
 		if(this.hasChar()) {
-			return this.charAt(this.currentPosition);
+			return this.charAt(this.sourcePosition);
 		}
 		return '\0';
 	}
 
 	public final char getChar(int n) {
-		int pos = this.currentPosition + n;
+		int pos = this.sourcePosition + n;
 		if(pos >= 0 && pos < this.endPosition) {
 			return this.charAt(pos);
 		}
@@ -84,13 +81,13 @@ public final class ParserContext  {
 	}
 
 	public final int consume(int plus) {
-		this.currentPosition = this.currentPosition + plus;
-		return this.currentPosition;
+		this.sourcePosition = this.sourcePosition + plus;
+		return this.sourcePosition;
 	}
 
 	public final char nextChar() {
 		if(this.hasChar()) {
-			int pos = this.currentPosition;
+			int pos = this.sourcePosition;
 			this.consume(1);
 			return this.charAt(pos);
 		}
@@ -100,7 +97,7 @@ public final class ParserContext  {
 	public final int skipWhiteSpace(boolean IncludeNewLine) {
 		if(IncludeNewLine) {
 			while(this.hasChar()) {
-				@Var char ch = this.charAt(this.currentPosition);
+				@Var char ch = this.charAt(this.sourcePosition);
 				if(ch != ' ' && ch != '\t' && ch != '\n') {
 					break;
 				}
@@ -109,34 +106,34 @@ public final class ParserContext  {
 		}
 		else {
 			while(this.hasChar()) {
-				@Var char ch = this.charAt(this.currentPosition);
+				@Var char ch = this.charAt(this.sourcePosition);
 				if(ch != ' ' && ch != '\t') {
 					break;
 				}
 				this.consume(1);
 			}
 		}
-		return this.currentPosition;
+		return this.sourcePosition;
 	}
 
-	public final BToken newToken() {
-		return new BToken(this.source, this.currentPosition, this.currentPosition);
+	public final PegToken newToken() {
+		return new PegToken(this.source, this.sourcePosition, this.sourcePosition);
 	}
 
-	public final BToken newToken(int startIndex, int endIndex) {
-		return new BToken(this.source, startIndex, endIndex);
+	public final PegToken newToken(int startIndex, int endIndex) {
+		return new PegToken(this.source, startIndex, endIndex);
 	}
 
-	public final boolean sliceNumber(BToken token) {
+	public final boolean sliceNumber(PegToken token) {
 		char ch = this.nextChar();
 		if(LibBunSystem._IsDigit(ch)) {
 			for(;this.hasChar(); this.consume(1)) {
-				ch = this.charAt(this.currentPosition);
+				ch = this.charAt(this.sourcePosition);
 				if(!LibBunSystem._IsDigit(ch)) {
 					break;
 				}
 			}
-			token.EndIndex = this.currentPosition;
+			token.EndIndex = this.sourcePosition;
 			return true;
 		}
 		return false;
@@ -146,41 +143,41 @@ public final class ParserContext  {
 		return (LibBunSystem._IsLetter(ch)  || ch == '_');
 	}
 
-	public final boolean sliceSymbol(BToken token, String allowedChars) {
+	public final boolean sliceSymbol(PegToken token, String allowedChars) {
 		char ch = this.nextChar();
 		if(this.isSymbolLetter(ch) || allowedChars.indexOf(ch) != -1) {
 			for(;this.hasChar(); this.consume(1)) {
-				ch = this.charAt(this.currentPosition);
+				ch = this.charAt(this.sourcePosition);
 				if(!this.isSymbolLetter(ch) && !LibBunSystem._IsDigit(ch) && allowedChars.indexOf(ch) == -1) {
 					break;
 				}
 			}
-			token.EndIndex = this.currentPosition;
+			token.EndIndex = this.sourcePosition;
 			return true;
 		}
 		return false;
 	}
 
-	public final boolean sliceMatchedText(BToken token, String text) {
-		if(this.endPosition - this.currentPosition >= text.length()) {
+	public final boolean sliceMatchedText(PegToken token, String text) {
+		if(this.endPosition - this.sourcePosition >= text.length()) {
 			for(int i = 0; i < text.length(); i++) {
 				//System.out.println("i="+i+", '"+text.charAt(i) + "', '"+this.charAt(this.currentPosition + i));
-				if(text.charAt(i) != this.charAt(this.currentPosition + i)) {
+				if(text.charAt(i) != this.charAt(this.sourcePosition + i)) {
 					return false;
 				}
 			}
 			this.consume(text.length());
-			token.EndIndex = this.currentPosition;
+			token.EndIndex = this.sourcePosition;
 			return true;
 		}
 		return false;
 	}
 
-	public final boolean sliceQuotedTextUntil(BToken token, char endChar, String stopChars) {
+	public final boolean sliceQuotedTextUntil(PegToken token, char endChar, String stopChars) {
 		for(; this.hasChar(); this.consume(1)) {
-			char ch = this.charAt(this.currentPosition);
+			char ch = this.charAt(this.sourcePosition);
 			if(ch == endChar) {
-				token.EndIndex = this.currentPosition;
+				token.EndIndex = this.sourcePosition;
 				return true;
 			}
 			if(stopChars.indexOf(ch) != -1) {
@@ -190,19 +187,19 @@ public final class ParserContext  {
 				this.consume(1);  // skip next char;
 			}
 		}
-		token.EndIndex = this.currentPosition;
+		token.EndIndex = this.sourcePosition;
 		return false;
 	}
 
-	public final boolean sliceUntilWhiteSpace(BToken token, String stopChars) {
+	public final boolean sliceUntilWhiteSpace(PegToken token, String stopChars) {
 		for(; this.hasChar(); this.consume(1)) {
-			char ch = this.charAt(this.currentPosition);
+			char ch = this.charAt(this.sourcePosition);
 			if(ch == '\\') {
 				this.consume(1);  // skip next char;
 			}
 			else {
 				if(ch == ' ' || ch == '\t' || ch == '\n') {
-					token.EndIndex = this.currentPosition;
+					token.EndIndex = this.sourcePosition;
 					return true;
 				}
 				if(stopChars.indexOf(ch) != 0) {
@@ -210,7 +207,7 @@ public final class ParserContext  {
 				}
 			}
 		}
-		token.EndIndex = this.currentPosition;
+		token.EndIndex = this.sourcePosition;
 		return false;
 	}
 
@@ -287,17 +284,6 @@ public final class ParserContext  {
 		return this.parsePegNode(left, this.parser.nameRightJoinName(symbol), true);
 	}
 
-	public BNode createExpectedErrorNode(BNode parentNode, BToken token, String text) {
-		if(token == null) {
-			token = this.newToken();
-		}
-		return new ErrorNode(parentNode, token, "expected " + text);
-	}
-
-	public BNode CreateUnexpectedCharacterNode(BNode parentNode, char ch) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	final int getStackPosition(Peg trace) {
 		this.pushImpl(trace, null, '\0', null, 0, null);
@@ -317,7 +303,7 @@ public final class ParserContext  {
 			this.logStack.add(log);
 		}
 		log.trace = trace;
-		log.sourcePosition = this.currentPosition;
+		log.sourcePosition = this.sourcePosition;
 		log.msg = msg;
 		log.type = type;
 		log.parentNode = parentNode;
@@ -360,7 +346,7 @@ public final class ParserContext  {
 			return this.defaultFailureNode;
 		}
 		else {
-			PegObject node = new PegFailureNode(created, this.currentPosition, msg);
+			PegObject node = new PegFailureNode(created, this.sourcePosition, msg);
 			node.debugSource = this.debugToken;
 			this.errorCount = this.errorCount + 1;
 			return node;

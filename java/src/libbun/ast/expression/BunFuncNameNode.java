@@ -2,7 +2,7 @@ package libbun.ast.expression;
 
 import libbun.ast.BNode;
 import libbun.ast.LocalDefinedNode;
-import libbun.parser.BToken;
+import libbun.parser.classic.BToken;
 import libbun.type.BFunc;
 import libbun.type.BFuncType;
 import libbun.type.BType;

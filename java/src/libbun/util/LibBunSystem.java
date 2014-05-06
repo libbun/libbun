@@ -43,10 +43,10 @@ import libbun.encode.LibBunSourceBuilder;
 import libbun.encode.jvm.JavaTypeTable;
 import libbun.encode.playground.BunGenerator;
 import libbun.lang.bun.BunTypeSafer;
-import libbun.parser.BSourceContext;
-import libbun.parser.BTokenContext;
-import libbun.parser.LibBunGamma;
-import libbun.parser.LibBunTokenFuncChain;
+import libbun.parser.classic.BSourceContext;
+import libbun.parser.classic.BTokenContext;
+import libbun.parser.classic.LibBunGamma;
+import libbun.parser.classic.LibBunTokenFuncChain;
 import libbun.type.BType;
 
 

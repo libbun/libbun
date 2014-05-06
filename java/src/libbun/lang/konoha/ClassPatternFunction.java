@@ -2,7 +2,7 @@ package libbun.lang.konoha;
 
 import libbun.ast.BNode;
 import libbun.ast.decl.BunClassNode;
-import libbun.parser.BTokenContext;
+import libbun.parser.classic.BTokenContext;
 import libbun.util.Var;
 import libbun.util.BMatchFunction;
 

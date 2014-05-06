@@ -25,9 +25,9 @@
 package libbun.ast.literal;
 
 import libbun.ast.BNode;
-import libbun.parser.BunVisitor;
-import libbun.parser.BToken;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.BToken;
+import libbun.parser.classic.BunVisitor;
+import libbun.parser.classic.LibBunVisitor;
 
 public final class BunNullNode extends LiteralNode {
 	public BunNullNode(BNode ParentNode, BToken SourceToken) {

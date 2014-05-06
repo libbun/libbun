@@ -40,7 +40,7 @@ import libbun.ast.statement.BunIfNode;
 import libbun.ast.statement.BunThrowNode;
 import libbun.ast.statement.BunTryNode;
 import libbun.ast.unary.BunCastNode;
-import libbun.parser.LibBunLogger;
+import libbun.parser.classic.LibBunLogger;
 import libbun.type.BClassField;
 import libbun.type.BClassType;
 import libbun.type.BFuncType;

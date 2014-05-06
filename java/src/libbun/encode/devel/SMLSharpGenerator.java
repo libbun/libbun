@@ -58,7 +58,7 @@ import libbun.ast.unary.BunNotNode;
 import libbun.ast.unary.BunPlusNode;
 import libbun.ast.unary.UnaryOperatorNode;
 import libbun.encode.LibBunSourceGenerator;
-import libbun.parser.LibBunLangInfo;
+import libbun.parser.classic.LibBunLangInfo;
 import libbun.type.BType;
 import libbun.util.Var;
 

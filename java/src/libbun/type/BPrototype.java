@@ -1,6 +1,6 @@
 package libbun.type;
 
-import libbun.parser.BToken;
+import libbun.parser.classic.BToken;
 import libbun.util.BField;
 
 public class BPrototype extends BFunc {

@@ -26,7 +26,7 @@ package libbun.ast.unary;
 
 
 import libbun.ast.BNode;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.LibBunVisitor;
 
 public abstract class UnaryOperatorNode extends BNode {
 	public final static int _Recv = 0;

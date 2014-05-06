@@ -44,7 +44,7 @@ import libbun.ast.literal.BunMapLiteralNode;
 import libbun.ast.statement.BunThrowNode;
 import libbun.ast.statement.BunTryNode;
 import libbun.encode.obsolete.OldSourceGenerator;
-import libbun.parser.LibBunLogger;
+import libbun.parser.classic.LibBunLogger;
 import libbun.parser.ssa.NodeLib;
 import libbun.parser.ssa.PHINode;
 import libbun.parser.ssa.SSAConverter;

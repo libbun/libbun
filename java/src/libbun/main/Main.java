@@ -27,7 +27,7 @@ package libbun.main;
 import java.io.IOException;
 
 import libbun.encode.LibBunGenerator;
-import libbun.parser.LibBunConst;
+import libbun.parser.classic.LibBunConst;
 import libbun.parser.peg.PegDebugger;
 import libbun.util.BArray;
 import libbun.util.LibBunSystem;

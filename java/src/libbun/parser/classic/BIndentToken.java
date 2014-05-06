@@ -1,4 +1,4 @@
-package libbun.parser;
+package libbun.parser.classic;
 
 
 public final class BIndentToken extends BToken {

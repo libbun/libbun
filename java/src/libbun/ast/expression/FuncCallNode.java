@@ -26,7 +26,7 @@ package libbun.ast.expression;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BFormFunc;
 import libbun.type.BFuncType;
 import libbun.type.BType;

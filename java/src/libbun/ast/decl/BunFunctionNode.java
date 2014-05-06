@@ -28,7 +28,7 @@ import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
 import libbun.ast.BunBlockNode;
 import libbun.encode.LibBunGenerator;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BFuncType;
 import libbun.type.BType;
 import libbun.type.BTypePool;

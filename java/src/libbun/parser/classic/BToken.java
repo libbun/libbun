@@ -1,7 +1,5 @@
-package libbun.parser;
+package libbun.parser.classic;
 
-import libbun.parser.peg.ParserContext;
-import libbun.parser.peg.PegParser;
 import libbun.util.BField;
 import libbun.util.BIgnored;
 import libbun.util.LibBunSystem;
@@ -55,21 +53,21 @@ public class BToken {
 		return null;
 	}
 
-	public final ParserContext newParserContext(PegParser parser) {
-		return new ParserContext(parser, this.Source, this.StartIndex, this.EndIndex);
-	}
-
-	public final ParserContext newParserContext(PegParser parser, int startIndex) {
-		return new ParserContext(parser, this.Source, this.StartIndex + startIndex, this.EndIndex);
-	}
-
-	public final ParserContext newParserContext(PegParser parser, int startIndex, int endIndex) {
-		endIndex = endIndex + this.StartIndex;
-		if(endIndex > this.EndIndex) {
-			endIndex = this.EndIndex;
-		}
-		return new ParserContext(parser, this.Source, this.StartIndex + startIndex, endIndex);
-	}
+	//	public final ParserContext newParserContext(PegParser parser) {
+	//		return new PpaserContext(parser, this.Source, this.StartIndex, this.EndIndex);
+	//	}
+	//
+	//	public final PContext newParserContext(PegParser parser, int startIndex) {
+	//		return new ParserContext(parser, this.Source, this.StartIndex + startIndex, this.EndIndex);
+	//	}
+	//
+	//	public final PegContext newParserContext(PegParser parser, int startIndex, int endIndex) {
+	//		endIndex = endIndex + this.StartIndex;
+	//		if(endIndex > this.EndIndex) {
+	//			endIndex = this.EndIndex;
+	//		}
+	//		return new PegContext(parser, this.Source, this.StartIndex + startIndex, endIndex);
+	//	}
 
 
 

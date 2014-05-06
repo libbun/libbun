@@ -1,7 +1,7 @@
 package libbun.ast;
 
-import libbun.parser.LibBunTypeChecker;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.LibBunTypeChecker;
+import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BType;
 import libbun.util.BField;
 import libbun.util.Var;

@@ -26,8 +26,8 @@ package libbun.ast.error;
 
 import libbun.ast.BNode;
 import libbun.ast.literal.ConstNode;
-import libbun.parser.BToken;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.BToken;
+import libbun.parser.classic.LibBunVisitor;
 import libbun.util.BField;
 import libbun.util.BIgnored;
 

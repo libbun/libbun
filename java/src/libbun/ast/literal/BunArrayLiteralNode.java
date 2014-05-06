@@ -26,7 +26,7 @@ package libbun.ast.literal;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.LibBunVisitor;
 
 public final class BunArrayLiteralNode extends AbstractListNode {
 	public BunArrayLiteralNode(BNode ParentNode) {

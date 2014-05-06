@@ -25,8 +25,8 @@
 package libbun.ast.decl;
 import libbun.ast.BNode;
 import libbun.ast.BunBlockNode;
-import libbun.parser.BNodeUtils;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.BNodeUtils;
+import libbun.parser.classic.LibBunVisitor;
 import libbun.util.Var;
 
 public class BunVarBlockNode extends BunBlockNode {

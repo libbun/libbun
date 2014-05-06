@@ -2,9 +2,9 @@ package libbun.type;
 
 import libbun.ast.BNode;
 import libbun.ast.decl.BunFunctionNode;
-import libbun.parser.LibBunLogger;
-import libbun.parser.BToken;
-import libbun.parser.LibBunTypeChecker;
+import libbun.parser.classic.BToken;
+import libbun.parser.classic.LibBunLogger;
+import libbun.parser.classic.LibBunTypeChecker;
 import libbun.util.BArray;
 import libbun.util.BField;
 import libbun.util.Var;

@@ -26,7 +26,7 @@ package libbun.ast.binary;
 
 import libbun.ast.BNode;
 import libbun.lang.bun.BunPrecedence;
-import libbun.parser.BTokenContext;
+import libbun.parser.classic.BTokenContext;
 import libbun.util.BField;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;

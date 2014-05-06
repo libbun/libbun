@@ -22,7 +22,7 @@
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // **************************************************************************
 
-package libbun.parser;
+package libbun.parser.classic;
 
 import libbun.ast.BunBlockNode;
 import libbun.ast.DesugarNode;

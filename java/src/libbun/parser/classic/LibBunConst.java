@@ -22,7 +22,7 @@
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // **************************************************************************
 
-package libbun.parser;
+package libbun.parser.classic;
 
 public abstract class LibBunConst {
 	public final static String  ProgName  = "LibBun";

@@ -1,6 +1,6 @@
 package libbun.util;
 
-import libbun.parser.BSourceContext;
+import libbun.parser.classic.BSourceContext;
 
 public abstract class BTokenFunction extends BFunction {
 	public BTokenFunction(int TypeId, String Name) {

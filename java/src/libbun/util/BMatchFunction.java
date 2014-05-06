@@ -1,7 +1,7 @@
 package libbun.util;
 
 import libbun.ast.BNode;
-import libbun.parser.BTokenContext;
+import libbun.parser.classic.BTokenContext;
 
 public abstract class BMatchFunction extends BFunction {
 	public BMatchFunction(int TypeId, String Name) {

@@ -1,7 +1,7 @@
 package libbun.lang.konoha;
 
 import libbun.ast.BNode;
-import libbun.parser.BTokenContext;
+import libbun.parser.classic.BTokenContext;
 import libbun.util.BMatchFunction;
 
 public class ClassMemberPatternFunction extends BMatchFunction {

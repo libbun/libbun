@@ -23,7 +23,7 @@
 // **************************************************************************
 
 
-package libbun.parser;
+package libbun.parser.classic;
 
 import libbun.util.BField;
 import libbun.util.BMatchFunction;

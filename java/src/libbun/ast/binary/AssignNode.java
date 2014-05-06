@@ -3,7 +3,7 @@ package libbun.ast.binary;
 import libbun.ast.BNode;
 import libbun.ast.expression.GetNameNode;
 import libbun.lang.bun.BunPrecedence;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.LibBunVisitor;
 
 public class AssignNode extends BinaryOperatorNode {
 	public AssignNode(BNode ParentNode) {

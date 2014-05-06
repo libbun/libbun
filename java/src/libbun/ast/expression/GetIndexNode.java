@@ -25,7 +25,7 @@
 package libbun.ast.expression;
 
 import libbun.ast.BNode;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.LibBunVisitor;
 import libbun.util.Var;
 
 //E.g., $Recv[$Index]

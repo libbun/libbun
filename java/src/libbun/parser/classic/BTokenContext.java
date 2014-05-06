@@ -23,7 +23,7 @@
 // **************************************************************************
 
 
-package libbun.parser;
+package libbun.parser.classic;
 import libbun.ast.BNode;
 import libbun.ast.EmptyNode;
 import libbun.ast.error.ErrorNode;

@@ -1,8 +1,8 @@
 package libbun.ast.decl;
 
 import libbun.ast.BNode;
-import libbun.parser.LibBunGamma;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.LibBunGamma;
+import libbun.parser.classic.LibBunVisitor;
 
 public abstract class TopLevelNode extends BNode {
 

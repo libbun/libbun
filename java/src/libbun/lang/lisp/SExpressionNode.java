@@ -3,7 +3,7 @@ package libbun.lang.lisp;
 import libbun.ast.BNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
-import libbun.parser.LibBunTypeChecker;
+import libbun.parser.classic.LibBunTypeChecker;
 import libbun.type.BType;
 
 public class SExpressionNode extends SyntaxSugarNode {

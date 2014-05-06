@@ -1,9 +1,9 @@
 package libbun.ast.decl;
 
 import libbun.ast.BNode;
-import libbun.parser.BToken;
-import libbun.parser.LibBunGamma;
-import libbun.parser.LibBunLogger;
+import libbun.parser.classic.BToken;
+import libbun.parser.classic.LibBunGamma;
+import libbun.parser.classic.LibBunLogger;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 

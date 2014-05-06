@@ -29,7 +29,7 @@ import libbun.ast.error.ErrorNode;
 import libbun.ast.error.TypeErrorNode;
 import libbun.ast.expression.GetIndexNode;
 import libbun.ast.statement.BunTryNode;
-import libbun.parser.LibBunLogger;
+import libbun.parser.classic.LibBunLogger;
 import libbun.type.BType;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;

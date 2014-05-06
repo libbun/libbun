@@ -35,7 +35,7 @@ import libbun.ast.statement.BunTryNode;
 import libbun.ast.statement.BunWhileNode;
 import libbun.ast.unary.BunCastNode;
 import libbun.ast.unary.UnaryOperatorNode;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.LibBunVisitor;
 import libbun.util.Var;
 
 public class ZASTTransformer extends LibBunVisitor {

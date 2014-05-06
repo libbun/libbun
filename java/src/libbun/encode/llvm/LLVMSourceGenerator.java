@@ -70,7 +70,7 @@ import libbun.ast.unary.BunNotNode;
 import libbun.ast.unary.UnaryOperatorNode;
 import libbun.encode.LibBunSourceBuilder;
 import libbun.encode.obsolete.OldSourceGenerator;
-import libbun.parser.LibBunLogger;
+import libbun.parser.classic.LibBunLogger;
 import libbun.type.BClassType;
 import libbun.type.BFuncType;
 import libbun.type.BGenericType;

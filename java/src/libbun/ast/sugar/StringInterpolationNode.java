@@ -5,7 +5,7 @@ import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.ast.binary.BunAddNode;
 import libbun.ast.literal.BunStringNode;
-import libbun.parser.LibBunTypeChecker;
+import libbun.parser.classic.LibBunTypeChecker;
 import libbun.type.BType;
 import libbun.util.Var;
 

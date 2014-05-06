@@ -1,4 +1,4 @@
-package libbun.parser;
+package libbun.parser.classic;
 
 import libbun.ast.binary.BunAndNode;
 import libbun.ast.binary.BunOrNode;

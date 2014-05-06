@@ -24,8 +24,8 @@
 
 
 package libbun.type;
-import libbun.parser.BToken;
-import libbun.parser.LibBunTypeChecker;
+import libbun.parser.classic.BToken;
+import libbun.parser.classic.LibBunTypeChecker;
 import libbun.util.BField;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;

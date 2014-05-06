@@ -2,8 +2,8 @@ package libbun.encode.jvm;
 
 import libbun.ast.BNode;
 import libbun.ast.decl.TopLevelNode;
-import libbun.parser.LibBunLogger;
-import libbun.parser.LibBunGamma;
+import libbun.parser.classic.LibBunGamma;
+import libbun.parser.classic.LibBunLogger;
 import libbun.type.BType;
 import libbun.util.Var;
 

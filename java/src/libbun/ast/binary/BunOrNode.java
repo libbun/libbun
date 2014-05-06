@@ -26,8 +26,8 @@ package libbun.ast.binary;
 
 import libbun.ast.BNode;
 import libbun.lang.bun.BunPrecedence;
-import libbun.parser.BunVisitor;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.BunVisitor;
+import libbun.parser.classic.LibBunVisitor;
 
 public final class BunOrNode extends BinaryOperatorNode {
 	public BunOrNode(BNode ParentNode) {

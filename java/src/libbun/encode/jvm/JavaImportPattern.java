@@ -1,7 +1,7 @@
 package libbun.encode.jvm;
 
 import libbun.ast.BNode;
-import libbun.parser.BTokenContext;
+import libbun.parser.classic.BTokenContext;
 import libbun.util.Var;
 import libbun.util.BMatchFunction;
 

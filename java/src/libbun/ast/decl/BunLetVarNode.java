@@ -4,7 +4,7 @@ import libbun.ast.BNode;
 import libbun.ast.literal.ConstNode;
 import libbun.ast.literal.DefaultValueNode;
 import libbun.encode.LibBunGenerator;
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BType;
 import libbun.util.BField;
 import libbun.util.LibBunSystem;

@@ -25,7 +25,7 @@
 package libbun.ast.literal;
 
 import libbun.ast.BNode;
-import libbun.parser.BToken;
+import libbun.parser.classic.BToken;
 
 public abstract class ConstNode extends BNode {
 	protected ConstNode(BNode ParentNode, BToken SourceToken) {

@@ -2,9 +2,7 @@ package libbun.parser.peg;
 
 import java.io.IOException;
 
-import libbun.parser.BToken;
-import libbun.parser.LibBunConst;
-import libbun.parser.ParserSource;
+import libbun.parser.classic.LibBunConst;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
@@ -40,8 +38,8 @@ public class PegDebugger {
 		@Var String Line = null;
 		while ((Line = ReadLine2(">>> ", "    ")) != null) {
 			try {
-				ParserContext source = new ParserContext(p, new ParserSource("(stdin)", linenum, Line, null), 0, Line.length());
-				BToken token = source.newToken(0, Line.length());
+				PegContext source = new PegContext(p, new PegSource("(stdin)", linenum, Line), 0, Line.length());
+				PegToken token = source.newToken(0, Line.length());
 				PegObject node = source.parsePegNode(new PegParsedNode(null, 0, 0), "Stmt", false/*hasNextChoice*/);
 				System.out.println("parsed: " + node.toString(token));
 				if(source.hasChar()) {

@@ -3,7 +3,7 @@ package libbun.ast.decl;
 import libbun.ast.BNode;
 import libbun.ast.literal.BunAsmNode;
 import libbun.ast.literal.BunStringNode;
-import libbun.parser.LibBunGamma;
+import libbun.parser.classic.LibBunGamma;
 import libbun.type.BFormFunc;
 import libbun.type.BFuncType;
 import libbun.type.BType;

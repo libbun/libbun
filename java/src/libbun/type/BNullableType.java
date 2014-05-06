@@ -1,6 +1,6 @@
 package libbun.type;
 
-import libbun.parser.LibBunTypeChecker;
+import libbun.parser.classic.LibBunTypeChecker;
 
 public class BNullableType extends BType {
 

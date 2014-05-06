@@ -1,4 +1,4 @@
-package libbun.parser;
+package libbun.parser.classic;
 
 public class ZEmptyValue {
 	public final static ZEmptyValue _TrueEmpty = new ZEmptyValue();

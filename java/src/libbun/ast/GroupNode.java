@@ -24,7 +24,7 @@
 
 package libbun.ast;
 
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.LibBunVisitor;
 
 public final class GroupNode extends BNode {
 	public final static int _Expr = 0;

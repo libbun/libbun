@@ -1,6 +1,6 @@
 package libbun.ast;
 
-import libbun.parser.LibBunVisitor;
+import libbun.parser.classic.LibBunVisitor;
 
 
 public abstract class LocalDefinedNode extends BNode {

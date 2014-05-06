@@ -1,16 +1,17 @@
 package libbun.parser.peg;
 
-import libbun.parser.BToken;
 import libbun.util.BunMap;
 import libbun.util.LibBunSystem;
 
 public abstract class Peg {
 	public final static boolean _BackTrack = true;
-	public BToken source;
-	public int serialNumber = 0;
+	public PegToken source;
+	public int priority = 0;
 	public Peg nextExpr = null;
+	public String leftLabel = null;
 
-	Peg(BToken source) {
+	Peg(String leftLabel, PegToken source) {
+		this.leftLabel = leftLabel;
 		this.source = source;
 	}
 
@@ -22,14 +23,7 @@ public abstract class Peg {
 		list.nextExpr = e;
 	}
 
-	Peg shorten(Peg e) {
-		if(e instanceof PegChoice) {
-			return ((PegChoice) e).firstExpr;
-		}
-		return e;
-	}
-
-	PegObject lazyMatchAll(PegObject parentNode, ParserContext sourceContext, boolean hasNextChoice) {
+	PegObject lazyMatchAll(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		Peg e = this;
 		PegObject node = parentNode;
 		while(e.nextExpr != null) {
@@ -42,7 +36,7 @@ public abstract class Peg {
 		return e.lazyMatch(node, sourceContext, hasNextChoice);
 	}
 
-	protected PegObject debugMatch(PegObject node, ParserContext sourceContext, boolean hasNextChoice) {
+	protected PegObject debugMatch(PegObject node, PegContext sourceContext, boolean hasNextChoice) {
 		PegObject node2 = this.lazyMatch(node, sourceContext, hasNextChoice);
 		if(!node2.isErrorNode()) {
 			String line = sourceContext.debugToken.Source.FormatErrorMarker("matched", sourceContext.getPosition(), "...");
@@ -50,7 +44,7 @@ public abstract class Peg {
 		}
 		return node2;
 	}
-	protected abstract PegObject lazyMatch(PegObject parentNode, ParserContext sourceContext, boolean hasNextChoice);
+	protected abstract PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice);
 
 	public String firstChars(BunMap<Peg> m) {
 		return "";
@@ -80,7 +74,7 @@ public abstract class Peg {
 	}
 
 	public final String groupfy(Peg e) {
-		if(e.nextExpr != null && e instanceof PegToken) {
+		if(e.nextExpr != null && e instanceof PegString) {
 			return e.toString();
 		}
 		else {
@@ -121,7 +115,7 @@ public abstract class Peg {
 		return true; //
 	}
 
-	private static boolean sliceGroup(ParserContext sourceContext, BToken token, int openChar, int closeChar) {
+	private static boolean sliceGroup(PegContext sourceContext, PegToken token, int openChar, int closeChar) {
 		int order = 1;
 		while(sourceContext.hasChar()) {
 			char ch = sourceContext.nextChar();
@@ -152,38 +146,38 @@ public abstract class Peg {
 		return false;
 	}
 
-	private static String sliceName(ParserContext sourceContext) {
+	private static String sliceName(PegContext sourceContext) {
 		return null;
 	}
 
-	private static Peg _ParsePostfix(ParserContext sourceContext, Peg left) {
+	private static Peg _ParsePostfix(String leftName, PegContext sourceContext, Peg left) {
 		if(left != null && sourceContext.hasChar()) {
 			char ch = sourceContext.getChar();
 			if(ch == ' ') {
 				return left;
 			}
-			BToken source = sourceContext.newToken();
+			PegToken source = sourceContext.newToken();
 			if(ch == '*') {
 				sourceContext.consume(1);
-				return new PegOneMoreExpr(source, left, 0);
+				return new PegOneMoreExpr(leftName, source, left, 0);
 			}
 			if(ch == '?') {
 				sourceContext.consume(1);
-				return new PegOptionalExpr(source, left);
+				return new PegOptionalExpr(leftName, source, left);
 			}
 			if(ch == '+') {  // a+  => a
 				sourceContext.consume(1);
-				return new PegOneMoreExpr(source, left, 1);
+				return new PegOneMoreExpr(leftName, source, left, 1);
 			}
 			System.out.println("unknown postfix = '" + ch + "'");
 		}
 		return left;
 	}
 
-	private static Peg _ParseSingleExpr(ParserContext sourceContext) {
+	private static Peg _ParseSingleExpr(String leftLabel, PegContext sourceContext) {
 		Peg right = null;
 		sourceContext.skipWhiteSpace(false);
-		BToken source = sourceContext.newToken();
+		PegToken source = sourceContext.newToken();
 		char ch = sourceContext.getChar();
 		//System.out.println(">> " + ch + " next=" + Context.GetPosition());
 		if(ch == '\0') {
@@ -191,29 +185,29 @@ public abstract class Peg {
 		}
 		if(sourceContext.isSymbolLetter(ch)) {
 			if(sourceContext.sliceSymbol(source, ".")) {
-				right = new PegLabel(source, source.GetText());
-				return Peg._ParsePostfix(sourceContext, right);
+				right = new PegLabel(leftLabel, source, source.GetText());
+				return Peg._ParsePostfix(leftLabel, sourceContext, right);
 			}
 		}
 		sourceContext.consume(1);
 		if(ch == '\'' || ch == '"') {
 			if(sourceContext.sliceQuotedTextUntil(source, ch, "")) {
 				source.EndIndex = sourceContext.consume(1);
-				right = new PegToken(source, LibBunSystem._UnquoteString(source.GetText()));
-				return Peg._ParsePostfix(sourceContext, right);
+				right = new PegString(leftLabel, source, LibBunSystem._UnquoteString(source.GetText()));
+				return Peg._ParsePostfix(leftLabel, sourceContext, right);
 			}
 		}
 		if(ch == '.') {
-			right = new PegAny(source);
-			return Peg._ParsePostfix(sourceContext, right);
+			right = new PegAny(leftLabel, source);
+			return Peg._ParsePostfix(leftLabel, sourceContext, right);
 		}
 		if(ch == '[') {
 			source.StartIndex = sourceContext.getPosition();
 			if(sourceContext.sliceQuotedTextUntil(source, ']', "")) {
 				source.EndIndex = sourceContext.getPosition();
 				sourceContext.consume(1);
-				right = new PegCharacter(source, LibBunSystem._UnquoteString(source.GetText()));
-				return Peg._ParsePostfix(sourceContext, right);
+				right = new PegCharacter(leftLabel, source, LibBunSystem._UnquoteString(source.GetText()));
+				return Peg._ParsePostfix(leftLabel, sourceContext, right);
 			}
 		}
 		//		if(ch == '$') {
@@ -229,33 +223,33 @@ public abstract class Peg {
 		//			return null;
 		//		}
 		if(ch == '$') {
-			right = Peg._ParseSingleExpr(sourceContext);
+			right = Peg._ParseSingleExpr(leftLabel, sourceContext);
 			if(right != null) {
-				right = new PegPushExpr(source, right);
+				right = new PegPushExpr(leftLabel, source, right);
 			}
 			return right;
 		}
 		if(ch == '&') {
-			right = Peg._ParseSingleExpr(sourceContext);
+			right = Peg._ParseSingleExpr(leftLabel, sourceContext);
 			if(right != null) {
-				right = new PegAndPredicate(source, right);
+				right = new PegAndPredicate(leftLabel, source, right);
 			}
 			return right;
 		}
 		if(ch == '!') {
-			right = Peg._ParseSingleExpr(sourceContext);
+			right = Peg._ParseSingleExpr(leftLabel, sourceContext);
 			if(right != null) {
-				right = new PegNotPredicate(source, right);
+				right = new PegNotPredicate(leftLabel, source, right);
 			}
 			return right;
 		}
 		if(ch == '(') {
 			source.StartIndex = sourceContext.getPosition();
 			if(Peg.sliceGroup(sourceContext, source, ch, ')')) {
-				ParserContext sub = source.newParserContext(sourceContext.parser);
-				right = Peg._ParsePegExpr(sub);
+				PegContext sub = source.newParserContext(sourceContext.parser);
+				right = Peg._ParsePegExpr(leftLabel, sub);
 				if(right != null) {
-					right = Peg._ParsePostfix(sourceContext, right);
+					right = Peg._ParsePostfix(leftLabel, sourceContext, right);
 				}
 				return right;
 			}
@@ -272,11 +266,11 @@ public abstract class Peg {
 			source.StartIndex = sourceContext.getPosition();
 			if(Peg.sliceGroup(sourceContext, source, ch, '}')) {
 				String name = Peg.sliceName(sourceContext);
-				ParserContext sub = source.newParserContext(sourceContext.parser);
-				right = Peg._ParsePegExpr(sub);
+				PegContext sub = source.newParserContext(sourceContext.parser);
+				right = Peg._ParsePegExpr(leftLabel, sub);
 				if(right != null) {
-					right = new PegNewObject(source, leftJoin, right, name);
-					right = Peg._ParsePostfix(sourceContext, right);
+					right = new PegNewObject(leftLabel, source, leftJoin, right, name);
+					right = Peg._ParsePostfix(leftLabel, sourceContext, right);
 				}
 				return right;
 			}
@@ -287,8 +281,8 @@ public abstract class Peg {
 		return right;
 	}
 
-	private final static Peg _ParseSequenceExpr(ParserContext sourceContext) {
-		Peg left = Peg._ParseSingleExpr(sourceContext);
+	private final static Peg _ParseSequenceExpr(String leftLabel, PegContext sourceContext) {
+		Peg left = Peg._ParseSingleExpr(leftLabel, sourceContext);
 		if(left == null) {
 			return left;
 		}
@@ -301,7 +295,7 @@ public abstract class Peg {
 				sourceContext.skipWhiteSpace(false);
 				return left;
 			}
-			Peg right = Peg._ParseSequenceExpr(sourceContext);
+			Peg right = Peg._ParseSequenceExpr(leftLabel, sourceContext);
 			if(right != null) {
 				left.appendNext(right);
 			}
@@ -309,13 +303,13 @@ public abstract class Peg {
 		return left;
 	}
 
-	public final static Peg _ParsePegExpr(ParserContext sourceContext) {
-		Peg left = Peg._ParseSequenceExpr(sourceContext);
+	public final static Peg _ParsePegExpr(String leftLabel, PegContext sourceContext) {
+		Peg left = Peg._ParseSequenceExpr(leftLabel, sourceContext);
 		sourceContext.skipWhiteSpace(false);
 		if(sourceContext.hasChar()) {
-			Peg right = Peg._ParsePegExpr(sourceContext);
+			Peg right = Peg._ParsePegExpr(leftLabel, sourceContext);
 			if(right != null) {
-				return new PegChoice(sourceContext.newToken(), left, right);
+				return new PegChoice(leftLabel, sourceContext.newToken(), left, right);
 			}
 		}
 		return left;
@@ -349,23 +343,23 @@ public abstract class Peg {
 
 abstract class PegAbstractSymbol extends Peg {
 	String symbol;
-	public PegAbstractSymbol (BToken source, String symbol) {
-		super(source);
+	public PegAbstractSymbol (String leftLabel, PegToken source, String symbol) {
+		super(leftLabel, source);
 		this.symbol = symbol;
 	}
 }
 
-class PegToken extends PegAbstractSymbol {
-	public PegToken(BToken source, String symbol) {
-		super(source, symbol);
+class PegString extends PegAbstractSymbol {
+	public PegString(String leftLabel, PegToken source, String symbol) {
+		super(leftLabel, source, symbol);
 	}
 	@Override protected String stringfy() {
 		return LibBunSystem._QuoteString("'", this.symbol, "'");
 	}
 
-	@Override public PegObject lazyMatch(PegObject parentNode, ParserContext sourceContext, boolean hasNextChoice) {
+	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		//sourceContext.skipWhiteSpace(false);
-		BToken token = sourceContext.newToken();
+		PegToken token = sourceContext.newToken();
 		//System.out.println("? ch = " + sourceContext.getChar() + " in " + this.symbol + " at pos = " + sourceContext.getPosition());
 		if(sourceContext.sliceMatchedText(token, this.symbol)) {
 			if(parentNode.endIndex == 0) {
@@ -392,14 +386,14 @@ class PegToken extends PegAbstractSymbol {
 }
 
 class PegAny extends PegAbstractSymbol {
-	public PegAny(BToken source) {
-		super(source, ".");
+	public PegAny(String leftLabel, PegToken source) {
+		super(leftLabel, source, ".");
 	}
 	@Override protected String stringfy() {
 		return ".";
 	}
 
-	@Override public PegObject lazyMatch(PegObject parentNode, ParserContext sourceContext, boolean hasNextChoice) {
+	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		if(sourceContext.hasChar()) {
 			sourceContext.consume(1);
 			return parentNode;
@@ -418,8 +412,8 @@ class PegAny extends PegAbstractSymbol {
 
 class PegCharacter extends PegAbstractSymbol {
 	String charSet;
-	public PegCharacter(BToken source, String token) {
-		super(source, token);
+	public PegCharacter(String leftLabel, PegToken source, String token) {
+		super(leftLabel, source, token);
 		token = token.replaceAll("A-Z", "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 		token = token.replaceAll("a-z", "abcdefghijklmnopqrstuvwxyz");
 		token = token.replaceAll("A-z", "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
@@ -427,7 +421,7 @@ class PegCharacter extends PegAbstractSymbol {
 		token = token.replaceAll("\\-", "-");
 		this.charSet = token;
 	}
-	@Override public PegObject lazyMatch(PegObject parentNode, ParserContext sourceContext, boolean hasNextChoice) {
+	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		char ch = sourceContext.getChar();
 		//System.out.println("? ch = " + ch + " in " + this.charSet + " at pos = " + sourceContext.getPosition());
 		if(this.charSet.indexOf(ch) == -1) {
@@ -453,8 +447,8 @@ class PegCharacter extends PegAbstractSymbol {
 
 
 class PegLabel extends PegAbstractSymbol {
-	public PegLabel(BToken source, String token) {
-		super(source, token);
+	public PegLabel(String leftLabel, PegToken source, String token) {
+		super(leftLabel, source, token);
 	}
 	@Override protected String stringfy() {
 		return this.symbol;
@@ -507,7 +501,7 @@ class PegLabel extends PegAbstractSymbol {
 		return result;
 	}
 
-	@Override public PegObject lazyMatch(PegObject parentNode, ParserContext sourceContext, boolean hasNextChoice) {
+	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		PegObject left = sourceContext.parsePegNode(parentNode, this.symbol, hasNextChoice);
 		if(left.isErrorNode()) {
 			return left;
@@ -529,8 +523,8 @@ class PegLabel extends PegAbstractSymbol {
 
 abstract class PegPredicate extends Peg {
 	Peg innerExpr;
-	public PegPredicate(BToken source, Peg e) {
-		super(source);
+	public PegPredicate(String leftLabel, PegToken source, Peg e) {
+		super(leftLabel, source);
 		this.innerExpr = e;
 	}
 	@Override boolean check(PegParser p, String leftName, int order) {
@@ -540,13 +534,13 @@ abstract class PegPredicate extends Peg {
 }
 
 class PegOptionalExpr extends PegPredicate {
-	public PegOptionalExpr(BToken source, Peg e) {
-		super(source, e);
+	public PegOptionalExpr(String leftLabel, PegToken source, Peg e) {
+		super(leftLabel, source, e);
 	}
 	@Override protected String stringfy() {
 		return this.groupfy(this.innerExpr) + "?";
 	}
-	@Override public PegObject lazyMatch(PegObject parentNode, ParserContext sourceContext, boolean hasNextChoice) {
+	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		PegObject node = parentNode;
 		int stackPosition = sourceContext.getStackPosition(this);
 		node = this.innerExpr.lazyMatchAll(node, sourceContext, true);
@@ -569,8 +563,8 @@ class PegOptionalExpr extends PegPredicate {
 
 class PegOneMoreExpr extends PegPredicate {
 	int min = 0;
-	public PegOneMoreExpr(BToken source, Peg e, int min) {
-		super(source, e);
+	public PegOneMoreExpr(String leftLabel, PegToken source, Peg e, int min) {
+		super(leftLabel, source, e);
 		this.min = min;
 	}
 	@Override protected String stringfy() {
@@ -581,7 +575,7 @@ class PegOneMoreExpr extends PegPredicate {
 			return this.groupfy(this.innerExpr) + "+";
 		}
 	}
-	@Override public PegObject lazyMatch(PegObject parentNode, ParserContext sourceContext, boolean hasNextChoice) {
+	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		PegObject prevNode = parentNode;
 		int count = 0;
 		while(true) {
@@ -617,13 +611,13 @@ class PegOneMoreExpr extends PegPredicate {
 }
 
 class PegAndPredicate extends PegPredicate {
-	PegAndPredicate(BToken source, Peg e) {
-		super(source, e);
+	PegAndPredicate(String leftLabel, PegToken source, Peg e) {
+		super(leftLabel, source, e);
 	}
 	@Override protected String stringfy() {
 		return "&" + this.groupfy(this.innerExpr);
 	}
-	@Override public PegObject lazyMatch(PegObject parentNode, ParserContext sourceContext, boolean hasNextChoice) {
+	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		PegObject node = parentNode;
 		int stackPosition = sourceContext.getStackPosition(this);
 		node = this.innerExpr.lazyMatchAll(node, sourceContext, true);
@@ -637,14 +631,14 @@ class PegAndPredicate extends PegPredicate {
 }
 
 class PegNotPredicate extends PegPredicate {
-	PegNotPredicate(BToken source, Peg e) {
-		super(source, e);
+	PegNotPredicate(String leftLabel, PegToken source, Peg e) {
+		super(leftLabel, source, e);
 	}
 	@Override protected String stringfy() {
 		return "!" + this.groupfy(this.innerExpr);
 	}
 
-	@Override public PegObject lazyMatch(PegObject parentNode, ParserContext sourceContext, boolean hasNextChoice) {
+	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		PegObject node = parentNode;
 		int stackPosition = sourceContext.getStackPosition(this);
 		node = this.innerExpr.lazyMatchAll(node, sourceContext, hasNextChoice);
@@ -660,8 +654,8 @@ class PegNotPredicate extends PegPredicate {
 class PegChoice extends Peg {
 	Peg firstExpr;
 	Peg secondExpr;
-	PegChoice(BToken source, Peg e, Peg e2) {
-		super(source);
+	PegChoice(String leftLabel, PegToken source, Peg e, Peg e2) {
+		super(leftLabel, source);
 		this.firstExpr = e;
 		this.secondExpr = e2;
 	}
@@ -669,7 +663,7 @@ class PegChoice extends Peg {
 		return this.firstExpr + " / " + this.secondExpr;
 	}
 
-	@Override public PegObject lazyMatch(PegObject parentNode, ParserContext sourceContext, boolean hasNextChoice) {
+	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		Peg e = this;
 		int stackPosition = sourceContext.getStackPosition(this);
 		while(e instanceof PegChoice) {
@@ -702,7 +696,7 @@ class PegChoice extends Peg {
 class PegPushExpr extends Peg {
 	Peg innerExpr;
 	int nodeAppendIndex = -1;
-	//	public PegPushExpr(BToken source, char n, Peg e) {
+	//	public PegPushExpr(PegToken source, char n, Peg e) {
 	//		super(source);
 	//		this.innerExpr = e;
 	//		if('0' <= n && n <= '9') {
@@ -712,8 +706,8 @@ class PegPushExpr extends Peg {
 	//			this.nodeAppendIndex = -1;
 	//		}
 	//	}
-	public PegPushExpr(BToken source, Peg e) {
-		super(source);
+	public PegPushExpr(String leftLabel, PegToken source, Peg e) {
+		super(leftLabel, source);
 		this.innerExpr = e;
 	}
 	@Override protected String stringfy() {
@@ -731,7 +725,7 @@ class PegPushExpr extends Peg {
 		return this.innerExpr.checkAll(p, leftName, order);
 	}
 
-	@Override public PegObject lazyMatch(PegObject parentNode, ParserContext sourceContext, boolean hasNextChoice) {
+	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		int pos = sourceContext.getPosition();
 		PegObject node = this.innerExpr.lazyMatchAll(parentNode, sourceContext, hasNextChoice);
 		if(node.isErrorNode()) {
@@ -752,8 +746,8 @@ class PegNewObject extends PegPredicate {
 	boolean leftJoin = false;
 	String nodeName = null;
 
-	public PegNewObject(BToken source, boolean leftJoin, Peg e, String nodeName) {
-		super(source, e);
+	public PegNewObject(String leftLabel, PegToken source, boolean leftJoin, Peg e, String nodeName) {
+		super(leftLabel, source, e);
 		this.leftJoin = leftJoin;
 		this.nodeName = nodeName;
 	}
@@ -766,11 +760,11 @@ class PegNewObject extends PegPredicate {
 		return s + this.innerExpr + "}"; // + this.nodeName;
 	}
 
-	@Override public PegObject lazyMatch(PegObject parentNode, ParserContext sourceContext, boolean hasNextChoice) {
+	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		// prefetch first node..
 		//sourceContext.skipWhiteSpace(true);
 		int stack = sourceContext.getStackPosition(this);
-		if(this.innerExpr instanceof PegToken) {
+		if(this.innerExpr instanceof PegString) {
 			PegObject node = this.innerExpr.lazyMatch(parentNode, sourceContext, hasNextChoice);
 			sourceContext.popBack(stack, Peg._BackTrack);
 			if(node.isErrorNode()) {
@@ -812,15 +806,15 @@ class PegNewObject extends PegPredicate {
 
 class PegFunctionExpr extends Peg {
 	PegFunction f;
-	PegFunctionExpr(PegFunction f) {
-		super(null);
+	PegFunctionExpr(String leftLabel, PegFunction f) {
+		super(leftLabel, null);
 		this.f = f;
 	}
 	@Override protected String stringfy() {
 		return "(peg function " + this.f + ")";
 	}
 
-	@Override public PegObject lazyMatch(PegObject parentNode, ParserContext sourceContext, boolean hasNextChoice) {
+	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		PegObject node = this.f.Invoke(parentNode, sourceContext);
 		if(node == null) {
 			return sourceContext.newFunctionErrorNode(this, this.f, hasNextChoice);

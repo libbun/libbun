@@ -12,7 +12,7 @@ import libbun.ast.expression.BunFormNode;
 import libbun.ast.literal.BunAsmNode;
 import libbun.ast.literal.LiteralNode;
 import libbun.ast.unary.BunCastNode;
-import libbun.parser.LibBunLangInfo;
+import libbun.parser.classic.LibBunLangInfo;
 import libbun.type.BType;
 import libbun.util.BArray;
 import libbun.util.BField;
