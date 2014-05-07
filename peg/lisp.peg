@@ -1,0 +1,8 @@
+
+Stmt    <- Expr
+Expr    <- '(' Space? List ')' { $List } / Integer / Symbol / Op
+Integer <- {[0-9]+ }
+List    <- (Expr Space+ { $Expr })*
+Symbol  <- { [a-zA-Z]+ }
+Op      <- { '+' } / { '-' } / { '*' } / { '/' } / { '%' } / { '<' } / { '>' }
+Space   <- {[ \t\r\n] }
