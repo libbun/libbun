@@ -1,0 +1,6 @@
+// written by uchida
+// Python parser module is experimental.
+require syntax::python
+
+def main():
+  print("Hello, world!") #=> Hello, world!
