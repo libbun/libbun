@@ -17,6 +17,8 @@ public final class PegContext  {
 	public final BArray<Log> logStack = new BArray<Log>(new Log[64]);
 	int stackTop = 0;
 	PegToken debugToken ;
+	int backtrackCount = 0;
+	int backtrackSize = 0;
 
 	public PegContext(PegParser parser, PegSource Source, int StartIndex, int EndIndex) {
 		this.parser = parser;
@@ -50,9 +52,11 @@ public final class PegContext  {
 	}
 
 	public void rollback(int pos) {
-		if(pos == 0 && this.sourcePosition > pos) {
-			System.out.println("backtracking");
-			new Exception().printStackTrace();
+		if(this.sourcePosition > pos) {
+			//			System.out.println("backtracking");
+			//			new Exception().printStackTrace();
+			this.backtrackCount = this.backtrackCount + 1;
+			this.backtrackSize = this.backtrackSize + (this.sourcePosition - pos);
 		}
 		this.sourcePosition = pos;
 	}
@@ -93,6 +97,41 @@ public final class PegContext  {
 		}
 		return '\0';
 	}
+
+	public boolean match(char ch) {
+		if(this.getChar() == ch) {
+			this.consume(1);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean match(char ch, char ch2) {
+		if(this.getChar(0) == ch && this.getChar(1) == ch2) {
+			this.consume(2);
+			return true;
+		}
+		return false;
+	}
+
+	public void skipIndent(int indentSize) {
+		int pos = this.sourcePosition;
+		//		this.showPosition("skip characters until indent="+indentSize + ", pos=" + pos, pos);
+		for(;pos < this.endPosition; pos = pos + 1) {
+			char ch = this.charAt(pos);
+			if(ch == '\n' && pos > this.sourcePosition) {
+				int posIndent = this.source.getIndentSize(pos+1);
+				if(posIndent <= indentSize) {
+					this.sourcePosition = pos + 1;
+					//					System.out.println("skip characters until indent="+indentSize + ", pos=" + this.sourcePosition);
+					return ;
+				}
+			}
+		}
+		//		System.out.println("skip characters until indent="+indentSize + ", pos = endPosition");
+		this.sourcePosition = this.endPosition;
+	}
+
 
 	public final int skipWhiteSpace(boolean IncludeNewLine) {
 		if(IncludeNewLine) {
@@ -220,20 +259,10 @@ public final class PegContext  {
 		return e != null;
 	}
 
-	//	public BNode matchRightPattern(BNode ParentNode, String PatternName) {
-	//		Peg e = this.parser.getRightPattern(PatternName, this.getFirstChar());
-	//		if(e != null) {
-	//			int pos = this.currentPosition;
-	//			BNode Node = e.matchAll(ParentNode, this);
-	//			if(Node == null || Node.IsErrorNode()) {
-	//				this.rollback(pos);
-	//			}
-	//			return Node;
-	//		}
-	//		return null;
-	//	}
+
 
 	private final BunMap<PegObject> memoMap = new BunMap<PegObject>(null);
+	private final BunMap<Memo> memoMap2 = new BunMap<Memo>(null);
 	private final PegObject trueNode = new PegParsedNode(null, 0, 0);
 	int memoHit = 0;
 	int memoMiss = 0;
@@ -241,49 +270,89 @@ public final class PegContext  {
 	int objectCount = 0;
 	int errorCount = 0;
 
-	public final PegObject parsePegNodeMemo(PegObject parentNode, String pattern, boolean hasNextChoice) {
+	public final PegObject parsePegNode(PegObject parentNode, String pattern, boolean hasNextChoice) {
+		int pos = this.getPosition();
+		String key = pattern + ":" + pos;
+		Memo m = this.memoMap2.GetValue(key, null);
+		if(m != null) {
+			this.memoHit = this.memoHit + 1;
+			this.sourcePosition = m.nextPosition;
+			if(m.result == null) {
+				return parentNode;
+			}
+			return m.result;
+		}
+		Peg e = this.parser.getPattern(pattern, this.getFirstChar());
+		if(e != null) {
+			PegObject node = e.lazyMatchAll(parentNode, this, hasNextChoice);
+			m = new Memo();
+			m.nextPosition = this.getPosition();
+			if(node != parentNode) {
+				m.result = node;
+			}
+			this.memoMiss = this.memoMiss + 1;
+			this.memoMap2.put(key, m);
+			return node;
+		}
+		LibBunSystem._Exit(1, "undefined label " + pattern + " '" + this.getFirstChar() + "'");
+		return this.defaultFailureNode;
+	}
+
+	public final PegObject parsePegNode2(PegObject parentNode, String pattern, boolean hasNextChoice) {
 		int pos = this.getPosition();
 		String key = pattern + ":" + pos;
 		PegObject node = this.memoMap.GetValue(key, null);
 		if(node != null) {
 			this.memoHit = this.memoHit + 1;
-			if(node == this.trueNode) {
-				return parentNode;
-			}
 			return node;
 		}
 		Peg e = this.parser.getPattern(pattern, this.getFirstChar());
-		//System.out.println("matching " + parentNode + "   " + pattern + "... " + e);
 		if(e != null) {
 			node = e.lazyMatchAll(parentNode, this, hasNextChoice);
-			this.memoMiss = this.memoMiss + 1;
-		}
-		else {
-			LibBunSystem._Exit(1, "undefined label " + pattern + " '" + this.getFirstChar() + "'");
-		}
-		//System.out.println("matched " + parentNode + "   " + pattern + "... " + node);
-		if(node == parentNode) {
-			this.memoMap.put(key, this.trueNode);
+			if(node.isErrorNode() && hasNextChoice) {
+				this.memoMiss = this.memoMiss + 1;
+				this.memoMap.put(key, node);
+				return node;
+			}
+			if(node != parentNode && node.isErrorNode()) {
+				this.memoMiss = this.memoMiss + 1;
+				this.memoMap.put(key, node);
+				return node;
+			}
 			return node;
 		}
-		this.memoMap.put(key, node);
-		return node;
+		LibBunSystem._Exit(1, "undefined label " + pattern + " '" + this.getFirstChar() + "'");
+		return this.defaultFailureNode;
 	}
 
-	public final PegObject parsePegNode(PegObject parentNode, String pattern, boolean hasNextChoice) {
+	public final PegObject parsePegNodeNon(PegObject parentNode, String pattern, boolean hasNextChoice) {
 		Peg e = this.parser.getPattern(pattern, this.getFirstChar());
 		if(e != null) {
 			return e.lazyMatchAll(parentNode, this, hasNextChoice);
 		}
 		LibBunSystem._Exit(1, "undefined label " + pattern + " '" + this.getFirstChar() + "'");
-		return null;
+		return this.defaultFailureNode;
 	}
 
-
-	public PegObject parseRightPegNode(PegObject left, String symbol) {
-		return this.parsePegNode(left, this.parser.nameRightJoinName(symbol), true);
+	public final PegObject parseRightPegNode(PegObject left, String symbol) {
+		String key = this.parser.nameRightJoinName(symbol);
+		Peg e = this.parser.getPattern(key, this.getFirstChar());
+		while(e != null) {
+			Peg sec = e;
+			if(e instanceof PegChoice) {
+				sec = ((PegChoice) e).firstExpr;
+				e = ((PegChoice) e).secondExpr;
+			}
+			else {
+				e = null;
+			}
+			PegObject right = sec.lazyMatchAll(left, this, true);
+			if(!right.isErrorNode()) {
+				left = right;
+			}
+		}
+		return left;
 	}
-
 
 	final int getStackPosition(Peg trace) {
 		this.pushImpl(trace, null, '\0', null, 0, null);
@@ -336,6 +405,7 @@ public final class PegContext  {
 		PegParsedNode node = new PegParsedNode(created, startIndex, endIndex);
 		node.debugSource = this.debugToken;
 		this.objectCount = this.objectCount + 1;
+		//System.out.println("pos="+this.sourcePosition+", by " + created);
 		return node;
 	}
 
@@ -374,6 +444,18 @@ public final class PegContext  {
 		return this.newErrorNode(created, "function  " + f + " was failed", false);
 	}
 
+	public String formatErrorMessage(String msg1, String msg2) {
+		return this.source.formatErrorLineMarker(msg1, this.sourcePosition, msg2);
+	}
+	public void showPosition(String msg, int pos) {
+		System.out.println(this.source.formatErrorLineMarker("debug", pos, msg));
+	}
+	public void showErrorMessage(String msg) {
+		System.out.println(this.source.formatErrorLineMarker("error", this.sourcePosition, msg));
+		LibBunSystem._Exit(1, msg);
+	}
+
+
 }
 
 class Log {
@@ -388,4 +470,9 @@ class Log {
 	@Override public String toString() {
 		return "" + this.sourcePosition + " " + this.msg;
 	}
+}
+
+class Memo {
+	PegObject result;
+	int nextPosition;
 }

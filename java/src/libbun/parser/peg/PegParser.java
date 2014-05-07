@@ -15,8 +15,8 @@ public final class PegParser {
 	BunMap<String>   keywordCache = null;
 	BunMap<String>   firstCharCache = null;
 
-	boolean enableFirstCharChache = true;
-	boolean enableMemo = true;
+	boolean enableFirstCharChache = false;
+	boolean enableMemo = false;
 
 	public PegParser(LibBunLogger logger, PegParser StackedParser) {
 		this.logger = logger;
@@ -77,18 +77,18 @@ public final class PegParser {
 			this.setPegRule(name, ((PegChoice) e).firstExpr);
 		}
 		else {
-			this.setUnchoicedPeg(name, e);
+			this.setPegSequence(name, e);
 		}
 	}
 
-	private void setUnchoicedPeg(String name, Peg e) {
+	private void setPegSequence(String name, Peg e) {
 		String key = name;
 		if(e instanceof PegLabel) {
 			String label = ((PegLabel) e).symbol;
 			//System.out.println("first name: " + name + ", " + label);
 			if(label.equals(name) && e.nextExpr != null) {
 				key = this.nameRightJoinName(key);  // left recursion
-				//e = e.nextExpr;
+				e = e.nextExpr;
 			}
 		}
 		//System.out.println("'"+ key + "' <- " + e + " ## first_chars=" + e.firstChars());
@@ -144,6 +144,8 @@ public final class PegParser {
 		for(int i = 0; i < list.size(); i++) {
 			String key = list.ArrayValues[i];
 			Peg e = this.pegMap.GetValue(key, null);
+			//e.removeLeftRecursion(this);
+			this.pegMap.put(key, e);
 			e.checkAll(this, key, 0);
 			System.out.println(e.toPrintableString(key));
 		}

@@ -165,7 +165,7 @@ public class PegToken {
 
 	public final int GetIndentSize() {
 		if(this.Source != null) {
-			return this.Source.CountIndentSize(this.Source.GetLineHeadPosition(this.StartIndex));
+			return this.Source.getIndentSize(this.StartIndex);
 		}
 		return 0;
 	}

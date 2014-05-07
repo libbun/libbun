@@ -95,7 +95,12 @@ class PegFailureNode extends PegObject {
 	}
 
 	@Override void stringfy(PegToken source, LibBunSourceBuilder sb) {
-		sb.AppendNewLine(this.debugSource.Source.FormatErrorMarker("error", this.startIndex, this.errorMessage + "   ## by " + this.createdPeg));
+		if(this.debugSource != null) {
+			sb.AppendNewLine(this.debugSource.Source.formatErrorLineMarker("error", this.startIndex, this.errorMessage + "   ## by " + this.createdPeg));
+		}
+		else {
+			sb.AppendNewLine("Nothing");
+		}
 	}
 
 }

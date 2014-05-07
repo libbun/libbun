@@ -4,7 +4,6 @@ import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
 public class PegSource {
-	//	@BField public final LibBunLogger Logger;
 	String FileName;
 	int    LineNumber;
 	public String  SourceText;
@@ -34,30 +33,50 @@ public class PegSource {
 		return LineNumber;
 	}
 
-	public final int GetLineHeadPosition(int Position) {
-		@Var String s = this.SourceText;
-		@Var int StartIndex = 0;
-		@Var int i = Position;
-		if(!(i < s.length())) {
-			i = s.length() - 1;
-		}
-		while(i >= 0) {
-			@Var char ch = LibBunSystem._GetChar(s, i);
-			if(ch == '\n') {
-				StartIndex = i + 1;
-				break;
-			}
-			i = i - 1;
-		}
-		return StartIndex;
-	}
+	//	public final int GetLineHeadPosition(int Position) {
+	//		@Var String s = this.SourceText;
+	//		@Var int StartIndex = 0;
+	//		@Var int i = Position;
+	//		if(!(i < s.length())) {
+	//			i = s.length() - 1;
+	//		}
+	//		while(i >= 0) {
+	//			@Var char ch = LibBunSystem._GetChar(s, i);
+	//			if(ch == '\n') {
+	//				StartIndex = i + 1;
+	//				break;
+	//			}
+	//			i = i - 1;
+	//		}
+	//		return StartIndex;
+	//	}
+	//
+	//	public final int CountIndentSize(int Position) {
+	//		@Var String s = this.SourceText;
+	//		@Var int length = 0;
+	//		@Var int i = Position;
+	//		while(i < s.length()) {
+	//			@Var char ch = LibBunSystem._GetChar(s, i);
+	//			if(ch == '\t') {
+	//				length = length + 8;
+	//			}
+	//			else if(ch == ' ') {
+	//				length = length + 1;
+	//			}
+	//			else {
+	//				break;
+	//			}
+	//			i = i + 1;
+	//		}
+	//		return length;
+	//	}
 
-	public final int CountIndentSize(int Position) {
-		@Var String s = this.SourceText;
+	public final int getIndentSize(int fromPosition) {
+		int startPosition = this.getLineStartPosition(fromPosition);
 		@Var int length = 0;
-		@Var int i = Position;
-		while(i < s.length()) {
-			@Var char ch = LibBunSystem._GetChar(s, i);
+		@Var String s = this.SourceText;
+		for(;startPosition < s.length();startPosition=startPosition+1) {
+			@Var char ch = LibBunSystem._GetChar(s, startPosition);
 			if(ch == '\t') {
 				length = length + 8;
 			}
@@ -67,84 +86,75 @@ public class PegSource {
 			else {
 				break;
 			}
-			i = i + 1;
 		}
 		return length;
+
 	}
 
-	public final String GetLineText(int Position) {
+	public final int getLineStartPosition(int fromPostion) {
 		@Var String s = this.SourceText;
-		@Var int StartIndex = 0;
-		@Var int EndIndex = s.length();
-		@Var int i = Position;
-		if(!(i < s.length())) {
-			i = s.length() - 1;
+		@Var int startIndex = fromPostion;
+		if(!(startIndex < s.length())) {
+			startIndex = s.length() - 1;
 		}
-		while(i >= 0) {
-			@Var char ch = LibBunSystem._GetChar(s, i);
+		while(startIndex > 0) {
+			@Var char ch = LibBunSystem._GetChar(s, startIndex);
 			if(ch == '\n') {
-				StartIndex = i + 1;
+				startIndex = startIndex + 1;
 				break;
 			}
-			i = i - 1;
+			startIndex = startIndex - 1;
 		}
-		i = Position;
-		while(i < s.length()) {
-			@Var char ch = LibBunSystem._GetChar(s, i);
-			if(ch == '\n') {
-				EndIndex = i;
-				break;
-			}
-			i = i + 1;
-		}
-		return s.substring(StartIndex, EndIndex);
+		return startIndex;
 	}
 
-	public final String GetLineMarker(int Position) {
+	public final String getLineTextAt(int pos) {
 		@Var String s = this.SourceText;
-		@Var int StartIndex = 0;
-		@Var int i = Position;
-		if(!(i < s.length())) {
-			i = s.length() - 1;
-		}
-		while(i >= 0) {
-			@Var char ch = LibBunSystem._GetChar(s, i);
+		@Var int startIndex = this.getLineStartPosition(pos);
+		int endIndex = startIndex;
+		while(endIndex < s.length()) {
+			@Var char ch = LibBunSystem._GetChar(s, endIndex);
 			if(ch == '\n') {
-				StartIndex = i + 1;
 				break;
 			}
-			i = i - 1;
+			endIndex = endIndex + 1;
 		}
-		@Var String Line = "";
-		i = StartIndex;
-		while(i < Position) {
+		return s.substring(startIndex, endIndex);
+	}
+
+	public final String getMakerLine(int pos) {
+		@Var String s = this.SourceText;
+		@Var int startIndex = this.getLineStartPosition(pos);
+		@Var String markerLine = "";
+		int i = startIndex;
+		while(i < pos) {
 			@Var char ch = LibBunSystem._GetChar(s, i);
 			if(ch == '\n') {
 				break;
 			}
 			if(ch == '\t') {
-				Line = Line + "\t";
+				markerLine = markerLine + "\t";
 			}
 			else {
-				Line = Line + " ";
+				markerLine = markerLine + " ";
 			}
 			i = i + 1;
 		}
-		return Line + "^";
+		return markerLine + "^";
 	}
 
 	public final String FormatErrorHeader(String Error, int Position, String Message) {
 		return "(" + this.FileName + ":" + this.GetLineNumber(Position) + ") [" + Error +"] " + Message;
 	}
 
-	public final String FormatErrorMarker(String Error, int Position, String Message) {
-		@Var String Line = this.GetLineText(Position);
+	public final String formatErrorLineMarker(String Error, int pos, String Message) {
+		@Var String Line = this.getLineTextAt(pos);
 		@Var String Delim = "\n\t";
 		if(Line.startsWith("\t") || Line.startsWith(" ")) {
 			Delim = "\n";
 		}
-		@Var String Header = this.FormatErrorHeader(Error, Position, Message);
-		@Var String Marker = this.GetLineMarker(Position);
+		@Var String Header = this.FormatErrorHeader(Error, pos, Message);
+		@Var String Marker = this.getMakerLine(pos);
 		Message = Header + Delim + Line + Delim + Marker;
 		return Message;
 	}

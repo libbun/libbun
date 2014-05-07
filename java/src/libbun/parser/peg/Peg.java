@@ -1,5 +1,6 @@
 package libbun.parser.peg;
 
+import libbun.util.BArray;
 import libbun.util.BunMap;
 import libbun.util.LibBunSystem;
 
@@ -9,6 +10,7 @@ public abstract class Peg {
 	public int priority = 0;
 	public Peg nextExpr = null;
 	public String leftLabel = null;
+	boolean debug = false;
 
 	Peg(String leftLabel, PegToken source) {
 		this.leftLabel = leftLabel;
@@ -23,27 +25,48 @@ public abstract class Peg {
 		list.nextExpr = e;
 	}
 
+	public void setDebug(boolean debug) {
+		Peg e = this;
+		while(e != null) {
+			e.debug = debug;
+			if(e instanceof PegChoice) {
+				((PegChoice) e).firstExpr.setDebug(debug);
+				((PegChoice) e).secondExpr.setDebug(debug);
+			}
+			if(e instanceof PegPredicate) {
+				((PegPredicate) e).innerExpr.setDebug(debug);
+			}
+			e = e.nextExpr;
+		}
+	}
+
 	PegObject lazyMatchAll(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		Peg e = this;
 		PegObject node = parentNode;
 		while(e.nextExpr != null) {
-			node = e.lazyMatch(node, sourceContext, hasNextChoice);
+			node = e.debugMatch(node, sourceContext, hasNextChoice);
 			if(node.isErrorNode()) {
 				return node;
 			}
 			e = e.nextExpr;
 		}
-		return e.lazyMatch(node, sourceContext, hasNextChoice);
+		return e.debugMatch(node, sourceContext, hasNextChoice);
 	}
 
 	protected PegObject debugMatch(PegObject node, PegContext sourceContext, boolean hasNextChoice) {
-		PegObject node2 = this.lazyMatch(node, sourceContext, hasNextChoice);
-		if(!node2.isErrorNode()) {
-			String line = sourceContext.debugToken.Source.FormatErrorMarker("matched", sourceContext.getPosition(), "...");
-			this.debug(line + "\n\tnode " + node + " => " + node2 + ".    ");
+		if(this.debug) {
+			PegObject node2 = this.lazyMatch(node, sourceContext, false);
+			String msg = "matched";
+			if(node2.isErrorNode()) {
+				msg = "failed";
+			}
+			String line = sourceContext.formatErrorMessage(msg, this.stringfy() + " (" + this.nextExpr + ")");
+			System.out.println(line + "\n\tnode #" + node + "# => #" + node2 + "#");
+			return node2;
 		}
-		return node2;
+		return this.lazyMatch(node, sourceContext, hasNextChoice);
 	}
+
 	protected abstract PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice);
 
 	public String firstChars(BunMap<Peg> m) {
@@ -97,6 +120,10 @@ public abstract class Peg {
 
 	public final String toPrintableString(String name) {
 		return (this.joinPrintableString(name + " <- ", this));
+	}
+
+	Peg removeLeftRecursion(PegParser p) {
+		return this;
 	}
 
 	final boolean checkAll(PegParser p, String leftName, int order) {
@@ -169,7 +196,7 @@ public abstract class Peg {
 				sourceContext.consume(1);
 				return new PegOneMoreExpr(leftName, source, left, 1);
 			}
-			System.out.println("unknown postfix = '" + ch + "'");
+			sourceContext.showErrorMessage("unknown postfix = '" + ch + "'");
 		}
 		return left;
 	}
@@ -210,22 +237,14 @@ public abstract class Peg {
 				return Peg._ParsePostfix(leftLabel, sourceContext, right);
 			}
 		}
-		//		if(ch == '$') {
-		//			char n = sourceContext.nextChar();
-		//			if(sourceContext.sliceMatchedText(source, "=")) {
-		//				right = Peg._ParseSingleExpr(sourceContext);
-		//				if(right != null) {
-		//					right = new PegPushExpr(source, n, right);
-		//				}
-		//				return right;
-		//			}
-		//			System.out.println("unfound '='");
-		//			return null;
-		//		}
 		if(ch == '$') {
+			boolean allowError = false;
+			if(sourceContext.match('$')) {
+				allowError = true;
+			}
 			right = Peg._ParseSingleExpr(leftLabel, sourceContext);
 			if(right != null) {
-				right = new PegPushExpr(leftLabel, source, right);
+				right = new PegSetter(leftLabel, source, right, allowError);
 			}
 			return right;
 		}
@@ -253,14 +272,12 @@ public abstract class Peg {
 				}
 				return right;
 			}
-			System.out.println("unclosed '" + ch + "'");
+			sourceContext.showErrorMessage("unclosed ')'");
 			return null;
 		}
 		if(ch == '{') {
-			char ch2 = sourceContext.getChar();
 			boolean leftJoin = false;
-			if(ch2 == '+') {
-				sourceContext.consume(1);
+			if(sourceContext.match('$', ' ') || sourceContext.match('$', '\n') || sourceContext.match('+')) {
 				leftJoin = true;
 			}
 			source.StartIndex = sourceContext.getPosition();
@@ -274,10 +291,10 @@ public abstract class Peg {
 				}
 				return right;
 			}
-			System.out.println("unclosed '{'");
+			sourceContext.showErrorMessage("unclosed ')'");
 			return null;
 		}
-		System.out.println("unknown char = '" + ch + "'");
+		sourceContext.showErrorMessage("unexpected character '" + ch + "'");
 		return right;
 	}
 
@@ -317,7 +334,7 @@ public abstract class Peg {
 
 	protected void dump(String msg) {
 		if(this.source != null) {
-			System.out.println(this.source.Source.FormatErrorMarker("*", this.source.StartIndex, msg));
+			System.out.println(this.source.Source.formatErrorLineMarker("*", this.source.StartIndex, msg));
 		}
 		else {
 			System.out.println("unknown source: " + msg);
@@ -362,10 +379,11 @@ class PegString extends PegAbstractSymbol {
 		PegToken token = sourceContext.newToken();
 		//System.out.println("? ch = " + sourceContext.getChar() + " in " + this.symbol + " at pos = " + sourceContext.getPosition());
 		if(sourceContext.sliceMatchedText(token, this.symbol)) {
-			if(parentNode.endIndex == 0) {
-				parentNode.startIndex = token.StartIndex;
-				parentNode.endIndex = token.EndIndex;
-			}
+			//			if(parentNode.endIndex == 0) {
+			//				parentNode.startIndex = token.StartIndex;
+			//				parentNode.endIndex = token.EndIndex;
+			//				System.out.println("#######" + token.GetText() + "########");
+			//			}
 			return parentNode;
 		}
 		return sourceContext.newExpectedErrorNode(this, this, hasNextChoice);
@@ -432,7 +450,7 @@ class PegCharacter extends PegAbstractSymbol {
 	}
 
 	@Override protected String stringfy() {
-		return "[" + this.symbol + "]";
+		return LibBunSystem._QuoteString("[", this.symbol, "]");
 	}
 	@Override public String firstChars(BunMap<Peg> m) {
 		return this.charSet;
@@ -445,7 +463,6 @@ class PegCharacter extends PegAbstractSymbol {
 	}
 }
 
-
 class PegLabel extends PegAbstractSymbol {
 	public PegLabel(String leftLabel, PegToken source, String token) {
 		super(leftLabel, source, token);
@@ -455,50 +472,49 @@ class PegLabel extends PegAbstractSymbol {
 	}
 
 	@Override public String firstChars(BunMap<Peg> m) {
-		if(m != null) {
-			Peg e = m.GetValue(this.symbol, null);
-			if(e != null) {
-				return e.firstChars(m);
-			}
-		}
+		//		if(m != null) {
+		//			Peg e = m.GetValue(this.symbol, null);
+		//			if(e != null) {
+		//				return e.firstChars(m);
+		//			}
+		//		}
 		return "";
 	}
 
 	@Override boolean check(PegParser p, String leftName, int order) {
 		if(!p.hasPattern(this.symbol)) {
-			LibBunSystem._PrintLine("undefined label: " + this.symbol);
-		}
-		if(order == 0 && this.nextExpr != null) {
-			Peg e = p.pegMap.GetValue(this.symbol, null);
-			if(this.hasFirstLabel(e, p, leftName)) {
-				System.out.println("find indirect left recursion" + leftName + " <- " + this.symbol + "...");
-				return false;
-			}
+			LibBunSystem._Exit(1, "undefined label: " + this.symbol);
 		}
 		return true;
 	}
 
-	private boolean hasFirstLabel(Peg e, PegParser p, String leftName) {
-		boolean result = false;
-		while(e != null) {
-			if(e instanceof PegChoice) {
-				if(this.hasFirstLabel(((PegChoice) e).firstExpr, p, leftName)) {
-					result = true;
+	@Override Peg removeLeftRecursion(PegParser p) {
+		if(this.nextExpr != null) {
+			BArray<String> list = p.pegMap.keys();
+			for(int i = 0; i < list.size(); i++) {
+				String key = list.ArrayValues[i];
+				Peg e = p.pegMap.GetValue(key, null);
+				if(this.lookupFirstLabel(e, this.symbol)) {
+					LibBunSystem._Exit(1, "find indirect left recursion " + this.leftLabel + " <- " + this.symbol + "...");
+					return null;
 				}
-				e = ((PegChoice) e).secondExpr;
-			}
-			else if(e instanceof PegLabel) {
-				String symbol = ((PegLabel) e).symbol;
-				if(symbol.equals(leftName)) {
-					return true;
-				}
-				e = p.pegMap.GetValue(symbol, null);
-			}
-			else {
-				break;
 			}
 		}
-		return result;
+		return this;
+	}
+
+	private boolean lookupFirstLabel(Peg e, String symbol) {
+		if(e instanceof PegChoice) {
+			if(!this.lookupFirstLabel(((PegChoice) e).firstExpr, symbol)) {
+				return this.lookupFirstLabel(((PegChoice) e).secondExpr, symbol);
+			}
+		}
+		if(e instanceof PegLabel) {
+			if(symbol.equals(((PegLabel) e).symbol)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
@@ -506,17 +522,7 @@ class PegLabel extends PegAbstractSymbol {
 		if(left.isErrorNode()) {
 			return left;
 		}
-		if(sourceContext.isLeftRecursion(this.symbol)) {
-			int stackPosition = sourceContext.getStackPosition(this);
-			//System.out.println("trying left recursion of " + this.token + " ...");
-			PegObject rightNode = sourceContext.parseRightPegNode(left, this.symbol);
-			if(!rightNode.isErrorNode()) {
-				//System.out.println("ok left recursion of " + this.token + " ..." + rightNode);
-				return rightNode;
-			}
-			sourceContext.popBack(stackPosition, Peg._BackTrack);
-		}
-		return left;
+		return sourceContext.parseRightPegNode(left, this.symbol);
 	}
 
 }
@@ -650,7 +656,6 @@ class PegNotPredicate extends PegPredicate {
 	}
 }
 
-
 class PegChoice extends Peg {
 	Peg firstExpr;
 	Peg secondExpr;
@@ -681,6 +686,22 @@ class PegChoice extends Peg {
 	@Override public String firstChars(BunMap<Peg> m) {
 		return this.firstExpr.firstChars(m) + this.secondExpr.firstChars(m);
 	}
+
+	@Override Peg removeLeftRecursion(PegParser p) {
+		this.firstExpr = this.firstExpr.removeLeftRecursion(p);
+		this.secondExpr = this.secondExpr.removeLeftRecursion(p);
+		if(this.firstExpr == null) {
+			if(this.secondExpr == null) {
+				return null;
+			}
+			return this.secondExpr;
+		}
+		if(this.secondExpr == null) {
+			return this.firstExpr;
+		}
+		return this;
+	}
+
 	@Override boolean check(PegParser p, String leftName, int order) {
 		boolean checkResult = true;
 		if(!this.firstExpr.checkAll(p, leftName, order)) {
@@ -691,55 +712,56 @@ class PegChoice extends Peg {
 		}
 		return checkResult;
 	}
+
 }
 
-class PegPushExpr extends Peg {
-	Peg innerExpr;
+class PegSetter extends PegPredicate {
 	int nodeAppendIndex = -1;
-	//	public PegPushExpr(PegToken source, char n, Peg e) {
-	//		super(source);
-	//		this.innerExpr = e;
-	//		if('0' <= n && n <= '9') {
-	//			this.nodeAppendIndex = (int)LibBunSystem._ParseInt(""+n);
-	//		}
-	//		else {
-	//			this.nodeAppendIndex = -1;
-	//		}
-	//	}
-	public PegPushExpr(String leftLabel, PegToken source, Peg e) {
-		super(leftLabel, source);
+	boolean allowError = false;
+	public PegSetter(String leftLabel, PegToken source, Peg e, boolean allowError) {
+		super(leftLabel, source, e);
 		this.innerExpr = e;
+		this.allowError = allowError;
 	}
 	@Override protected String stringfy() {
-		if(this.nodeAppendIndex == -1) {
-			return "$"+this.groupfy(this.innerExpr);
+		String predicate = "$";
+		if(this.allowError) {
+			predicate = "$$";
 		}
-		return "$" + this.nodeAppendIndex + "=" + this.groupfy(this.innerExpr);
+		if(this.nodeAppendIndex == -1) {
+			return predicate+this.groupfy(this.innerExpr);
+		}
+		return predicate + this.nodeAppendIndex + "=" + this.groupfy(this.innerExpr);
 	}
-
 	@Override public String firstChars(BunMap<Peg> m) {
 		return this.innerExpr.firstChars(m);
 	}
-
 	@Override boolean check(PegParser p, String leftName, int order) {
 		return this.innerExpr.checkAll(p, leftName, order);
 	}
-
 	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
-		int pos = sourceContext.getPosition();
+		if(this.allowError) {
+			int pos = sourceContext.getPosition();
+			PegObject node = this.innerExpr.lazyMatchAll(parentNode, sourceContext, false);
+			sourceContext.push(this, parentNode, this.nodeAppendIndex, node);
+			if(node.isErrorNode()) {
+				sourceContext.showPosition("syntax error: " + node, pos);
+				int indent = sourceContext.source.getIndentSize(pos);
+				sourceContext.skipIndent(indent);
+			}
+			return parentNode;
+		}
 		PegObject node = this.innerExpr.lazyMatchAll(parentNode, sourceContext, hasNextChoice);
 		if(node.isErrorNode()) {
 			return node;
 		}
 		if(parentNode == node) {
-			this.warning("node was not created: " + node);
-			node = sourceContext.newPegNode(this, pos, sourceContext.getPosition());
+			this.warning("node was not created: nothing to set " + node);
 			return parentNode;
 		}
 		sourceContext.push(this, parentNode, this.nodeAppendIndex, node);
 		return parentNode;
 	}
-
 }
 
 class PegNewObject extends PegPredicate {
@@ -760,40 +782,61 @@ class PegNewObject extends PegPredicate {
 		return s + this.innerExpr + "}"; // + this.nodeName;
 	}
 
+	private boolean containSetter(Peg e, boolean checkSequence) {
+		if(e instanceof PegSetter) {
+			return true;
+		}
+		if(e instanceof PegPredicate) {
+			return this.containSetter(((PegPredicate) e).innerExpr, true);
+		}
+		if(e instanceof PegChoice) {
+			if(this.containSetter(((PegChoice) e).firstExpr, true)) {
+				return true;
+			}
+			if(this.containSetter(((PegChoice) e).secondExpr, true)) {
+				return true;
+			}
+		}
+		if(checkSequence && e.nextExpr != null) {
+			return this.containSetter(e.nextExpr, true);
+		}
+		return false;
+	}
+
 	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		// prefetch first node..
-		//sourceContext.skipWhiteSpace(true);
+		int pos = sourceContext.getPosition();
 		int stack = sourceContext.getStackPosition(this);
-		if(this.innerExpr instanceof PegString) {
-			PegObject node = this.innerExpr.lazyMatch(parentNode, sourceContext, hasNextChoice);
-			sourceContext.popBack(stack, Peg._BackTrack);
+		Peg sequence = this.innerExpr;
+		while(sequence != null && !this.containSetter(sequence, false)) {
+			PegObject node = sequence.lazyMatch(parentNode, sourceContext, hasNextChoice);
 			if(node.isErrorNode()) {
 				return node;
 			}
-			stack = sourceContext.getStackPosition(this);
+			sequence = sequence.nextExpr;
 		}
-		PegParsedNode newnode = sourceContext.newPegNode(this, sourceContext.getPosition(), 0);
+		PegParsedNode newnode = sourceContext.newPegNode(this, pos, 0);
 		if(this.leftJoin) {
 			sourceContext.push(this, newnode, 0, parentNode);
 		}
-		PegObject node = this.innerExpr.lazyMatchAll(newnode, sourceContext, hasNextChoice);
-		if(node.isErrorNode()) {
-			sourceContext.popBack(stack, Peg._BackTrack);
-			return node;
+		if(sequence != null) {
+			System.out.println("appending object by " + this);
+			PegObject node = sequence.lazyMatchAll(newnode, sourceContext, false);
+			if(node.isErrorNode()) {
+				System.out.println("disposing... object pos=" + pos + ", by " + this + "error="+node);
+				//sourceContext.popBack(stack, Peg._BackTrack);
+				return node;
+			}
 		}
-		else {
-			int top = sourceContext.getStackPosition(this);
-			for(int i = stack; i < top; i++) {
-				Log log = sourceContext.logStack.ArrayValues[i];
-				if(log.type == 'p') {
-					if(log.parentNode == newnode) {
-						newnode.set(log.index, (PegObject)log.childNode);
-					}
-				}
+		int top = sourceContext.getStackPosition(this);
+		for(int i = stack; i < top; i++) {
+			Log log = sourceContext.logStack.ArrayValues[i];
+			if(log.type == 'p' && log.parentNode == newnode) {
+				newnode.set(log.index, (PegObject)log.childNode);
 			}
-			if(newnode.endIndex == 0 || newnode.elementList == null) {
-				newnode.endIndex = sourceContext.getPosition();
-			}
+		}
+		if(newnode.endIndex == 0 || newnode.elementList == null) {
+			newnode.endIndex = sourceContext.getPosition();
 		}
 		return newnode;
 	}

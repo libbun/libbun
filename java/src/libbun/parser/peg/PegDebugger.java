@@ -43,9 +43,10 @@ public class PegDebugger {
 				PegObject node = source.parsePegNode(new PegParsedNode(null, 0, 0), "Stmt", false/*hasNextChoice*/);
 				System.out.println("parsed: " + node.toString(token));
 				if(source.hasChar()) {
-					System.out.println("uncosumed: '" + source + "'");
+					System.out.println("** uncosumed: '" + source + "' **");
 				}
 				System.out.println("hit: " + source.memoHit + ", miss: " + source.memoMiss + ", object=" + source.objectCount + ", error=" + source.errorCount);
+				System.out.println("backtrackCount: " + source.backtrackCount + ", backtrackLength: " + source.backtrackSize);
 				linenum = linenum + 1;
 			}
 			catch (Exception e) {
