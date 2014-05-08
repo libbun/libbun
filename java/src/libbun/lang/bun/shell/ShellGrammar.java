@@ -88,9 +88,9 @@ class ImportCommandPatternFunction extends BMatchFunction {
 		if(TokenList.isEmpty()) {
 			return null;
 		}
-		@Var int StartIndex = TokenList.get(0).StartIndex;
-		@Var int EndIndex = TokenList.get(TokenList.size() - 1).EndIndex;
-		@Var BToken CommandToken = new BToken(TokenList.get(0).Source, StartIndex, EndIndex);
+		@Var int StartIndex = TokenList.get(0).startIndex;
+		@Var int EndIndex = TokenList.get(TokenList.size() - 1).endIndex;
+		@Var BToken CommandToken = new BToken(TokenList.get(0).source, StartIndex, EndIndex);
 		TokenList.clear();
 		return CommandToken;
 	}
@@ -254,10 +254,10 @@ class SimpleArgumentPatternFunction extends BMatchFunction {	// subset of Comman
 		@Var int EndIndex = 0;
 		for(int i = 0; i < size; i++) {
 			if(i == 0) {
-				StartIndex = BArray.GetIndex(TokenList, i).StartIndex;
+				StartIndex = BArray.GetIndex(TokenList, i).startIndex;
 			}
 			if(i == size - 1) {
-				EndIndex = BArray.GetIndex(TokenList, i).EndIndex;
+				EndIndex = BArray.GetIndex(TokenList, i).endIndex;
 			}
 		}
 		@Var BToken Token = new BToken(TokenContext.SourceContext.Source, StartIndex, EndIndex);

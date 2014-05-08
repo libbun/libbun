@@ -3,11 +3,14 @@ package libbun.parser.peg;
 import libbun.ast.BNode;
 import libbun.ast.binary.BinaryOperatorNode;
 import libbun.encode.LibBunSourceBuilder;
+import libbun.parser.common.BToken;
+import libbun.parser.common.BunSource;
+import libbun.parser.common.BunToken;
 import libbun.util.BArray;
 import libbun.util.LibBunSystem;
 
 public abstract class PegObject {
-	PegSource debugSource;
+	BunSource debugSource;
 	Peg createdPeg;
 	int startIndex;
 	int endIndex;
@@ -25,9 +28,9 @@ public abstract class PegObject {
 	}
 
 	public abstract void set(int index, PegObject childNode);
-	abstract void stringfy(PegToken source, LibBunSourceBuilder sb);
+	abstract void stringfy(BunToken source, LibBunSourceBuilder sb);
 
-	String toString(PegToken source) {
+	String toString(BunToken source) {
 		LibBunSourceBuilder sb = new LibBunSourceBuilder(null, null);
 		this.stringfy(source, sb);
 		return sb.toString();
@@ -45,7 +48,7 @@ public abstract class PegObject {
 		return null;
 	}
 
-	public final PegToken getToken() {
+	public final BToken getToken() {
 		return this.debugSource.newToken(this.startIndex, this.endIndex);
 	}
 
@@ -114,7 +117,7 @@ class PegParsedNode extends PegObject {
 		}
 	}
 
-	@Override void stringfy(PegToken source, LibBunSourceBuilder sb) {
+	@Override void stringfy(BunToken source, LibBunSourceBuilder sb) {
 		if(this.elementList == null) {
 			sb.AppendNewLine(source.substring(this.startIndex, this.endIndex), "   ## by " + this.createdPeg);
 		}
@@ -143,7 +146,7 @@ class PegFailureNode extends PegObject {
 		return "!!ERROR: " + this.errorMessage + "!!";
 	}
 
-	@Override void stringfy(PegToken source, LibBunSourceBuilder sb) {
+	@Override void stringfy(BunToken source, LibBunSourceBuilder sb) {
 		if(this.debugSource != null) {
 			sb.AppendNewLine(this.debugSource.formatErrorLineMarker("error", this.startIndex, this.errorMessage + "   ## by " + this.createdPeg));
 		}

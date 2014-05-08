@@ -490,7 +490,7 @@ class StringInterpolationPatternFunction extends BMatchFunction {
 	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
 		@Var StringInterpolationNode FormatNode = new StringInterpolationNode(ParentNode);
 		@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
-		TokenContext = TokenContext.SubContext(Token.StartIndex + 1, Token.EndIndex - 1);
+		TokenContext = TokenContext.SubContext(Token.startIndex + 1, Token.endIndex - 1);
 		while(true) {
 			@Var BToken SubToken = TokenContext.ParseTokenBy(StringInterpolationToken);
 			if(SubToken == null) {
@@ -498,7 +498,7 @@ class StringInterpolationPatternFunction extends BMatchFunction {
 				break;
 			}
 			if(SubToken.EndsWith("${")) {
-				SubToken.EndIndex = SubToken.EndIndex - 2;
+				SubToken.endIndex = SubToken.endIndex - 2;
 				if(SubToken.size() == 0) {
 					FormatNode.Append(new BunStringNode(FormatNode, Token, ""));
 				}

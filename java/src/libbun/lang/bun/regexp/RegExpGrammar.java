@@ -33,7 +33,7 @@ class RegExpPatternFunction extends BMatchFunction {
 		while(TokenContext.HasNext()) {
 			@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
 			if(Token.EqualsText('/')) {
-				BeginToken.EndIndex = Token.EndIndex;
+				BeginToken.endIndex = Token.endIndex;
 				return new BunRegExpNode(ParentNode, BeginToken);
 			}
 			if(Token.IsIndent()) {

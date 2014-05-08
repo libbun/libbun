@@ -38,9 +38,9 @@ public final class BunLogger {
 	}
 
 	public final static void _LogErrorExit(BToken Token, String Message) {
-		if(Token != null && Token.Source != null) {
-			Message = Token.Source.FormatErrorMarker("error", Token.StartIndex, Message);
-			Token.Source.logger.log(Message);
+		if(Token != null && Token.source != null) {
+			Message = Token.source.FormatErrorMarker("error", Token.startIndex, Message);
+			Token.source.logger.log(Message);
 		}
 		else {
 			LibBunSystem._Exit(1, Message);
@@ -48,9 +48,9 @@ public final class BunLogger {
 	}
 
 	public final static String _LogError(BToken Token, String Message) {
-		if(Token != null && Token.Source != null) {
-			Message = Token.Source.FormatErrorMarker("error", Token.StartIndex, Message);
-			Token.Source.logger.log(Message);
+		if(Token != null && Token.source != null) {
+			Message = Token.source.FormatErrorMarker("error", Token.startIndex, Message);
+			Token.source.logger.log(Message);
 			@Var int loc = Message.indexOf("\n");
 			if(loc > 0) {
 				Message = Message.substring(0, loc);
@@ -61,22 +61,22 @@ public final class BunLogger {
 
 	public final static void _LogWarning(BToken Token, String Message) {
 		if(Token != null) {
-			Message = Token.Source.FormatErrorMarker("warning", Token.StartIndex, Message);
-			Token.Source.logger.log(Message);
+			Message = Token.source.FormatErrorMarker("warning", Token.startIndex, Message);
+			Token.source.logger.log(Message);
 		}
 	}
 
 	public final static void _LogInfo(BToken Token, String Message) {
-		if(Token != null && Token.Source != null) {
-			Message = Token.Source.FormatErrorMarker("info", Token.StartIndex, Message);
-			Token.Source.logger.log(Message);
+		if(Token != null && Token.source != null) {
+			Message = Token.source.FormatErrorMarker("info", Token.startIndex, Message);
+			Token.source.logger.log(Message);
 		}
 	}
 
 	public final static void _LogDebug(BToken Token, String Message) {
-		if(Token != null && Token.Source != null) {
-			Message = Token.Source.FormatErrorMarker("debug", Token.StartIndex, Message);
-			Token.Source.logger.log(Message);
+		if(Token != null && Token.source != null) {
+			Message = Token.source.FormatErrorMarker("debug", Token.startIndex, Message);
+			Token.source.logger.log(Message);
 		}
 	}
 

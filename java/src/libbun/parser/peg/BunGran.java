@@ -74,6 +74,7 @@ import libbun.ast.unary.BunComplementNode;
 import libbun.ast.unary.BunMinusNode;
 import libbun.ast.unary.BunNotNode;
 import libbun.ast.unary.BunPlusNode;
+import libbun.parser.common.BunToken;
 import libbun.type.BType;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
@@ -100,7 +101,7 @@ class FalseFunction extends SemanticFunction {
 
 class StringLiteralFunction extends SemanticFunction {
 	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		@Var PegToken token = po.getToken();
+		@Var BunToken token = po.getToken();
 		return new BunStringNode(parentNode, null, LibBunSystem._UnquoteString(token.GetText()));
 	}
 }
@@ -108,14 +109,14 @@ class StringLiteralFunction extends SemanticFunction {
 
 class IntLiteralFunction extends SemanticFunction {
 	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		@Var PegToken token = po.getToken();
+		@Var BunToken token = po.getToken();
 		return new BunIntNode(parentNode, null, LibBunSystem._ParseInt(token.GetText()));
 	}
 }
 
 class FloatLiteralFunction extends SemanticFunction {
 	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		@Var PegToken token = po.getToken();
+		@Var BunToken token = po.getToken();
 		return new BunFloatNode(parentNode, null, LibBunSystem._ParseFloat(token.GetText()));
 	}
 }
@@ -181,7 +182,7 @@ class FloatLiteralFunction extends SemanticFunction {
 
 class NameFunction extends SemanticFunction {
 	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		@Var PegToken token = po.getToken();
+		@Var BunToken token = po.getToken();
 		return new GetNameNode(parentNode, null, token.GetText());
 	}
 }

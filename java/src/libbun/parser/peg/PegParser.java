@@ -1,6 +1,8 @@
 package libbun.parser.peg;
 
 import libbun.parser.common.BunLogger;
+import libbun.parser.common.BunSource;
+import libbun.parser.common.BunToken;
 import libbun.util.BArray;
 import libbun.util.BunMap;
 import libbun.util.LibBunSystem;
@@ -40,20 +42,20 @@ public final class PegParser {
 		if(text == null) {
 			LibBunSystem._Exit(1, "file not found: " + file);
 		}
-		PegContext sourceContext = new PegContext(this, new PegSource(file, 1, text), 0, text.length());
-		PegToken token = sourceContext.newToken();
-		for(;sourceContext.sliceQuotedTextUntil(token, '\n', "");) {
-			int loc = token.indexOf("<-");
+		PegContext sourceContext = new PegContext(this, new BunSource(file, 1, text, null), 0, text.length());
+		BunToken line = sourceContext.newToken();
+		for(;sourceContext.sliceQuotedTextUntil(line, '\n', "");) {
+			int loc = line.indexOf("<-");
 			if(loc > 0) {
-				String name = token.substring(0,loc).trim();
-				PegContext sub = token.newParserContext(this, loc+2);
+				String name = line.substring(0,loc).trim();
+				PegContext sub = sourceContext.subContext(loc+2, line.endIndex);
 				Peg e = Peg._ParsePegExpr(name, sub);
 				if(e != null) {
 					this.setPegRule(name, e);
 				}
 			}
-			token.StartIndex = sourceContext.consume(1);
-			token.EndIndex = token.StartIndex;
+			line.startIndex = sourceContext.consume(1);
+			line.endIndex = line.startIndex;
 		}
 		this.resetCache();
 		return true;

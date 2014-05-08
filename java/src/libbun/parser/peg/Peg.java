@@ -1,18 +1,19 @@
 package libbun.parser.peg;
 
+import libbun.parser.common.BunToken;
 import libbun.util.BArray;
 import libbun.util.BunMap;
 import libbun.util.LibBunSystem;
 
 public abstract class Peg {
 	public final static boolean _BackTrack = true;
-	public PegToken source;
+	public BunToken source;
 	public int priority = 0;
 	public Peg nextExpr = null;
 	public String leftLabel = null;
 	boolean debug = false;
 
-	Peg(String leftLabel, PegToken source) {
+	Peg(String leftLabel, BunToken source) {
 		this.leftLabel = leftLabel;
 		this.source = source;
 	}
@@ -142,14 +143,14 @@ public abstract class Peg {
 		return true; //
 	}
 
-	private static boolean sliceGroup(PegContext sourceContext, PegToken token, int openChar, int closeChar) {
+	private static boolean sliceGroup(PegContext sourceContext, BunToken token, int openChar, int closeChar) {
 		int order = 1;
 		while(sourceContext.hasChar()) {
 			char ch = sourceContext.nextChar();
 			if(ch == closeChar) {
 				order = order - 1;
 				if(order == 0) {
-					token.EndIndex = sourceContext.getPosition() - 1;
+					token.endIndex = sourceContext.getPosition() - 1;
 					return true;
 				}
 			}
@@ -183,7 +184,7 @@ public abstract class Peg {
 			if(ch == ' ') {
 				return left;
 			}
-			PegToken source = sourceContext.newToken();
+			BunToken source = sourceContext.newToken();
 			if(ch == '*') {
 				sourceContext.consume(1);
 				return new PegOneMoreExpr(leftName, source, left, 0);
@@ -204,7 +205,7 @@ public abstract class Peg {
 	private static Peg _ParseSingleExpr(String leftLabel, PegContext sourceContext) {
 		Peg right = null;
 		sourceContext.skipWhiteSpace(false);
-		PegToken source = sourceContext.newToken();
+		BunToken source = sourceContext.newToken();
 		char ch = sourceContext.getChar();
 		//System.out.println(">> " + ch + " next=" + Context.GetPosition());
 		if(ch == '\0') {
@@ -233,7 +234,7 @@ public abstract class Peg {
 		sourceContext.consume(1);
 		if(ch == '\'' || ch == '"') {
 			if(sourceContext.sliceQuotedTextUntil(source, ch, "")) {
-				source.EndIndex = sourceContext.consume(1);
+				source.endIndex = sourceContext.consume(1);
 				right = new PegString(leftLabel, source, LibBunSystem._UnquoteString(source.GetText()));
 				return Peg._ParsePostfix(leftLabel, sourceContext, right);
 			}
@@ -243,9 +244,9 @@ public abstract class Peg {
 			return Peg._ParsePostfix(leftLabel, sourceContext, right);
 		}
 		if(ch == '[') {
-			source.StartIndex = sourceContext.getPosition();
+			source.startIndex = sourceContext.getPosition();
 			if(sourceContext.sliceQuotedTextUntil(source, ']', "")) {
-				source.EndIndex = sourceContext.getPosition();
+				source.endIndex = sourceContext.getPosition();
 				sourceContext.consume(1);
 				right = new PegCharacter(leftLabel, source, LibBunSystem._UnquoteString(source.GetText()));
 				return Peg._ParsePostfix(leftLabel, sourceContext, right);
@@ -277,9 +278,9 @@ public abstract class Peg {
 			return right;
 		}
 		if(ch == '(') {
-			source.StartIndex = sourceContext.getPosition();
+			source.startIndex = sourceContext.getPosition();
 			if(Peg.sliceGroup(sourceContext, source, ch, ')')) {
-				PegContext sub = source.newParserContext(sourceContext.parser);
+				PegContext sub = sourceContext.subContext(source.startIndex, source.endIndex);
 				right = Peg._ParsePegExpr(leftLabel, sub);
 				if(right != null) {
 					right = Peg._ParsePostfix(leftLabel, sourceContext, right);
@@ -294,10 +295,10 @@ public abstract class Peg {
 			if(sourceContext.match('$', ' ') || sourceContext.match('$', '\n') || sourceContext.match('+')) {
 				leftJoin = true;
 			}
-			source.StartIndex = sourceContext.getPosition();
+			source.startIndex = sourceContext.getPosition();
 			if(Peg.sliceGroup(sourceContext, source, ch, '}')) {
 				String name = Peg.sliceName(sourceContext);
-				PegContext sub = source.newParserContext(sourceContext.parser);
+				PegContext sub = sourceContext.subContext(source.startIndex, source.endIndex);
 				right = Peg._ParsePegExpr(leftLabel, sub);
 				if(right != null) {
 					right = new PegNewObject(leftLabel, source, leftJoin, right, name);
@@ -348,7 +349,7 @@ public abstract class Peg {
 
 	protected void dump(String msg) {
 		if(this.source != null) {
-			System.out.println(this.source.Source.formatErrorLineMarker("*", this.source.StartIndex, msg));
+			System.out.println(this.source.source.formatErrorLineMarker("*", this.source.startIndex, msg));
 		}
 		else {
 			System.out.println("unknown source: " + msg);
@@ -374,14 +375,14 @@ public abstract class Peg {
 
 abstract class PegAbstractSymbol extends Peg {
 	String symbol;
-	public PegAbstractSymbol (String leftLabel, PegToken source, String symbol) {
+	public PegAbstractSymbol (String leftLabel, BunToken source, String symbol) {
 		super(leftLabel, source);
 		this.symbol = symbol;
 	}
 }
 
 class PegString extends PegAbstractSymbol {
-	public PegString(String leftLabel, PegToken source, String symbol) {
+	public PegString(String leftLabel, BunToken source, String symbol) {
 		super(leftLabel, source, symbol);
 	}
 	@Override protected String stringfy() {
@@ -390,7 +391,7 @@ class PegString extends PegAbstractSymbol {
 
 	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		//sourceContext.skipWhiteSpace(false);
-		PegToken token = sourceContext.newToken();
+		BunToken token = sourceContext.newToken();
 		//System.out.println("? ch = " + sourceContext.getChar() + " in " + this.symbol + " at pos = " + sourceContext.getPosition());
 		if(sourceContext.sliceMatchedText(token, this.symbol)) {
 			//			if(parentNode.endIndex == 0) {
@@ -418,7 +419,7 @@ class PegString extends PegAbstractSymbol {
 }
 
 class PegAny extends PegAbstractSymbol {
-	public PegAny(String leftLabel, PegToken source) {
+	public PegAny(String leftLabel, BunToken source) {
 		super(leftLabel, source, ".");
 	}
 	@Override protected String stringfy() {
@@ -444,7 +445,7 @@ class PegAny extends PegAbstractSymbol {
 
 class PegCharacter extends PegAbstractSymbol {
 	String charSet;
-	public PegCharacter(String leftLabel, PegToken source, String token) {
+	public PegCharacter(String leftLabel, BunToken source, String token) {
 		super(leftLabel, source, token);
 		token = token.replaceAll("A-Z", "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 		token = token.replaceAll("a-z", "abcdefghijklmnopqrstuvwxyz");
@@ -478,7 +479,7 @@ class PegCharacter extends PegAbstractSymbol {
 }
 
 class PegLabel extends PegAbstractSymbol {
-	public PegLabel(String leftLabel, PegToken source, String token) {
+	public PegLabel(String leftLabel, BunToken source, String token) {
 		super(leftLabel, source, token);
 	}
 	@Override protected String stringfy() {
@@ -543,7 +544,7 @@ class PegLabel extends PegAbstractSymbol {
 
 abstract class PegPredicate extends Peg {
 	Peg innerExpr;
-	public PegPredicate(String leftLabel, PegToken source, Peg e) {
+	public PegPredicate(String leftLabel, BunToken source, Peg e) {
 		super(leftLabel, source);
 		this.innerExpr = e;
 	}
@@ -554,7 +555,7 @@ abstract class PegPredicate extends Peg {
 }
 
 class PegOptionalExpr extends PegPredicate {
-	public PegOptionalExpr(String leftLabel, PegToken source, Peg e) {
+	public PegOptionalExpr(String leftLabel, BunToken source, Peg e) {
 		super(leftLabel, source, e);
 	}
 	@Override protected String stringfy() {
@@ -583,7 +584,7 @@ class PegOptionalExpr extends PegPredicate {
 
 class PegOneMoreExpr extends PegPredicate {
 	int min = 0;
-	public PegOneMoreExpr(String leftLabel, PegToken source, Peg e, int min) {
+	public PegOneMoreExpr(String leftLabel, BunToken source, Peg e, int min) {
 		super(leftLabel, source, e);
 		this.min = min;
 	}
@@ -631,7 +632,7 @@ class PegOneMoreExpr extends PegPredicate {
 }
 
 class PegAndPredicate extends PegPredicate {
-	PegAndPredicate(String leftLabel, PegToken source, Peg e) {
+	PegAndPredicate(String leftLabel, BunToken source, Peg e) {
 		super(leftLabel, source, e);
 	}
 	@Override protected String stringfy() {
@@ -651,7 +652,7 @@ class PegAndPredicate extends PegPredicate {
 }
 
 class PegNotPredicate extends PegPredicate {
-	PegNotPredicate(String leftLabel, PegToken source, Peg e) {
+	PegNotPredicate(String leftLabel, BunToken source, Peg e) {
 		super(leftLabel, source, e);
 	}
 	@Override protected String stringfy() {
@@ -673,7 +674,7 @@ class PegNotPredicate extends PegPredicate {
 class PegChoice extends Peg {
 	Peg firstExpr;
 	Peg secondExpr;
-	PegChoice(String leftLabel, PegToken source, Peg e, Peg e2) {
+	PegChoice(String leftLabel, BunToken source, Peg e, Peg e2) {
 		super(leftLabel, source);
 		this.firstExpr = e;
 		this.secondExpr = e2;
@@ -732,7 +733,7 @@ class PegChoice extends Peg {
 class PegSetter extends PegPredicate {
 	int nodeAppendIndex = -1;
 	boolean allowError = false;
-	public PegSetter(String leftLabel, PegToken source, Peg e, boolean allowError) {
+	public PegSetter(String leftLabel, BunToken source, Peg e, boolean allowError) {
 		super(leftLabel, source, e);
 		this.innerExpr = e;
 		this.allowError = allowError;
@@ -782,7 +783,7 @@ class PegNewObject extends PegPredicate {
 	boolean leftJoin = false;
 	String nodeName = null;
 
-	public PegNewObject(String leftLabel, PegToken source, boolean leftJoin, Peg e, String nodeName) {
+	public PegNewObject(String leftLabel, BunToken source, boolean leftJoin, Peg e, String nodeName) {
 		super(leftLabel, source, e);
 		this.leftJoin = leftJoin;
 		this.nodeName = nodeName;
@@ -862,7 +863,7 @@ class PegNewObject extends PegPredicate {
 class PegSemanticAction extends Peg {
 	String name;
 	SemanticFunction f;
-	PegSemanticAction(String leftLabel, PegToken source, String name, SemanticFunction f) {
+	PegSemanticAction(String leftLabel, BunToken source, String name, SemanticFunction f) {
 		super(leftLabel, source);
 		this.name = name;
 		this.f = f;

@@ -92,7 +92,7 @@ public class BTokenContext {
 	public BNode CreateExpectedErrorNode(BToken SourceToken, String ExpectedTokenText) {
 		if(SourceToken == null || SourceToken.IsNull()) {
 			SourceToken = this.GetBeforeToken();
-			SourceToken = new BToken(SourceToken.Source, SourceToken.EndIndex, SourceToken.EndIndex);
+			SourceToken = new BToken(SourceToken.source, SourceToken.endIndex, SourceToken.endIndex);
 			return new ErrorNode(null, SourceToken, ExpectedTokenText + " is expected");
 		}
 		return new ErrorNode(null, SourceToken, ExpectedTokenText + " is expected");
@@ -212,8 +212,8 @@ public class BTokenContext {
 		if(Token.IsNextWhiteSpace()) {
 			return Token;
 		}
-		@Var int StartIndex = Token.StartIndex;
-		@Var int EndIndex = Token.EndIndex;
+		@Var int StartIndex = Token.startIndex;
+		@Var int EndIndex = Token.endIndex;
 		while(this.HasNext() && !Token.IsNextWhiteSpace()) {
 			@Var int RollbackPosition = this.CurrentPosition;
 			Token = this.GetToken(BTokenContext._MoveNext);
@@ -221,9 +221,9 @@ public class BTokenContext {
 				this.CurrentPosition = RollbackPosition;
 				break;
 			}
-			EndIndex = Token.EndIndex;
+			EndIndex = Token.endIndex;
 		}
-		return new BToken(Token.Source, StartIndex, EndIndex);
+		return new BToken(Token.source, StartIndex, EndIndex);
 	}
 
 	public BNode MatchToken(BNode ParentNode, String TokenText, boolean IsRequired) {
@@ -367,7 +367,7 @@ public class BTokenContext {
 			return true;
 		}
 		if(Token.StartsWith(TokenText)) {
-			Token = new BToken(Token.Source, Token.StartIndex + TokenText.length(), Token.EndIndex);
+			Token = new BToken(Token.source, Token.startIndex + TokenText.length(), Token.endIndex);
 			this.CurrentPosition = this.CurrentPosition + 1;
 			this.TokenList.add(this.CurrentPosition, Token);
 			return true;
