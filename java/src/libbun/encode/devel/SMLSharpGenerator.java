@@ -57,19 +57,41 @@ import libbun.ast.unary.BunMinusNode;
 import libbun.ast.unary.BunNotNode;
 import libbun.ast.unary.BunPlusNode;
 import libbun.ast.unary.UnaryOperatorNode;
+import libbun.encode.LibBunSourceBuilder;
 import libbun.encode.LibBunSourceGenerator;
 import libbun.parser.classic.LibBunLangInfo;
 import libbun.type.BType;
+import libbun.util.BField;
 import libbun.util.Var;
 
 public class SMLSharpGenerator extends LibBunSourceGenerator {
+	@BField private final LibBunSourceBuilder Constant;
+	@BField private final LibBunSourceBuilder Export;
+	@BField private boolean IsDefinedFirstFunction = false;
 
 	public SMLSharpGenerator() {
 		super(new LibBunLangInfo("SML#-2.0", "sml"));
+		this.Constant = this.InsertNewSourceBuilder();
+		this.Export = this.AppendNewSourceBuilder();
 		this.SetNativeType(BType.BooleanType, "bool");
 		this.SetNativeType(BType.IntType, "intInf");
 		this.SetNativeType(BType.FloatType, "real");
-		this.SetNativeType(BType.StringType, "string");
+		this.SetNativeType(BType.StringType, "string option");
+	}
+
+	@Override protected void GenerateStatement(BNode Node) {
+		if(Node instanceof BunCastNode && Node.Type == BType.VoidType) {
+			this.GenerateStatement(Node.AST[BunCastNode._Expr]);
+		}
+		else if(Node instanceof BunLetVarNode && Node.IsTopLevel()){
+			@Var LibBunSourceBuilder PushedBuilder = this.Source;
+			this.Source = this.Constant;
+			super.GenerateStatement(Node);
+			this.Source = PushedBuilder;
+		}
+		else {
+			super.GenerateStatement(Node);
+		}
 	}
 
 	@Override
@@ -84,8 +106,12 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 
 	@Override
 	public void VisitNullNode(BunNullNode Node) {
-		// TODO Auto-generated method stub
-
+		if(Node.Type.IsStringType()) {
+			this.Source.Append("NONE");
+		}
+		else {
+			// TODO Auto-generated method stub
+		}
 	}
 
 	@Override
@@ -109,7 +135,9 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 
 	@Override
 	public void VisitStringNode(BunStringNode Node) {
+		this.Source.Append("(SOME ");
 		this.Source.AppendQuotedText(Node.StringValue);
+		this.Source.Append(")");
 	}
 
 	@Override
@@ -159,19 +187,19 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 	@Override
 	public void VisitAddNode(BunAddNode Node) {
 		if(Node.Type.IsStringType()) {
-			this.Source.Append("(");
+			this.Source.Append("(SOME ((valOf ");
 			@Var BNode LeftNode = Node.LeftNode();
 			if(!LeftNode.Type.IsStringType()) {
 				LeftNode = this.TypeChecker.EnforceNodeType(Node.LeftNode(), BType.StringType);
 			}
 			this.GenerateExpression(LeftNode);
-			this.Source.Append(" ^ ");
+			this.Source.Append(") ^ (valOf ");
 			@Var BNode RightNode = Node.RightNode();
 			if(!RightNode.Type.IsStringType()) {
 				RightNode = this.TypeChecker.EnforceNodeType(Node.RightNode(), BType.StringType);
 			}
 			this.GenerateExpression(RightNode);
-			this.Source.Append(")");
+			this.Source.Append(")))");
 		}
 		else {
 			this.Source.Append("(");
@@ -457,9 +485,8 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 
 	@Override
 	public void VisitVarBlockNode(BunVarBlockNode Node) {
-		@Var BunLetVarNode LetVarNode = Node.VarDeclNode();
-		this.Source.Append("let val ", LetVarNode.GetUniqueName(this), " = ref ");
-		this.GenerateExpression(LetVarNode.InitValueNode());
+		this.Source.Append("let ");
+		this.GenerateExpression(Node.VarDeclNode());
 		this.Source.Append(" in");
 		this.VisitBlockNode(Node);
 		this.Source.Append(" end");
@@ -547,18 +574,12 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 		if(Node.IsParamNode()) {
 			this.Source.Append(Node.GetUniqueName(this));
 		}
-		else if(Node.IsTopLevel()){
-			this.Source.Append("val ", Node.GetUniqueName(this), " = ");
-			this.GenerateExpression(Node.InitValueNode());
-			this.Source.Append(";");
-		}
 		else {
-			/* this.Source.OpenIndent("let");
-			this.Source.AppendNewLine("val ", Node.GetUniqueName(this), " = ");
+			this.Source.Append("val ", Node.GetUniqueName(this), " = ");
+			if(!Node.IsReadOnly()) {
+				this.Source.Append("ref ");
+			}
 			this.GenerateExpression(Node.InitValueNode());
-			this.Source.Append(";");
-			this.Source.CloseIndent("in");
-			this.Source.Append("end"); */
 		}
 	}
 
@@ -573,15 +594,25 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 
 	@Override
 	public void VisitFunctionNode(BunFunctionNode Node) {
-		//if(Node.IsExport) {
-		//}
 		@Var boolean IsAnonymousFunction = Node.FuncName() == null;
 		@Var boolean DoesReturnValue = !Node.ReturnType().IsVoidType();
 		if(IsAnonymousFunction) {
 			this.Source.Append("(fn");
 		}
 		else {
-			this.Source.Append("fun ", Node.ResolvedFuncType.StringfySignature(Node.FuncName()));
+			if(Node.IsTopLevelDefineFunction()) {
+				if(this.IsDefinedFirstFunction) {
+					this.Source.Append("and ");
+				}
+				else {
+					this.Source.Append("fun ");
+					this.IsDefinedFirstFunction = true;
+				}
+			}
+			else {
+				this.Source.Append("fun ");
+			}
+			this.Source.Append(Node.GetSignature());
 		}
 		this.GenerateArgumentListNode(Node);
 		if(IsAnonymousFunction) {
@@ -609,8 +640,13 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 		if(IsAnonymousFunction) {
 			this.Source.Append(")");
 		}
-		else if(Node.IsTopLevelDefineFunction()) {
-			this.Source.Append(";");
+
+		if(!IsAnonymousFunction && Node.IsExport) {
+			this.Export.AppendNewLine("val ", Node.FuncName(), " = ");
+			this.Export.Append(Node.GetSignature());
+			if(Node.FuncName().equals("main")) {
+				this.AppendNewSourceBuilder().Append(";main ()");
+			}
 		}
 	}
 

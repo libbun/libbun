@@ -21,7 +21,7 @@ println: Func<String,void>
  js:   console.log($[0])
  py:   print $[0]
  lua:  print($[0])
- sml:  (TextIO.print ($[0] ^ "\n"))
+ sml:  (TextIO.print ((valOf $[0]) ^ "\n"))
 
 print: Func<String,void>
  bun:  print($[0])
@@ -33,7 +33,7 @@ print: Func<String,void>
  js:   console.log($[0])
  py:   print $[0],
  lua:  print($[0])
- sml:  (TextIO.print $[0])
+ sml:  (TextIO.print (valOf $[0]))
 
 ## boolean
 _: Func<boolean,String>
@@ -46,7 +46,7 @@ _: Func<boolean,String>
  js:   String($[0])
  py:   (u'true' if $[0] else u'false')
  lua:  tostring($[0])
- sml:  (Bool.toString $[0])
+ sml: (SOME  (Bool.toString $[0]))
 
 ## int
 _: Func<int,float>
@@ -71,7 +71,7 @@ _: Func<int,String>
  js: String($[0])
  py:  unicode($[0])
  lua: tostring($[0])
- sml: (IntInf.toString $[0])
+ sml: (SOME (IntInf.toString $[0]))
 
 /: Func<int,int,int>
  js: @intdiv~libbun_intdiv($[0], $[1])
@@ -101,7 +101,7 @@ _: Func<float,String>
  js:   String($[0])
  py:   (u'%.5f' % ($[0]))
  lua:  tostring($[0])
- sml:  (Real.toString $[0])
+ sml: (SOME  (Real.toString $[0]))
 
 ## String
 
@@ -113,7 +113,7 @@ _: Func<String,int>
  js:  parseInt($[0], 10)
  javascript-playground:  parseInt($[0], 10)
  lua: tonumber($[0])
- sml: (IntInf.fromString $[0])
+ sml: (IntInf.fromString (valOf $[0]))
 
 _: Func<String,float>
  bun: ((float)$[0])
@@ -123,13 +123,12 @@ _: Func<String,float>
  js:  parseFloat($[0])
  javascript-playground:  parseFloat($[0])
  lua: tonumber($[0])
- sml: (Real.fromString $[0])
+ sml: (Real.fromString (valOf $[0]))
 
 +: Func<String,String,String>
  c:  @concat~libbun_concat($[0], $[1])
  cl: ~(format nil "~a~a" $[0] $[1])
  lua: $[0] .. $[1]
- sml: ($[0] ^ $[1])
 
 size: Func<String,int>
  #: s.size() returns the length of a string $s
