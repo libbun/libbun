@@ -25,15 +25,15 @@
 package libbun.ast.literal;
 
 import libbun.ast.BNode;
-import libbun.parser.classic.BToken;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.BunToken;
 import libbun.type.BType;
 import libbun.util.BField;
 
 public final class BunFloatNode extends LiteralNode {
 	@BField public double	FloatValue;
-	public BunFloatNode(BNode ParentNode, BToken Token, double Value) {
+	public BunFloatNode(BNode ParentNode, BunToken Token, double Value) {
 		super(ParentNode, Token);
 		this.Type = BType.FloatType;
 		this.FloatValue = Value;

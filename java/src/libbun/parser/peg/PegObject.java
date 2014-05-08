@@ -48,7 +48,7 @@ public abstract class PegObject {
 		else {
 			node = new PegNode(parentNode, this.size());
 			if(this.size() > 0) {
-				this.copySub(source, node);
+				this.copySubTo(source, node);
 			}
 		}
 		node.SourceToken = source.newToken(this.startIndex, this.endIndex);
@@ -71,7 +71,7 @@ public abstract class PegObject {
 		return po.eval(source, parentNode);
 	}
 
-	public BNode copySub(BunSource source, BNode node) {
+	public BNode copySubTo(BunSource source, BNode node) {
 		node.expandAstToSize(this.size());
 		for(int i = 0; i < this.size(); i++) {
 			node.AST[i] = this.get(source, node, i);
@@ -82,11 +82,10 @@ public abstract class PegObject {
 		return node;
 	}
 
-	public BNode copySubAsBinary(BunSource source, BinaryOperatorNode node) {
+	public BNode copyBinaryAsRightAssoc(BunSource source, BinaryOperatorNode node) {
 		node.expandAstToSize(2);
 		node.AST[0] = this.get(source, node, 0);
-		node.SetRightBinaryNode(this.get(source, node, 1));
-		return node;
+		return node.SetRightBinaryNode(this.get(source, node, 1));
 	}
 }
 

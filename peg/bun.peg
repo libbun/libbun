@@ -1,75 +1,81 @@
 
-_       <- [ \t]+
-indent  <- [ \t\n]+
-Comment <- '/*' (!'*/' .)*  '*/'
-Comment <- '//' (!'\n' .)*
+_      <- [ ]
 
-Name    <- {[A-z_] [A-z0-9_]* ('::' [A-z_] [A-z0-9_]*)?} #Name
-Value   <- Name
-Value   <- {[0-9]+}                               #Int 
-Value   <- {[0-9]+ '.' [0-9]+}                    #Float
-Value   <- {'"' (!'"' .)* '"'}                    #String
-Value   <- 'null'     #Null
-Value   <- 'true'     #True
-Value   <- 'false'    #False
+Name   <- {[A-z_] [A-z0-9_]* ('::' [A-z_] [A-z0-9_]*)?} #Name
+Expr   <- Name
+Expr   <- {[0-9]+}                               #Int 
+Expr   <- {[0-9]+ '.' [0-9]+}                    #Float
+Expr   <- {'"' (!'"' .)* '"'}                    #String
+Expr   <- 'null'     #Null
+Expr   <- 'true'     #True
+Expr   <- 'false'    #False
 
-Type   <- Name                                   #Type
-Type   <- Type {$ '[]'}                          #ArrayType
-Type   <- Type {$ '<' $Type (',' $Type)* '>'}    #GenericType
+Type   <- {$Name / '?'}                          #Type
+Type   <- {'(arrayof ' $Type ')'}                #ArrayType
+Type   <- {'(funcof ' $Type (_ $Type)? ')'}      #GenericType
 
-Term <- Value
-Term <- {'+' _? $Term}                     #PlusUnary
-Term <- {'-' _? $Term}                     #MinusUnary
-Term <- {'!' _? $Term}                     #NotUnary
-Term <- {'~' _? $Term}                     #ComplementUnary
-Term <- {'(' _? $Expr _? ')'}              #Group
-Term <- {'(' _? Type _? ')' _? $Expr}      #Cast
+Expr <- {'(+ ' $Expr ')'}                  #Plus
+Expr <- {'(- ' $Expr ')'}                  #Minus
+Expr <- {'(! ' $Expr ')'}                  #Not
+Expr <- {'(~ ' $Expr ')'}                  #Complement
+Expr <- {'(group ' $Expr ')'}              #Group
+Expr <- {'(to ' $Type ' ' $Expr ')'}       #Cast
 
-Term <- {'new' _ $Type _? '(' _? ($Expr _? (',' _? $Expr)*)? _? ')'}  #NewObject
-Term <- {'[' _? ($Expr _? (',' _? $Expr)*)? _? ']'}                   #ArrayLiteral
+Expr <- {'(new ' $Type (_ $Expr (_ $Expr)*)? ')'}  #NewObject
+Expr <- {'(array ' (_ $Expr (_ $Expr)*)? ')'}      #ArrayLiteral
 
-Expr <- Term
-Expr <- Expr _? {$ '&&' _? $Expr}          #RaAnd
-Expr <- Expr _? {$ '||' _? $Expr}          #RaOr
+Expr <- {'(&& ' $Expr _ $Expr ')'}        #And
+Expr <- {'(|| ' $Expr _ $Expr ')'}        #Or
 
-Expr <- Expr _? {$ '==' _? $Expr}          #RaEquals
-Expr <- Expr _? {$ '!=' _? $Expr}          #RaNotEquals
-Expr <- Expr _? {$ '<'  _? $Expr}          #RaLessThan
-Expr <- Expr _? {$ '>'  _? $Expr}          #RaLessThanEquals
-Expr <- Expr _? {$ '<=' _? $Expr}          #RaGreaterThan
-Expr <- Expr _? {$ '>=' _? $Expr}          #RaGreaterThanEquals
+Expr <- {'(== ' $Expr _ $Expr ')'}        #Equals
+Expr <- {'(!= ' $Expr _ $Expr ')'}        #NotEquals
+Expr <- {'(< '  $Expr _ $Expr ')'}        #LessThan
+Expr <- {'(> '  $Expr _ $Expr ')'}        #LessThanEquals
+Expr <- {'(<= ' $Expr _ $Expr ')'}        #GreaterThan
+Expr <- {'(>= ' $Expr _ $Expr ')'}        #GreaterThanEquals
 
-Expr <- Expr _? {$ '+' _? $Expr}           :RaAdd
-Expr <- Expr _? {$ '-' _? $Expr}           :RaSub
-Expr <- Expr _? {$ '*' _? $Expr}           :RaMul
-Expr <- Expr _? {$ '/' _? $Expr}           :RaDiv
-Expr <- Expr _? {$ '%' _? $Expr}           :RaMod
+Expr <- {'(+ ' $Expr _ $Expr ')'}         #Add
+Expr <- {'(- ' $Expr _ $Expr ')'}         #Sub
+Expr <- {'(* ' $Expr _ $Expr ')'}         #Mul
+Expr <- {'(/ ' $Expr _ $Expr ')'}         #Div
+Expr <- {'(% ' $Expr _ $Expr ')'}         #Mod
 
-Expr <- Expr _? {$ '(' _? ($Expr (_? ',' _? $Expr)*)? _? ')'}   #FuncCall
-Expr <- Expr {$ '.' $Name}                                      #Field
-Expr <- Expr {$ '.' $Name '(' _? ($Expr (_? ',' _? $Expr)*)?  _? ')'}  #MethodCall
-Expr <- Expr {$ '[' _? $Expr _? ']'}                            #Indexer
+Expr <- {'(call ' $Expr (_ $Expr (_ $Expr)*)? ')'}   #FuncCall
+Expr <- {'(call0 ' $Expr ')'}  #FuncCall
+Expr <- {'(send ' $Expr _ $Name (_ $Expr (_ $Expr)*)? ')'}  #MethodCall
+
+Expr <- {'(field ' $Expr _ $Name ')'}                       #Field
+Expr <- {'(index ' $Expr _ $Expr ')'}                       #Indexer
 
 Stmt <- Expr
-LValue <- Name / Expr {$ '.' $Name} / Expr {+ '[' _? $Expr _? ']'}
-Stmt <- {&[A-z_] $LValue _? '=' _? $Expr}          #Assignment
 
-if    <- {'if' _? '(' _? $Expr _? ')' _? $Block (_? 'else' _? $(if / Block))? }  #If
-Stmt  <- if
-Stmt  <- {'while' _? '(' _? $Expr _? ')' _? $Block }    #While
-Stmt  <- {'break'}                                      #Break
-Stmt  <- {'try' _? $Block _? ('catch' _? '(' _? $Name _? ')' _? $Block)? ('finally' _? $Block)?} #Try
-Stmt  <- {'throw' _? $Expr}                             #Throw
-Stmt  <- {'return' _? ($Expr)?}                         #Return
-Stmt  <- {'var' _ $Name _? ($TypeAnno)? '=' _? $Expr (_ 'in' _? $Block)?}     #Var
-Stmt  <- {'let' _ $Name _? ($TypeAnno)? '=' _? $Expr (_ 'in' _? $Block)?}     #Let
-Stmt  <- {'function' _ $Name _? '(' _? ($Param (_? ',' _? $Param)*)? _? ')' _? ($TypeAnno)? $Block}   #Function
-Param <- {$Name _? ($TypeAnno)?}    #Param
-TypeAnno <- ':' _? Type _?
+Stmt <- {'(set ' $LValue _ $Expr ')'}   #Assignment
 
-Block <- {'{' (indent / ';' / $Stmt)* (!'}' $$Stmt)? '}'}   #Block
+LValue <- Name
+LValue <- {'(field ' $Expr _ $Name ')'}                       #Field
+LValue <- {'(index ' $Expr _ $Expr ')'}                       #Indexer
 
-PyBlock <- {':' (NestedIndent $Stmt)+ }
 
-a < b < c {$Expr < $Expr < $Expr} :(and (< $0 $1) (<$1 $2))
-{'while' _? '(' _? $Expr _? ')' _? $Block }  :(while $1 $3)
+Stmt  <- {'(if ' $Expr _ $Block _ $Block ')' }  #If
+Stmt  <- {'(while ' $Expr _ $Block ')'}         #While
+Stmt  <- {'(break)'}                            #Break
+Stmt  <- {'(try ' $Block _ $Name _ $Block _ $Block ')'} #Try
+Stmt  <- {'(trycatch ' $Block _ $Name _ $Block ')'}     #Try
+Stmt  <- {'(tryfinally ' $Block _ $Block ')'}           #Try
+Stmt  <- {'(throw ' $Expr ')'}                   #Throw
+Stmt  <- {'(return ' $Expr ')'}                  #Return
+Stmt  <- {'(var ' $Name _ $Type _ $Expr ')'}     #Var
+Stmt  <- {'(let ' $Name _ $Type _ $Expr ')'}     #Let
+Stmt  <- {'(var ' $Name _ $Type _ $Expr $Block ')'}  #Var
+
+Stmt  <- {'(function ' $Name (_ $Param (_ $Param)*)? _ $Type _ $Block ')'}   #Function
+Param <- {'(param ' $Name _ $Type ')'}    #Param
+
+Block <- {'(block' (_ $Stmt )* (!')' $$Stmt)? ')'}   #Block
+Block <- {'(empty)'}                      #Block
+Block <- {'(block1 ' $Stmt ')'}           #Block
+Block <- {'(block2 ' $Stmt _ $Stmt ')'}   #Block
+
+
+
+

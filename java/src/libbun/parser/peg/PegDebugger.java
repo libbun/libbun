@@ -12,7 +12,7 @@ import libbun.util.Var;
 public class PegDebugger {
 	public final static void test(String FileName) {
 		PegParser p = new PegParser(null, null);
-		BunGran.LoadGrammar(p);
+		BunSemanticActionSet.LoadGrammar(p);
 		p.loadPegFile(FileName);
 		PerformShell(p);
 	}
