@@ -28,7 +28,6 @@ import libbun.ast.BNode;
 import libbun.ast.EmptyNode;
 import libbun.ast.error.ErrorNode;
 import libbun.encode.LibBunGenerator;
-import libbun.parser.common.BToken;
 import libbun.parser.common.BunSource;
 import libbun.util.BArray;
 import libbun.util.BField;

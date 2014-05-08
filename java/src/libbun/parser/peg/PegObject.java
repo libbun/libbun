@@ -3,7 +3,7 @@ package libbun.parser.peg;
 import libbun.ast.BNode;
 import libbun.ast.binary.BinaryOperatorNode;
 import libbun.encode.LibBunSourceBuilder;
-import libbun.parser.common.BToken;
+import libbun.parser.classic.BToken;
 import libbun.parser.common.BunSource;
 import libbun.parser.common.BunToken;
 import libbun.util.BArray;

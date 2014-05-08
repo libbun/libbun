@@ -24,7 +24,7 @@
 
 package libbun.type;
 
-import libbun.parser.common.BToken;
+import libbun.parser.classic.BToken;
 import libbun.parser.common.BunToken;
 import libbun.util.BArray;
 import libbun.util.BField;

@@ -1,6 +1,7 @@
-package libbun.parser.common;
+package libbun.parser.classic;
 
-import libbun.parser.classic.BIndentToken;
+import libbun.parser.common.BunSource;
+import libbun.parser.common.BunToken;
 import libbun.util.BIgnored;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;

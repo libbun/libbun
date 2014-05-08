@@ -1,5 +1,6 @@
 package libbun.parser.common;
 
+import libbun.parser.classic.BToken;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 

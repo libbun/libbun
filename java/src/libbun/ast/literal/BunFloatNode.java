@@ -25,9 +25,9 @@
 package libbun.ast.literal;
 
 import libbun.ast.BNode;
+import libbun.parser.classic.BToken;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.parser.common.BToken;
 import libbun.type.BType;
 import libbun.util.BField;
 

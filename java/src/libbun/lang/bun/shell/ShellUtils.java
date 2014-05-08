@@ -11,8 +11,8 @@ import java.util.Stack;
 import libbun.ast.BNode;
 import libbun.ast.binary.BunAddNode;
 import libbun.ast.literal.BunStringNode;
+import libbun.parser.classic.BToken;
 import libbun.parser.classic.BTokenContext;
-import libbun.parser.common.BToken;
 import libbun.util.BArray;
 
 // you must implement this class if you use shell grammar

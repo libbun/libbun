@@ -33,7 +33,7 @@ import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.expression.GetFieldNode;
 import libbun.ast.expression.GetNameNode;
 import libbun.ast.statement.BunBreakNode;
-import libbun.parser.common.BToken;
+import libbun.parser.classic.BToken;
 import libbun.type.BClassField;
 import libbun.type.BClassType;
 import libbun.type.BType;
