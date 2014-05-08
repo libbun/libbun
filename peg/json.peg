@@ -1,6 +1,6 @@
 ; see http://json.org/ and ECMA-262 Ed.5
 
-JSON ← S? ( Object / Array / String / True / False / Null / Number ) S?
+JSON <- ?  ( Object / Array / String / True / False / Null / Number ) S?
 
 Object <- {"{" ( $String ":" $JSON ( "," $String ":" $JSON )* / S? ) "}" }
 Array  <- {"[" ( $JSON ( "," $JSON )* / S? ) "]"

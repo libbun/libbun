@@ -248,7 +248,7 @@ public abstract class Peg {
 			if(sourceContext.sliceQuotedTextUntil(source, ']', "")) {
 				source.endIndex = sourceContext.getPosition();
 				sourceContext.consume(1);
-				right = new PegCharacter(leftLabel, source, LibBunSystem._UnquoteString(source.GetText()));
+				right = new PegCharacter(leftLabel, source, source.GetText());
 				return Peg._ParsePostfix(leftLabel, sourceContext, right);
 			}
 		}
@@ -443,21 +443,140 @@ class PegAny extends PegAbstractSymbol {
 
 }
 
+class TokenReader {
+	int pos;
+	String token;
+	public TokenReader(String token) {
+		this.token = token;
+		this.pos = 0;
+	}
+	char get() {
+		return this.token.charAt(this.pos);
+	}
+	void consume() {
+		this.pos += 1;
+	}
+	boolean hasNext() {
+		return (this.pos < this.token.length());
+	}
+}
+
 class PegCharacter extends PegAbstractSymbol {
 	String charSet;
+	boolean[] cclass;
 	public PegCharacter(String leftLabel, BunToken source, String token) {
 		super(leftLabel, source, token);
-		token = token.replaceAll("A-Z", "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-		token = token.replaceAll("a-z", "abcdefghijklmnopqrstuvwxyz");
-		token = token.replaceAll("A-z", "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
-		token = token.replaceAll("0-9", "0123456789");
-		token = token.replaceAll("\\-", "-");
-		this.charSet = token;
+		//token = token.replaceAll("A-Z", "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+		//token = token.replaceAll("a-z", "abcdefghijklmnopqrstuvwxyz");
+		//token = token.replaceAll("A-z", "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+		//token = token.replaceAll("0-9", "0123456789");
+		//token = token.replaceAll("\\-", "-");
+		//this.charSet = token;
+		this.makeCharClass(token);
 	}
+
+	private boolean ishexnum(int c) {
+		return ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F');
+	}
+
+	private int cnext(TokenReader reader) {
+		int c = reader.get();
+		reader.consume();
+		if (c > 0) {
+			if (c == '\\' && reader.hasNext()) {
+				c = reader.get();
+				reader.consume();
+				switch (c) {
+				case 'a':  c= '\007'; break; /* bel */
+				case 'b':  c= '\b';   break; /* bs */
+				case 'e':  c= '\033'; break; /* esc */
+				case 'f':  c= '\f';   break; /* ff */
+				case 'n':  c= '\n';   break; /* nl */
+				case 'r':  c= '\r';   break; /* cr */
+				case 't':  c= '\t';   break; /* ht */
+				case 'v':  c= '\013'; break; /* vt */
+				case 'u': /* unicode character */
+				case 'U': /* \U0010 */
+					if (this.ishexnum(reader.get())) {
+						c = reader.get() - '0';
+						reader.consume();
+						if (reader.hasNext() && this.ishexnum(reader.get())) {
+							c = (c * 16) + reader.get() - '0';
+							reader.consume();
+						}
+						if (reader.hasNext() && this.ishexnum(reader.get())) {
+							c = (c * 16) + reader.get() - '0';
+							reader.consume();
+						}
+						if (reader.hasNext() && this.ishexnum(reader.get())) {
+							c = (c * 16) + reader.get() - '0';
+							reader.consume();
+						}
+					}
+					else {} /* case "\]", "\\" */
+					break;
+				}
+			}
+		}
+		return c;
+	}
+
+	private boolean[] makeCharClass(String token) {
+		boolean bits[] = new boolean[256];
+		TokenReader reader = new TokenReader(token);
+		int c;
+		int prev = -1;
+		boolean flip = false;
+		this.charSet = "";
+		this.cclass = bits;
+		if(reader.hasNext() && reader.get() == '^') { // convert [^0] to "!'0' ."
+			reader.consume();
+			flip = true;
+		}
+		while (reader.hasNext()) {
+			if ('-' == reader.get() && reader.pos + 1 < token.length() && prev >= 0) {
+				reader.consume();
+				c = this.cnext(reader);
+				while(true) {
+					if(prev > c) {
+						break;
+					}
+					bits[prev] = true;
+					prev += 1;
+				}
+				prev = -1;
+			}
+			else {
+				c = this.cnext(reader);
+				bits[c] = true;
+				prev= c;
+			}
+		}
+		if(flip) {
+			for (int i = 0; i < bits.length; i++) {
+				bits[i] = !bits[i];
+			}
+		}
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < bits.length; i++) {
+			if(bits[i]) {
+				if(33 <= i && i <= 126) { // "(char) i" is printable characters
+					builder.append((char)i);
+				}
+				else {
+					builder.append("\\");
+					builder.append(i);
+				}
+			}
+		}
+		this.charSet = builder.toString();
+		return bits;
+	}
+
 	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		char ch = sourceContext.getChar();
 		//System.out.println("? ch = " + ch + " in " + this.charSet + " at pos = " + sourceContext.getPosition());
-		if(this.charSet.indexOf(ch) == -1) {
+		if(!this.cclass[ch]) {
 			return sourceContext.newExpectedErrorNode(this, this, hasNextChoice);
 		}
 		sourceContext.consume(1);

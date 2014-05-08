@@ -73,6 +73,9 @@ public class BunSource {
 		if(!(startIndex < s.length())) {
 			startIndex = s.length() - 1;
 		}
+		if(startIndex < 0) {
+			startIndex = 0;
+		}
 		while(startIndex > 0) {
 			@Var char ch = LibBunSystem._GetChar(s, startIndex);
 			if(ch == '\n') {
