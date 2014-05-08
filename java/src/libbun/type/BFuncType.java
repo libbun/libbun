@@ -1,9 +1,9 @@
 package libbun.type;
 
+import libbun.common.CommonArray;
 import libbun.util.BField;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
-import libbun.util.BArray;
 
 public final class BFuncType extends BType {
 	public final static BFuncType _FuncType  = new BFuncType();
@@ -64,7 +64,7 @@ public final class BFuncType extends BType {
 
 	@Override public final BType GetGreekRealType(BType[] Greek) {
 		if(this.HasGreekType) {
-			@Var BArray<BType> TypeList = new BArray<BType>(new BType[this.TypeParams.length]);
+			@Var CommonArray<BType> TypeList = new CommonArray<BType>(new BType[this.TypeParams.length]);
 			@Var int i = 0;
 			while(i < this.TypeParams.length) {
 				TypeList.add(this.TypeParams[i].GetGreekRealType(Greek));

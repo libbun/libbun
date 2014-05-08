@@ -43,6 +43,7 @@ import libbun.ast.literal.BunArrayLiteralNode;
 import libbun.ast.literal.BunMapLiteralNode;
 import libbun.ast.statement.BunThrowNode;
 import libbun.ast.statement.BunTryNode;
+import libbun.common.CommonArray;
 import libbun.encode.obsolete.OldSourceGenerator;
 import libbun.parser.common.BunLogger;
 import libbun.parser.ssa.NodeLib;
@@ -53,7 +54,6 @@ import libbun.type.BClassType;
 import libbun.type.BFunc;
 import libbun.type.BFuncType;
 import libbun.type.BType;
-import libbun.util.BArray;
 import libbun.util.Var;
 
 public class SSACGenerator extends OldSourceGenerator {
@@ -487,7 +487,7 @@ public class SSACGenerator extends OldSourceGenerator {
 		this.Source.Append("phi(");
 		@Var int i = 0;
 		while(i < phi.Args.size()) {
-			BNode Arg = BArray.GetIndex(phi.Args, i);
+			BNode Arg = CommonArray.GetIndex(phi.Args, i);
 			// Arg is instanceof ZLetVarNode or ZVarBlockNode or ZSetNameNode or PHINode
 			if(i != 0) {
 				this.Source.Append(", ");

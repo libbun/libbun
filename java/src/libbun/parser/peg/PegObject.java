@@ -1,20 +1,20 @@
 package libbun.parser.peg;
 
 import libbun.ast.BNode;
+import libbun.ast.PegNode;
 import libbun.ast.binary.BinaryOperatorNode;
+import libbun.common.CommonArray;
 import libbun.encode.LibBunSourceBuilder;
 import libbun.parser.classic.BToken;
 import libbun.parser.common.BunSource;
 import libbun.parser.common.BunToken;
-import libbun.util.BArray;
-import libbun.util.LibBunSystem;
 
 public abstract class PegObject {
 	BunSource debugSource;
 	Peg createdPeg;
 	int startIndex;
 	int endIndex;
-	BArray<PegObject> elementList;
+	CommonArray<PegObject> elementList;
 	SemanticFunction semanticAction;
 
 	PegObject(Peg createdPeg, int startIndex, int endIndex) {
@@ -40,12 +40,16 @@ public abstract class PegObject {
 		this.semanticAction = f;
 	}
 
-	public final BNode eval(BNode parentNode) {
+	public final BNode eval(BunSource source, BNode parentNode) {
+		BNode node = null;
 		if(this.semanticAction != null) {
-			return this.semanticAction.Invoke(parentNode, this);
+			node = this.semanticAction.Invoke(source, parentNode, this);
 		}
-		LibBunSystem._Exit(1, "undefined semantic action: " + this);
-		return null;
+		else {
+			node = new PegNode(parentNode, this.size());
+		}
+		node.SourceToken = source.newToken(this.startIndex, this.endIndex);
+		return node;
 	}
 
 	public final BToken getToken() {
@@ -59,15 +63,15 @@ public abstract class PegObject {
 		return 0;
 	}
 
-	public final BNode get(BNode parentNode, int index) {
+	public final BNode get(BunSource source, BNode parentNode, int index) {
 		PegObject po = this.elementList.ArrayValues[index];
-		return po.eval(parentNode);
+		return po.eval(source, parentNode);
 	}
 
-	public BNode copySub(BNode node) {
+	public BNode copySub(BunSource source, BNode node) {
 		node.expandAstToSize(this.size());
 		for(int i = 0; i < this.size(); i++) {
-			node.AST[i] = this.get(node, i);
+			node.AST[i] = this.get(source, node, i);
 			if(node.AST[i] != null) {
 				node.AST[i].ParentNode = node;
 			}
@@ -75,10 +79,10 @@ public abstract class PegObject {
 		return node;
 	}
 
-	public BNode copySubAsBinary(BinaryOperatorNode node) {
+	public BNode copySubAsBinary(BunSource source, BinaryOperatorNode node) {
 		node.expandAstToSize(2);
-		node.AST[0] = this.get(node, 0);
-		node.SetRightBinaryNode(this.get(node, 1));
+		node.AST[0] = this.get(source, node, 0);
+		node.SetRightBinaryNode(this.get(source, node, 1));
 		return node;
 	}
 }
@@ -93,7 +97,7 @@ class PegParsedNode extends PegObject {
 
 	@Override public void set(int index, PegObject childNode) {
 		if(this.elementList == null) {
-			this.elementList = new BArray<PegObject>(new PegObject[2]);
+			this.elementList = new CommonArray<PegObject>(new PegObject[2]);
 		}
 		this.elementList.add(childNode);
 	}

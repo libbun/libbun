@@ -27,6 +27,7 @@ package libbun.parser.classic;
 import libbun.ast.BNode;
 import libbun.ast.BunBlockNode;
 import libbun.ast.decl.BunLetVarNode;
+import libbun.common.CommonMap;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.common.BunToken;
 import libbun.type.BClassType;
@@ -34,7 +35,6 @@ import libbun.type.BType;
 import libbun.util.BField;
 import libbun.util.BMatchFunction;
 import libbun.util.BTokenFunction;
-import libbun.util.BunMap;
 import libbun.util.LibBunSystem;
 import libbun.util.Nullable;
 import libbun.util.Var;
@@ -42,7 +42,7 @@ import libbun.util.Var;
 public final class LibBunGamma {
 	@BField public final LibBunGenerator   Generator;
 	@BField public final BunBlockNode      BlockNode;
-	@BField BunMap<BunLetVarNode>          SymbolTable = null;
+	@BField CommonMap<BunLetVarNode>          SymbolTable = null;
 
 	public LibBunGamma(LibBunGenerator Generator, BunBlockNode BlockNode) {
 		this.BlockNode = BlockNode;   // rootname is null
@@ -76,7 +76,7 @@ public final class LibBunGamma {
 
 	public final void SetSymbol(String Symbol, BunLetVarNode EntryNode) {
 		if(this.SymbolTable == null) {
-			this.SymbolTable = new BunMap<BunLetVarNode>(null);
+			this.SymbolTable = new CommonMap<BunLetVarNode>(null);
 		}
 		this.SymbolTable.put(Symbol, EntryNode);
 	}

@@ -6,13 +6,13 @@ import libbun.ast.BNode;
 import libbun.ast.EmptyNode;
 import libbun.ast.error.ErrorNode;
 import libbun.ast.literal.BunStringNode;
+import libbun.common.CommonArray;
 import libbun.parser.classic.BPatternToken;
 import libbun.parser.classic.BSourceContext;
 import libbun.parser.classic.BToken;
 import libbun.parser.classic.BTokenContext;
 import libbun.parser.classic.LibBunGamma;
 import libbun.parser.classic.LibBunSyntax;
-import libbun.util.BArray;
 import libbun.util.BMatchFunction;
 import libbun.util.BTokenFunction;
 import libbun.util.LibBunSystem;
@@ -216,8 +216,8 @@ class SimpleArgumentPatternFunction extends BMatchFunction {	// subset of Comman
 		}
 		@Var boolean FoundSubstitution = false;
 		@Var boolean FoundEscape = false;
-		@Var BArray<BToken> TokenList = new BArray<BToken>(new BToken[]{});
-		@Var BArray<BNode> NodeList = new BArray<BNode>(new BNode[]{});
+		@Var CommonArray<BToken> TokenList = new CommonArray<BToken>(new BToken[]{});
+		@Var CommonArray<BNode> NodeList = new CommonArray<BNode>(new BNode[]{});
 		while(!ShellUtils._MatchStopToken(TokenContext)) {
 			@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
 			if(Token instanceof BPatternToken && ((BPatternToken)Token).PresetPattern.equals("$StringLiteral$")) {
@@ -245,7 +245,7 @@ class SimpleArgumentPatternFunction extends BMatchFunction {	// subset of Comman
 		return false;
 	}
 
-	private void Flush(BTokenContext TokenContext, BArray<BNode> NodeList, BArray<BToken> TokenList) {
+	private void Flush(BTokenContext TokenContext, CommonArray<BNode> NodeList, CommonArray<BToken> TokenList) {
 		@Var int size = TokenList.size();
 		if(size == 0) {
 			return;
@@ -254,10 +254,10 @@ class SimpleArgumentPatternFunction extends BMatchFunction {	// subset of Comman
 		@Var int EndIndex = 0;
 		for(int i = 0; i < size; i++) {
 			if(i == 0) {
-				StartIndex = BArray.GetIndex(TokenList, i).startIndex;
+				StartIndex = CommonArray.GetIndex(TokenList, i).startIndex;
 			}
 			if(i == size - 1) {
-				EndIndex = BArray.GetIndex(TokenList, i).endIndex;
+				EndIndex = CommonArray.GetIndex(TokenList, i).endIndex;
 			}
 		}
 		@Var BToken Token = new BToken(TokenContext.SourceContext.Source, StartIndex, EndIndex);

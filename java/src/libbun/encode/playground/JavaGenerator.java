@@ -56,6 +56,8 @@ import libbun.ast.unary.BunMinusNode;
 import libbun.ast.unary.BunNotNode;
 import libbun.ast.unary.BunPlusNode;
 import libbun.ast.unary.UnaryOperatorNode;
+import libbun.common.CommonArray;
+import libbun.common.CommonMap;
 import libbun.encode.LibBunSourceGenerator;
 import libbun.parser.classic.LibBunLangInfo;
 import libbun.parser.common.BunLogger;
@@ -63,9 +65,7 @@ import libbun.type.BClassField;
 import libbun.type.BClassType;
 import libbun.type.BFuncType;
 import libbun.type.BType;
-import libbun.util.BArray;
 import libbun.util.BField;
-import libbun.util.BunMap;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 import libbun.util.ZenMethod;
@@ -73,7 +73,7 @@ import libbun.util.ZenMethod;
 public class JavaGenerator extends LibBunSourceGenerator {
 
 	@BField private BunFunctionNode MainFuncNode = null;
-	@BField private final BArray<BunFunctionNode> ExportFunctionList = new BArray<BunFunctionNode>(new BunFunctionNode[4]);
+	@BField private final CommonArray<BunFunctionNode> ExportFunctionList = new CommonArray<BunFunctionNode>(new BunFunctionNode[4]);
 
 	public JavaGenerator() {
 		super(new LibBunLangInfo("Java-1.6", "java"));
@@ -500,7 +500,7 @@ public class JavaGenerator extends LibBunSourceGenerator {
 		return this.GetNativeTypeName(Type);
 	}
 
-	@BField private final BunMap<String> FuncNameMap = new BunMap<String>(null);
+	@BField private final CommonMap<String> FuncNameMap = new CommonMap<String>(null);
 
 	String GetFuncTypeClass(BFuncType FuncType) {
 		@Var String ClassName = this.FuncNameMap.GetOrNull(FuncType.GetUniqueName());

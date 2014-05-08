@@ -1,15 +1,15 @@
 package libbun.type;
 
+import libbun.common.CommonArray;
+import libbun.common.CommonMap;
 import libbun.parser.classic.BToken;
 import libbun.parser.classic.LibBunTypeChecker;
 import libbun.util.Nullable;
 import libbun.util.Var;
-import libbun.util.BArray;
-import libbun.util.BunMap;
 
 public class BTypePool {
 
-	private final static BArray<BType> _TypeList = new BArray<BType>(new BType[128]);
+	private final static CommonArray<BType> _TypeList = new CommonArray<BType>(new BType[128]);
 
 	public final static int _NewTypeId(BType T) {
 		@Var int TypeId = BTypePool._TypeList.size();
@@ -27,14 +27,14 @@ public class BTypePool {
 		return BType.VarType;
 	}
 
-	private final static BunMap<BType>     _ClassNameMap = new BunMap<BType>(null);
-	private final static BunMap<BType[]>   _UniqueTypeSetMap = new BunMap<BType[]>(null);
+	private final static CommonMap<BType>     _ClassNameMap = new CommonMap<BType>(null);
+	private final static CommonMap<BType[]>   _UniqueTypeSetMap = new CommonMap<BType[]>(null);
 
 	private final static String _MangleType2(BType Type1, BType Type2) {
 		return ":" + Type1.TypeId + ":" + Type2.TypeId;
 	}
 
-	private final static String _MangleTypes(BArray<BType> TypeList) {
+	private final static String _MangleTypes(CommonArray<BType> TypeList) {
 		@Var String s = "";
 		@Var int i = 0;
 		while(i < TypeList.size()) {
@@ -45,7 +45,7 @@ public class BTypePool {
 		return s;
 	}
 
-	private final static BType[] _UniqueTypes(BArray<BType> TypeList) {
+	private final static BType[] _UniqueTypes(CommonArray<BType> TypeList) {
 		@Var String MangleName = "[]" + BTypePool._MangleTypes(TypeList);
 		@Var BType[] Types = BTypePool._UniqueTypeSetMap.GetOrNull(MangleName);
 		if(Types == null) {
@@ -70,7 +70,7 @@ public class BTypePool {
 		BTypePool._ClassNameMap.put(MangleName, Type);
 	}
 
-	public final static BType _GetGenericType(BType BaseType, BArray<BType> TypeList, boolean IsCreation) {
+	public final static BType _GetGenericType(BType BaseType, CommonArray<BType> TypeList, boolean IsCreation) {
 		assert(BaseType.GetParamSize() > 0);
 		if(TypeList.size() == 1 && !BaseType.IsFuncType()) {
 			return BTypePool._GetGenericType1(BaseType, TypeList.ArrayValues[0]);
@@ -89,7 +89,7 @@ public class BTypePool {
 		return GenericType;
 	}
 
-	public final static BFuncType _LookupFuncType2(BArray<BType> TypeList) {
+	public final static BFuncType _LookupFuncType2(CommonArray<BType> TypeList) {
 		@Var BType FuncType = BTypePool._GetGenericType(BFuncType._FuncType, TypeList, true);
 		if(FuncType instanceof BFuncType) {
 			return (BFuncType)FuncType;
@@ -98,20 +98,20 @@ public class BTypePool {
 	}
 
 	public final static BFuncType _LookupFuncType2(BType R) {
-		@Var BArray<BType> TypeList = new BArray<BType>(new BType[2]);
+		@Var CommonArray<BType> TypeList = new CommonArray<BType>(new BType[2]);
 		TypeList.add(R);
 		return BTypePool._LookupFuncType2(TypeList);
 	}
 
 	public final static BFuncType _LookupFuncType2(BType P1, BType R) {
-		@Var BArray<BType> TypeList = new BArray<BType>(new BType[2]);
+		@Var CommonArray<BType> TypeList = new CommonArray<BType>(new BType[2]);
 		TypeList.add(P1);
 		TypeList.add(R);
 		return BTypePool._LookupFuncType2(TypeList);
 	}
 
 	public final static BFuncType _LookupFuncType2(BType P1, BType P2, BType R) {
-		@Var BArray<BType> TypeList = new BArray<BType>(new BType[3]);
+		@Var CommonArray<BType> TypeList = new CommonArray<BType>(new BType[3]);
 		TypeList.add(P1);
 		TypeList.add(P2);
 		TypeList.add(R);
@@ -119,7 +119,7 @@ public class BTypePool {
 	}
 
 	public final static BFuncType _LookupFuncType2(BType P1, BType P2, BType P3, BType R) {
-		@Var BArray<BType> TypeList = new BArray<BType>(new BType[3]);
+		@Var CommonArray<BType> TypeList = new CommonArray<BType>(new BType[3]);
 		TypeList.add(P1);
 		TypeList.add(P2);
 		TypeList.add(P3);

@@ -121,6 +121,8 @@ import libbun.ast.unary.BunMinusNode;
 import libbun.ast.unary.BunNotNode;
 import libbun.ast.unary.BunPlusNode;
 import libbun.ast.unary.UnaryOperatorNode;
+import libbun.common.CommonArray;
+import libbun.common.CommonMap;
 import libbun.encode.LibBunGenerator;
 import libbun.lang.bun.BunTypeSafer;
 import libbun.parser.classic.BSourceContext;
@@ -134,11 +136,9 @@ import libbun.type.BFunc;
 import libbun.type.BFuncType;
 import libbun.type.BType;
 import libbun.type.BTypePool;
-import libbun.util.BArray;
 import libbun.util.BFunction;
 import libbun.util.BMatchFunction;
 import libbun.util.BTokenFunction;
-import libbun.util.BunMap;
 import libbun.util.BunObject;
 import libbun.util.LibBunSystem;
 import libbun.util.SoftwareFault;
@@ -149,7 +149,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 public class AsmJavaGenerator extends LibBunGenerator {
-	private final BunMap<Class<?>> GeneratedClassMap = new BunMap<Class<?>>(null);
+	private final CommonMap<Class<?>> GeneratedClassMap = new CommonMap<Class<?>>(null);
 	public JavaStaticFieldNode MainFuncNode = null;
 	AsmClassLoader AsmLoader = null;
 	Stack<AsmTryCatchLabel> TryCatchLabel;
@@ -195,7 +195,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 		return this.GeneratedClassMap.GetOrNull(this.NameFunctionClass(FuncName, RecvType, FuncParamSize));
 	}
 
-	private final BunMap<BNode> LazyNodeMap = new BunMap<BNode>(null);
+	private final CommonMap<BNode> LazyNodeMap = new CommonMap<BNode>(null);
 	protected void LazyBuild(BunFunctionNode Node) {
 		this.LazyNodeMap.put(Node.GetSignature(), Node);
 	}
@@ -361,7 +361,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 			Constructor<?> jMethod = this.GetConstructor(RecvType, ParamList);
 			if(jMethod != null) {
 				@Var Class<?>[] ParamTypes = jMethod.getParameterTypes();
-				@Var BArray<BType> TypeList = new BArray<BType>(new BType[ParamTypes.length + 2]);
+				@Var CommonArray<BType> TypeList = new CommonArray<BType>(new BType[ParamTypes.length + 2]);
 				if (ParamTypes != null) {
 					@Var int j = 0;
 					while(j < LibBunSystem._Size(ParamTypes)) {
@@ -423,7 +423,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 			this.VisitErrorNode(new ErrorNode(Node, "ambigious map"));
 		}
 		else {
-			String Owner = Type.getInternalName(BunMap.class);
+			String Owner = Type.getInternalName(CommonMap.class);
 			this.AsmBuilder.visitTypeInsn(NEW, Owner);
 			this.AsmBuilder.visitInsn(DUP);
 			this.AsmBuilder.PushInt(Node.Type.TypeId);

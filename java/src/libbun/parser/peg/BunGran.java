@@ -74,6 +74,7 @@ import libbun.ast.unary.BunComplementNode;
 import libbun.ast.unary.BunMinusNode;
 import libbun.ast.unary.BunNotNode;
 import libbun.ast.unary.BunPlusNode;
+import libbun.parser.common.BunSource;
 import libbun.parser.common.BunToken;
 import libbun.type.BType;
 import libbun.util.LibBunSystem;
@@ -82,25 +83,25 @@ import libbun.util.Var;
 // Syntax
 
 class NullFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 		return new BunNullNode(parentNode, null/*po.getToken()*/);
 	}
 }
 
 class TrueFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 		return new BunBooleanNode(parentNode, null/*po.getToken()*/, true);
 	}
 }
 
 class FalseFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 		return new BunBooleanNode(parentNode, null/*po.getToken()*/, false);
 	}
 }
 
 class StringLiteralFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 		@Var BunToken token = po.getToken();
 		return new BunStringNode(parentNode, null, LibBunSystem._UnquoteString(token.GetText()));
 	}
@@ -108,14 +109,14 @@ class StringLiteralFunction extends SemanticFunction {
 
 
 class IntLiteralFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 		@Var BunToken token = po.getToken();
 		return new BunIntNode(parentNode, null, LibBunSystem._ParseInt(token.GetText()));
 	}
 }
 
 class FloatLiteralFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 		@Var BunToken token = po.getToken();
 		return new BunFloatNode(parentNode, null, LibBunSystem._ParseFloat(token.GetText()));
 	}
@@ -139,7 +140,7 @@ class FloatLiteralFunction extends SemanticFunction {
 //
 //class StringInterpolationFunction extends SemanticFunction {
 //	public final static BTokenFunction StringInterpolationToken = new StringInterpolationTokenFunction();
-//	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+//	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 //		@Var StringInterpolationNode FormatNode = new StringInterpolationNode(parentNode);
 //		@Var BToken Token = po.getToken();
 //		TokenContext = TokenContext.SubContext(Token.StartIndex + 1, Token.EndIndex - 1);
@@ -181,156 +182,156 @@ class FloatLiteralFunction extends SemanticFunction {
 //}
 
 class NameFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 		@Var BunToken token = po.getToken();
 		return new GetNameNode(parentNode, null, token.GetText());
 	}
 }
 
 class BunNotFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunNotNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunNotNode(parentNode));
 	}
 }
 
 class BunPlusFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunPlusNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunPlusNode(parentNode));
 	}
 }
 class BunMinusFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunMinusNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunMinusNode(parentNode));
 	}
 }
 class BunComplementFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunComplementNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunComplementNode(parentNode));
 	}
 }
 class BunAndFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunAndNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunAndNode(parentNode));
 	}
 }
 
 class BunOrFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunOrNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunOrNode(parentNode));
 	}
 }
 
 class BunAddFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunAddNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunAddNode(parentNode));
 	}
 }
 
 class BunSubFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunSubNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunSubNode(parentNode));
 	}
 }
 
 class BunMulFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunMulNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunMulNode(parentNode));
 	}
 }
 
 class BunDivFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunSubNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunSubNode(parentNode));
 	}
 }
 
 class BunModFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunModNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunModNode(parentNode));
 	}
 }
 
 class BunBitwiseAndFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunBitwiseAndNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunBitwiseAndNode(parentNode));
 	}
 }
 
 class BunBitwiseOrFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunBitwiseOrNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunBitwiseOrNode(parentNode));
 	}
 }
 
 class BunBitwiseXorFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunBitwiseXorNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunBitwiseXorNode(parentNode));
 	}
 }
 
 class BunLeftShiftFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunLeftShiftNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunLeftShiftNode(parentNode));
 	}
 }
 
 class BunRightShiftFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunRightShiftNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunRightShiftNode(parentNode));
 	}
 }
 
 class BunEqualsFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunEqualsNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunEqualsNode(parentNode));
 	}
 }
 
 class BunNotEqualsFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunNotEqualsNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunNotEqualsNode(parentNode));
 	}
 }
 
 class BunLessThanFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunLessThanNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunLessThanNode(parentNode));
 	}
 }
 
 class BunLessThanEqualsFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunLessThanEqualsNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunLessThanEqualsNode(parentNode));
 	}
 }
 
 class BunGreaterThanFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunGreaterThanNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunGreaterThanNode(parentNode));
 	}
 }
 
 class BunGreaterThanEqualsFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunGreaterThanEqualsNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunGreaterThanEqualsNode(parentNode));
 	}
 }
 
 class InstanceOfFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new BunInstanceOfNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new BunInstanceOfNode(parentNode));
 	}
 }
 
 class AssignFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySubAsBinary(new AssignNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySubAsBinary(source, new AssignNode(parentNode));
 	}
 }
 
 //
 //class DefinedTypeFunction extends SemanticFunction {
-//	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+//	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 //		@Var BToken Token = po.getToken();
 //		@Var BType Type = parentNode.Getp().GetType(Token.GetText(), Token, false/*IsCreation*/);
 //		if(Type != null) {
@@ -342,7 +343,7 @@ class AssignFunction extends SemanticFunction {
 //}
 //
 //class OpenTypeFunction extends SemanticFunction {
-//	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+//	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 //		@Var BToken MaybeToken   = null;
 //		@Var BToken MutableToken = null;
 //		if(TokenContext.IsToken("maybe")) {
@@ -401,7 +402,7 @@ class AssignFunction extends SemanticFunction {
 //}
 //
 //class TypeAnnotationFunction extends SemanticFunction {
-//	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+//	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 //		if(TokenContext.MatchToken(":")) {
 //			return TokenContext.Parse(parentNode, "$OpenType$", BTokenContext._Required);
 //		}
@@ -410,58 +411,58 @@ class AssignFunction extends SemanticFunction {
 //}
 
 class GetFieldFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new GetFieldNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new GetFieldNode(parentNode));
 	}
 }
 
 class MethodCallFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new MethodCallNode(parentNode, null, null));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new MethodCallNode(parentNode, null, null));
 	}
 }
 
 class GroupFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new GroupNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new GroupNode(parentNode));
 	}
 }
 
 class CastFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 		BunCastNode castNode = new BunCastNode(parentNode, BType.VarType, null);
-		po.copySub(castNode);
+		po.copySub(source, castNode);
 		castNode.CastType();  // due to old implementation that cannot be fixed easily.
 		return castNode;
 	}
 }
 
 class FuncCallFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new FuncCallNode(parentNode, null));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new FuncCallNode(parentNode, null));
 	}
 }
 
 class GetIndexFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new GetIndexNode(parentNode, null));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new GetIndexNode(parentNode, null));
 	}
 }
 
 class ArrayLiteralFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunArrayLiteralNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunArrayLiteralNode(parentNode));
 	}
 }
 
 class NewObjectFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new NewObjectNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new NewObjectNode(parentNode));
 	}
 }
 
 class MapLiteralFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 		//		return po
 		//		@Var BNode LiteralNode = new BunMapEntryNode(parentNode, null);
 		//		LiteralNode = TokenContext.Match(LiteralNode, BunMapEntryNode._Key, "$Expression$", BTokenContext._Required);
@@ -477,13 +478,13 @@ class MapLiteralFunction extends SemanticFunction {
 }
 
 class BlockFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunBlockNode(parentNode, null));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunBlockNode(parentNode, null));
 	}
 }
 
 class AnnotationFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -491,68 +492,68 @@ class AnnotationFunction extends SemanticFunction {
 
 
 class IfFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunIfNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunIfNode(parentNode));
 	}
 }
 
 class WhileFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunWhileNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunWhileNode(parentNode));
 	}
 }
 
 class BreakFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunBreakNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunBreakNode(parentNode));
 	}
 }
 
 class ReturnFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunReturnNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunReturnNode(parentNode));
 	}
 }
 
 class TryFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunTryNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunTryNode(parentNode));
 	}
 }
 
 class ThrowFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunThrowNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunThrowNode(parentNode));
 	}
 }
 
 class VarFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunLetVarNode(parentNode, 0, null, null));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunLetVarNode(parentNode, 0, null, null));
 	}
 }
 
 class LetFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunLetVarNode(parentNode, BunLetVarNode._IsReadOnly, null, null));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunLetVarNode(parentNode, BunLetVarNode._IsReadOnly, null, null));
 	}
 }
 
 class ParamFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunLetVarNode(parentNode, BunLetVarNode._IsReadOnly, null, null));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunLetVarNode(parentNode, BunLetVarNode._IsReadOnly, null, null));
 	}
 }
 
 class FunctionFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunFunctionNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunFunctionNode(parentNode));
 	}
 }
 
 
 //class ExportFunction extends SemanticFunction {
-//	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+//	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 //		@Var BToken NameToken = po.getToken();
 //		@Var BNode Node = TokenContext.Parse(parentNode, "function", BTokenContext._Optional);
 //		if(Node instanceof BunFunctionNode) {
@@ -574,14 +575,14 @@ class FunctionFunction extends SemanticFunction {
 //}
 //
 //class ImportFunction extends SemanticFunction {
-//	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+//	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 //		@Var BToken NameToken = po.getToken();
 //		return new ErrorNode(parentNode, NameToken, "unsupported import");
 //	}
 //}
 
 //class ClassFunction extends SemanticFunction {
-//	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+//	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 //		@Var BNode ClassNode = new BunClassNode(parentNode);
 //		ClassNode = TokenContext.MatchToken(ClassNode, "class", BTokenContext._Required);
 //		ClassNode = TokenContext.Match(ClassNode, BunClassNode._NameInfo, "$Name$", BTokenContext._Required);
@@ -594,7 +595,7 @@ class FunctionFunction extends SemanticFunction {
 //}
 //
 //class FieldFunction extends SemanticFunction {
-//	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+//	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 //		@Var boolean Rememberd = TokenContext.SetParseFlag(false);
 //		@Var BNode VarNode = new BunLetVarNode(parentNode, 0, null, null);
 //		VarNode = TokenContext.MatchToken(VarNode, "var", BTokenContext._Required);
@@ -611,20 +612,20 @@ class FunctionFunction extends SemanticFunction {
 
 
 class AssertFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunAssertNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunAssertNode(parentNode));
 	}
 }
 
 class AsmFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunAsmNode(parentNode, null, null, null));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunAsmNode(parentNode, null, null, null));
 	}
 }
 
 
 class BunDefineFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 		//		@Var BNode LetNode = new BunLetVarNode(parentNode, BunLetVarNode._IsReadOnly, null, null);
 		//		LetNode = TokenContext.MatchToken(LetNode, "define", BTokenContext._Required);
 		//		LetNode = TokenContext.Match(LetNode, BunLetVarNode._NameInfo, "$LongName$", BTokenContext._Required);
@@ -639,8 +640,8 @@ class BunDefineFunction extends SemanticFunction {
 }
 
 class RequireFunction extends SemanticFunction {
-	@Override public BNode Invoke(BNode parentNode, PegObject po) {
-		return po.copySub(new BunRequireNode(parentNode));
+	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
+		return po.copySub(source, new BunRequireNode(parentNode));
 	}
 }
 

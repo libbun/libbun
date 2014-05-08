@@ -5,4 +5,4 @@ Integer <- {[0-9]+ }
 List    <- (Expr Space+ { $Expr })*
 Symbol  <- { [a-zA-Z]+ }
 Op      <- { '+' } / { '-' } / { '*' } / { '/' } / { '%' } / { '<' } / { '>' }
-Space   <- {[ \t\r\n] }
+Space   <- [ \t\r\n] 

@@ -1,7 +1,7 @@
 package libbun.encode.jvm;
 
+import libbun.common.CommonArray;
 import libbun.type.BType;
-import libbun.util.BArray;
 import libbun.util.BBooleanArray;
 import libbun.util.BFloatArray;
 import libbun.util.BIntArray;
@@ -29,7 +29,7 @@ public class LibAsm {
 		if(zParamType.IsFloatType()) {
 			return BFloatArray.class;
 		}
-		return BArray.class;
+		return CommonArray.class;
 	}
 
 	static Class<?> AsElementClass(BType zType) {

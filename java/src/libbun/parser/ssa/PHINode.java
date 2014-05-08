@@ -4,13 +4,13 @@ import libbun.ast.BNode;
 import libbun.ast.BunBlockNode;
 import libbun.ast.LocalDefinedNode;
 import libbun.ast.expression.GetNameNode;
+import libbun.common.CommonArray;
 import libbun.encode.LibBunGenerator;
-import libbun.util.BArray;
 import libbun.util.Var;
 
 public class PHINode extends LocalDefinedNode {
-	public BArray<BNode>      Args;
-	public BArray<BunBlockNode> Blocks;
+	public CommonArray<BNode>      Args;
+	public CommonArray<BunBlockNode> Blocks;
 	public Variable VarRef;
 	public Variable BackupValue;
 	public String VariableName;
@@ -19,8 +19,8 @@ public class PHINode extends LocalDefinedNode {
 		super(null, 0);
 		this.BackupValue = BackupValue;
 		this.VariableName = VariableName;
-		this.Args = new BArray<BNode>(new BNode[0]);
-		this.Blocks = new BArray<BunBlockNode>(new BunBlockNode[0]);
+		this.Args = new CommonArray<BNode>(new BNode[0]);
+		this.Blocks = new CommonArray<BunBlockNode>(new BunBlockNode[0]);
 		this.Type = NodeLib.GetType(BackupValue.Node);
 	}
 
@@ -29,8 +29,8 @@ public class PHINode extends LocalDefinedNode {
 			this.Args.add(this.BackupValue.Node);
 			this.Blocks.add(null);
 		}
-		BArray.SetIndex(this.Args, Index, node);
-		BArray.SetIndex(this.Blocks, Index, block);
+		CommonArray.SetIndex(this.Args, Index, node);
+		CommonArray.SetIndex(this.Blocks, Index, block);
 	}
 
 	public boolean IsSameVariable(Variable Var) {
@@ -42,7 +42,7 @@ public class PHINode extends LocalDefinedNode {
 		@Var String Txt = "PHI[";
 		@Var int i = 0;
 		while(i < this.Args.size()) {
-			BNode Node = BArray.GetIndex(this.Args, i);
+			BNode Node = CommonArray.GetIndex(this.Args, i);
 			if (i != 0) {
 				Txt += ", ";
 			}
@@ -62,7 +62,7 @@ public class PHINode extends LocalDefinedNode {
 	}
 
 	public BNode GetArgument(int Index) {
-		return BArray.GetIndex(this.Args, Index);
+		return CommonArray.GetIndex(this.Args, Index);
 	}
 
 	public boolean EqualsName(GetNameNode Node, LibBunGenerator Generator) {

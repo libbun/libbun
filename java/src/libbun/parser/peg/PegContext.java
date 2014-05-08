@@ -1,11 +1,11 @@
 package libbun.parser.peg;
 
 import libbun.ast.BNode;
+import libbun.common.CommonArray;
+import libbun.common.CommonMap;
 import libbun.parser.common.BunSource;
 import libbun.parser.common.BunToken;
-import libbun.util.BArray;
 import libbun.util.BField;
-import libbun.util.BunMap;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
@@ -16,7 +16,7 @@ public final class PegContext  {
 	@BField public  PegParser    parser;
 	@BField private final boolean IsAllowSkipIndent = false;
 
-	public final BArray<Log> logStack = new BArray<Log>(new Log[64]);
+	public final CommonArray<Log> logStack = new CommonArray<Log>(new Log[64]);
 	int stackTop = 0;
 	int backtrackCount = 0;
 	int backtrackSize = 0;
@@ -270,8 +270,8 @@ public final class PegContext  {
 
 
 
-	private final BunMap<PegObject> memoMap = new BunMap<PegObject>(null);
-	private final BunMap<Memo> memoMap2 = new BunMap<Memo>(null);
+	private final CommonMap<PegObject> memoMap = new CommonMap<PegObject>(null);
+	private final CommonMap<Memo> memoMap2 = new CommonMap<Memo>(null);
 	private final PegObject trueNode = new PegParsedNode(null, 0, 0);
 	int memoHit = 0;
 	int memoMiss = 0;

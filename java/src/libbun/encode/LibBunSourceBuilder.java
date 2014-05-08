@@ -25,20 +25,17 @@
 
 package libbun.encode;
 
-import libbun.util.BArray;
+import libbun.common.CommonStringBuilder;
 import libbun.util.BField;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
-public final class LibBunSourceBuilder {
-	@BField public BArray<String> SourceList = new BArray<String>(new String[128]);
+public final class LibBunSourceBuilder extends CommonStringBuilder {
 	@BField LibBunSourceBuilder Parent;
 	@BField LibBunSourceGenerator Template;
-	@BField int IndentLevel = 0;
-	@BField String CurrentIndentString = "";
-	@BField char LastChar = '\n';
 
 	public LibBunSourceBuilder(LibBunSourceGenerator Template, LibBunSourceBuilder Parent) {
+		super();
 		this.Template = Template;
 		this.Parent = Parent;
 	}
@@ -46,133 +43,6 @@ public final class LibBunSourceBuilder {
 	public final LibBunSourceBuilder Pop() {
 		this.AppendLineFeed();
 		return this.Parent;
-	}
-
-	public final boolean IsEmpty(String Text) {
-		return (Text == null || Text.length() == 0);
-	}
-
-	public final void Append(String Source) {
-		if(!this.IsEmpty(Source)) {
-			this.SourceList.add(Source);
-			this.LastChar = LibBunSystem._GetChar(Source, Source.length()-1);
-		}
-	}
-
-	public final void Append(String Text, String Text2) {
-		this.SourceList.add(Text);
-		this.SourceList.add(Text2);
-	}
-
-	public final void Append(String Text, String Text2, String Text3) {
-		this.SourceList.add(Text);
-		this.SourceList.add(Text2);
-		this.SourceList.add(Text3);
-	}
-
-	public final void AppendInt(int Value) {
-		this.SourceList.add("" + Value);
-	}
-
-	public final void AppendQuotedText(String Text) {
-		this.SourceList.add(LibBunSystem._QuoteString(Text));
-	}
-
-	public final void AppendLineFeed() {
-		if(this.LastChar != '\n') {
-			this.SourceList.add("\n"/*this.Template.LineFeed*/);
-		}
-	}
-
-	public final void OpenIndent() {
-		this.IndentLevel = this.IndentLevel + 1;
-		this.CurrentIndentString = null;
-	}
-
-	public final void OpenIndent(String Text) {
-		if(Text != null && Text.length() > 0) {
-			this.Append(Text);
-		}
-		this.OpenIndent();
-	}
-
-	public final void CloseIndent() {
-		this.IndentLevel = this.IndentLevel - 1;
-		this.CurrentIndentString = null;
-		LibBunSystem._Assert(this.IndentLevel >= 0);
-	}
-
-	public final void CloseIndent(String Text) {
-		this.CloseIndent();
-		if(Text != null && Text.length() > 0) {
-			this.AppendNewLine(Text);
-		}
-	}
-
-	public final int SetIndentLevel(int IndentLevel) {
-		int Level = this.IndentLevel;
-		this.IndentLevel = IndentLevel;
-		this.CurrentIndentString = null;
-		return Level;
-	}
-
-	private final void AppendIndentString() {
-		if (this.CurrentIndentString == null) {
-			this.CurrentIndentString = LibBunSystem._JoinStrings("   ", this.IndentLevel);
-		}
-		this.SourceList.add(this.CurrentIndentString);
-	}
-
-	public final void AppendNewLine() {
-		this.AppendLineFeed();
-		this.AppendIndentString();
-	}
-
-	public final void AppendNewLine(String Text) {
-		this.AppendNewLine();
-		this.Append(Text);
-	}
-
-	public final void AppendNewLine(String Text, String Text2) {
-		this.AppendNewLine();
-		this.Append(Text);
-		this.Append(Text2);
-	}
-
-	public final void AppendNewLine(String Text, String Text2, String Text3) {
-		this.AppendNewLine();
-		this.Append(Text);
-		this.Append(Text2);
-		this.Append(Text3);
-	}
-
-	public final boolean EndsWith(char s) {
-		return this.LastChar == s;
-	}
-
-	public final void AppendWhiteSpace() {
-		if(this.LastChar == ' ' || this.LastChar == '\t' || this.LastChar == '\n') {
-			return;
-		}
-		this.SourceList.add(" ");
-	}
-
-	public final void AppendWhiteSpace(String Text) {
-		this.AppendWhiteSpace();
-		this.Append(Text);
-	}
-
-	public final void AppendWhiteSpace(String Text, String Text2) {
-		this.AppendWhiteSpace();
-		this.Append(Text);
-		this.Append(Text2);
-	}
-
-	public final void AppendWhiteSpace(String Text, String Text2, String Text3) {
-		this.AppendWhiteSpace();
-		this.Append(Text);
-		this.Append(Text2);
-		this.Append(Text3);
 	}
 
 	public final void AppendCode(String Source) {
@@ -202,10 +72,6 @@ public final class LibBunSourceBuilder {
 		}
 	}
 
-	public final void Clear() {
-		this.SourceList.clear(0);
-	}
-
 	public final int GetPosition() {
 		return this.SourceList.size();
 	}
@@ -213,14 +79,5 @@ public final class LibBunSourceBuilder {
 	public final String CopyString(int BeginIndex, int EndIndex) {
 		return LibBunSystem._SourceBuilderToString(this, BeginIndex, EndIndex);
 	}
-
-	@Override public final String toString() {
-		return LibBunSystem._SourceBuilderToString(this);
-	}
-	////
-	////	@Deprecated public final void AppendLine(String Text) {
-	////		this.Append(Text);
-	////		this.AppendLineFeed();
-	//	}
 
 }

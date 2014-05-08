@@ -1,8 +1,8 @@
 package libbun.parser.classic;
 
+import libbun.common.CommonArray;
 import libbun.parser.common.BunLogger;
 import libbun.parser.common.BunSource;
-import libbun.util.BArray;
 import libbun.util.BField;
 import libbun.util.BTokenFunction;
 import libbun.util.LibBunSystem;
@@ -11,7 +11,7 @@ import libbun.util.Var;
 public final class BSourceContext /*extends LibBunSource*/ {
 	@BField public final BunSource Source;
 	@BField final LibBunParser Parser;
-	@BField final BArray<BToken>  ParsedTokenList;
+	@BField final CommonArray<BToken>  ParsedTokenList;
 	@BField int SourcePosition = 0;
 	@BField final int EndPosition;
 

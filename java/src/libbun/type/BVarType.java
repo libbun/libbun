@@ -24,20 +24,20 @@
 
 package libbun.type;
 
+import libbun.common.CommonArray;
 import libbun.parser.classic.BToken;
 import libbun.parser.common.BunToken;
-import libbun.util.BArray;
 import libbun.util.BField;
 import libbun.util.BIgnored;
 import libbun.util.Var;
 
 public class BVarType extends BType {
 
-	@BField public final BArray<BVarType> VarList;
+	@BField public final CommonArray<BVarType> VarList;
 	@BField public BunToken SourceToken;
 	@BField public int GreekId;
 
-	public BVarType(BArray<BVarType> VarList, String Name, BunToken sourceToken2) {
+	public BVarType(CommonArray<BVarType> VarList, String Name, BunToken sourceToken2) {
 		super(0, Name, BType.VarType);
 		this.VarList = VarList;
 		this.SourceToken = sourceToken2;

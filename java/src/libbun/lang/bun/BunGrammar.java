@@ -86,6 +86,7 @@ import libbun.ast.unary.BunMinusNode;
 import libbun.ast.unary.BunNotNode;
 import libbun.ast.unary.BunPlusNode;
 import libbun.ast.unary.UnaryOperatorNode;
+import libbun.common.CommonArray;
 import libbun.parser.classic.BPatternToken;
 import libbun.parser.classic.BSourceContext;
 import libbun.parser.classic.BToken;
@@ -98,7 +99,6 @@ import libbun.type.BFuncType;
 import libbun.type.BGenericType;
 import libbun.type.BType;
 import libbun.type.BTypePool;
-import libbun.util.BArray;
 import libbun.util.BMatchFunction;
 import libbun.util.BTokenFunction;
 import libbun.util.LibBunSystem;
@@ -590,7 +590,7 @@ class RightTypePatternFunction extends BMatchFunction {
 		@Var BToken SourceToken = TokenContext.GetToken();
 		if(LeftTypeNode.Type.GetParamSize() > 0) {
 			if(TokenContext.MatchToken("<")) {  // Generics
-				@Var BArray<BType> TypeList = new BArray<BType>(new BType[4]);
+				@Var CommonArray<BType> TypeList = new CommonArray<BType>(new BType[4]);
 				while(!TokenContext.StartsWithToken(">")) {
 					if(TypeList.size() > 0 && !TokenContext.MatchToken(",")) {
 						return null;

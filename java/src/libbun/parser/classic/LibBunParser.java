@@ -1,17 +1,17 @@
 package libbun.parser.classic;
 
+import libbun.common.CommonMap;
 import libbun.util.BField;
 import libbun.util.BMatchFunction;
 import libbun.util.BTokenFunction;
-import libbun.util.BunMap;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
 public final class LibBunParser {
 	@BField LibBunParser StackedParser;
 	@BField LibBunTokenFuncChain[]         TokenMatrix = null;
-	@BField BunMap<LibBunSyntax>           SyntaxTable = null;
-	@BField BunMap<LibBunSyntax>           BinaryTable = null;
+	@BField CommonMap<LibBunSyntax>           SyntaxTable = null;
+	@BField CommonMap<LibBunSyntax>           BinaryTable = null;
 
 	public LibBunParser(LibBunParser StackedParser) {
 		this.StackedParser = StackedParser;
@@ -20,8 +20,8 @@ public final class LibBunParser {
 
 	public void Init() {
 		this.TokenMatrix = LibBunSystem._NewTokenMatrix();
-		this.SyntaxTable = new BunMap<LibBunSyntax>(null);
-		this.BinaryTable = new BunMap<LibBunSyntax>(null);
+		this.SyntaxTable = new CommonMap<LibBunSyntax>(null);
+		this.BinaryTable = new CommonMap<LibBunSyntax>(null);
 	}
 
 	public LibBunParser Pop() {
@@ -57,7 +57,7 @@ public final class LibBunParser {
 		return this.BinaryTable.GetOrNull(PatternName);
 	}
 
-	private void AppendSyntaxPattern(BunMap<LibBunSyntax> Table, String PatternName, BMatchFunction MatchFunc, int Flag) {
+	private void AppendSyntaxPattern(CommonMap<LibBunSyntax> Table, String PatternName, BMatchFunction MatchFunc, int Flag) {
 		@Var int Alias = PatternName.indexOf(" ");
 		@Var String Name = PatternName;
 		if(Alias != -1) {

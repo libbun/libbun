@@ -36,6 +36,7 @@ import libbun.ast.decl.TopLevelNode;
 import libbun.ast.error.ErrorNode;
 import libbun.ast.literal.BunNullNode;
 import libbun.ast.literal.DefaultValueNode;
+import libbun.common.CommonMap;
 import libbun.parser.classic.BToken;
 import libbun.parser.classic.BTokenContext;
 import libbun.parser.classic.BunVisitor;
@@ -53,16 +54,15 @@ import libbun.type.BPrototype;
 import libbun.type.BType;
 import libbun.util.BField;
 import libbun.util.BIgnored;
-import libbun.util.BunMap;
 import libbun.util.LibBunSystem;
 import libbun.util.Nullable;
 import libbun.util.Var;
 import libbun.util.ZenMethod;
 
 public abstract class LibBunGenerator extends BunVisitor {
-	@BField public BunMap<String>        ImportedLibraryMap = new BunMap<String>(null);
-	@BField public BunMap<String>        SymbolMap = new BunMap<String>(null);
-	@BField private final BunMap<BFunc>  DefinedFuncMap = new BunMap<BFunc>(null);
+	@BField public CommonMap<String>        ImportedLibraryMap = new CommonMap<String>(null);
+	@BField public CommonMap<String>        SymbolMap = new CommonMap<String>(null);
+	@BField private final CommonMap<BFunc>  DefinedFuncMap = new CommonMap<BFunc>(null);
 
 	@BField public final LibBunGamma      RootGamma;
 	@BField public LibBunParser           RootParser;

@@ -12,10 +12,10 @@ import libbun.ast.decl.BunVarBlockNode;
 import libbun.ast.expression.GetNameNode;
 import libbun.ast.statement.BunIfNode;
 import libbun.ast.statement.BunWhileNode;
+import libbun.common.CommonArray;
+import libbun.common.CommonMap;
 import libbun.encode.LibBunGenerator;
 import libbun.type.BType;
-import libbun.util.BArray;
-import libbun.util.BunMap;
 import libbun.util.Var;
 
 /**
@@ -31,11 +31,11 @@ public class SSAConverter extends ZASTTransformer {
 	private static final int WhileBodyBranchIndex = IfElseBranchIndex;
 
 	public SSAConverterState State;
-	public BArray<Variable> LocalVariables;
+	public CommonArray<Variable> LocalVariables;
 	public ValueReplacer Replacer;
-	public BunMap<Integer> ValueNumber;
-	private final HashMap<BNode, BArray<Variable>> CurVariableTableBefore;
-	private final HashMap<BNode, BArray<Variable>> CurVariableTableAfter;
+	public CommonMap<Integer> ValueNumber;
+	private final HashMap<BNode, CommonArray<Variable>> CurVariableTableBefore;
+	private final HashMap<BNode, CommonArray<Variable>> CurVariableTableAfter;
 	private final LibBunGenerator Generator;
 
 	public SSAConverter(LibBunGenerator Generator) {
@@ -43,9 +43,9 @@ public class SSAConverter extends ZASTTransformer {
 		this.LocalVariables = null;
 		this.Replacer = new ValueReplacer(Generator);
 		this.State = new SSAConverterState(null, -1);
-		this.ValueNumber = new BunMap<Integer>(BType.IntType);
-		this.CurVariableTableBefore = new HashMap<BNode, BArray<Variable>>();
-		this.CurVariableTableAfter = new HashMap<BNode, BArray<Variable>>();
+		this.ValueNumber = new CommonMap<Integer>(BType.IntType);
+		this.CurVariableTableBefore = new HashMap<BNode, CommonArray<Variable>>();
+		this.CurVariableTableAfter = new HashMap<BNode, CommonArray<Variable>>();
 	}
 
 	private void RecordListOfVariablesBeforeVisit(BNode Node) {
@@ -69,7 +69,7 @@ public class SSAConverter extends ZASTTransformer {
 	 *  GetCurrentVariablesBefore(int y = 0) returns [(x, 0)]
 	 *  GetCurrentVariablesBefore(x = y    ) returns [(x, 0), (y,0)]
 	 */
-	public BArray<Variable> GetCurrentVariablesBefore(BNode Node) {
+	public CommonArray<Variable> GetCurrentVariablesBefore(BNode Node) {
 		return this.CurVariableTableBefore.get(Node);
 	}
 
@@ -86,7 +86,7 @@ public class SSAConverter extends ZASTTransformer {
 	 *  GetCurrentVariablesAfter(int y = 0) returns [(x, 0)]
 	 *  GetCurrentVariablesAfter(x = y    ) returns [(x, 0), (y,0)]
 	 */
-	public BArray<Variable> GetCurrentVariablesAfter(BNode Node) {
+	public CommonArray<Variable> GetCurrentVariablesAfter(BNode Node) {
 		return this.CurVariableTableAfter.get(Node);
 	}
 
@@ -122,7 +122,7 @@ public class SSAConverter extends ZASTTransformer {
 	private int GetVariableIndex(String Name) {
 		@Var int i = this.LocalVariables.size() - 1;
 		while(i >= 0) {
-			@Var Variable V = BArray.GetIndex(this.LocalVariables, i);
+			@Var Variable V = CommonArray.GetIndex(this.LocalVariables, i);
 			if(V != null && V.Name.equals(Name)) {
 				return i;
 			}
@@ -133,16 +133,16 @@ public class SSAConverter extends ZASTTransformer {
 	}
 
 	private Variable FindVariable(String Name) {
-		return BArray.GetIndex(this.LocalVariables, this.GetVariableIndex(Name));
+		return CommonArray.GetIndex(this.LocalVariables, this.GetVariableIndex(Name));
 	}
 
 	private void RemoveVariable(String Name) {
-		BArray.SetIndex(this.LocalVariables, this.GetVariableIndex(Name), null);
+		CommonArray.SetIndex(this.LocalVariables, this.GetVariableIndex(Name), null);
 	}
 
 	private void UpdateVariable(Variable NewVal) {
 		@Var int Index = this.GetVariableIndex(NewVal.Name);
-		BArray.SetIndex(this.LocalVariables, Index, NewVal);
+		CommonArray.SetIndex(this.LocalVariables, Index, NewVal);
 	}
 
 	private void AddVariable(Variable V) {
@@ -169,8 +169,8 @@ public class SSAConverter extends ZASTTransformer {
 		return this.UpdateValueNumber(Val, true);
 	}
 
-	private BArray<Variable> CloneCurrentValues() {
-		return new BArray<Variable>(this.LocalVariables.CompactArray());
+	private CommonArray<Variable> CloneCurrentValues() {
+		return new CommonArray<Variable>(this.LocalVariables.CompactArray());
 	}
 
 	private void InsertPHI(JoinNode JNode, int BranchIndex, Variable OldVal, Variable NewVal) {
@@ -361,7 +361,7 @@ public class SSAConverter extends ZASTTransformer {
 
 	@Override
 	public void VisitFunctionNode(BunFunctionNode Node) {
-		this.LocalVariables = new BArray<Variable>(new Variable[0]);
+		this.LocalVariables = new CommonArray<Variable>(new Variable[0]);
 		@Var int i = 0;
 		while(i < Node.GetListSize()) {
 			BunLetVarNode ParamNode = Node.GetParamNode(i);

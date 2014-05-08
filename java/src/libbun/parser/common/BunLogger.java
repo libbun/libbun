@@ -24,13 +24,13 @@
 
 package libbun.parser.common;
 
-import libbun.util.BArray;
+import libbun.common.CommonArray;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
 public final class BunLogger {
 
-	public BArray<String>  ReportedErrorList = new BArray<String>(new String[10]);
+	public CommonArray<String>  ReportedErrorList = new CommonArray<String>(new String[10]);
 
 	public final void log(String Message) {
 		this.ReportedErrorList.add(Message);
@@ -80,8 +80,8 @@ public final class BunLogger {
 	}
 
 	public final String[] GetReportedErrors() {
-		@Var BArray<String> List = this.ReportedErrorList;
-		this.ReportedErrorList = new BArray<String>(new String[10]);
+		@Var CommonArray<String> List = this.ReportedErrorList;
+		this.ReportedErrorList = new CommonArray<String>(new String[10]);
 		return List.CompactArray();
 	}
 

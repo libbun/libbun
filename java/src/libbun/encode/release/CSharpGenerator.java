@@ -80,6 +80,8 @@ import libbun.ast.unary.BunMinusNode;
 import libbun.ast.unary.BunNotNode;
 import libbun.ast.unary.BunPlusNode;
 import libbun.ast.unary.UnaryOperatorNode;
+import libbun.common.CommonArray;
+import libbun.common.CommonMap;
 import libbun.encode.LibBunSourceBuilder;
 import libbun.encode.LibBunSourceGenerator;
 import libbun.parser.classic.LibBunLangInfo;
@@ -87,16 +89,14 @@ import libbun.parser.common.BunLogger;
 import libbun.type.BClassType;
 import libbun.type.BFuncType;
 import libbun.type.BType;
-import libbun.util.BArray;
 import libbun.util.BField;
-import libbun.util.BunMap;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 import libbun.util.ZenMethod;
 
 public class CSharpGenerator extends LibBunSourceGenerator {
 
-	@BField private final BArray<BunFunctionNode> ExportFunctionList = new BArray<BunFunctionNode>(new BunFunctionNode[4]);
+	@BField private final CommonArray<BunFunctionNode> ExportFunctionList = new CommonArray<BunFunctionNode>(new BunFunctionNode[4]);
 	@BField private final static String NameSpaceName = "LibBunGenerated";
 	@BField private final static String MainClassName = "LibBunMain";
 	@BField private boolean IsMainClassOpened = false;
@@ -259,7 +259,7 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 	}
 
 
-	@BField private final BunMap<String> FuncNameMap = new BunMap<String>(null);
+	@BField private final CommonMap<String> FuncNameMap = new CommonMap<String>(null);
 
 	String GetFuncTypeClass(BFuncType FuncType) {
 		@Var String ClassName = this.FuncNameMap.GetOrNull(FuncType.GetUniqueName());

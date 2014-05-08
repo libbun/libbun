@@ -1,5 +1,7 @@
 package libbun.util;
 
+import libbun.common.CommonArray;
+
 
 public class BBooleanArray extends BunObject {
 	@BField private int    Size;
@@ -40,7 +42,7 @@ public class BBooleanArray extends BunObject {
 		if(Index < a.Size) {
 			return a.ArrayValues[(int)Index];
 		}
-		BArray.ThrowOutOfArrayIndex(a.Size, Index);
+		CommonArray.ThrowOutOfArrayIndex(a.Size, Index);
 		return false;
 	}
 
@@ -49,7 +51,7 @@ public class BBooleanArray extends BunObject {
 			a.ArrayValues[(int)Index] = Value;
 			return;
 		}
-		BArray.ThrowOutOfArrayIndex(a.Size, Index);
+		CommonArray.ThrowOutOfArrayIndex(a.Size, Index);
 	}
 
 	public final void Add(boolean Value) {

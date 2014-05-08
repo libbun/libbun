@@ -46,7 +46,6 @@ import libbun.encode.obsolete.OldSourceGenerator;
 import libbun.parser.classic.BNodeUtils;
 import libbun.type.BType;
 import libbun.util.BField;
-import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
 
@@ -207,8 +206,8 @@ public class HaskellSourceGenerator extends OldSourceGenerator {
 		if(ReturnNode != null && ReturnNode.HasReturnExpr()) {
 			this.Indent(this.Source);
 
-			String Indentation = LibBunSystem._JoinStrings("\t", IndentLevel);
-			this.Source.Append(Indentation);
+			//String Indentation = LibBunSystem._JoinStrings("\t", IndentLevel);
+			//this.Source.Append(Indentation);
 			this.Source.Append("return ");
 			this.GenerateExpression(ReturnNode.ExprNode());
 			this.UnIndent(this.Source);

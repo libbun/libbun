@@ -1,7 +1,7 @@
 package libbun.encode.jvm;
 
-import libbun.util.BArray;
-import libbun.util.BunMap;
+import libbun.common.CommonArray;
+import libbun.common.CommonMap;
 import libbun.util.SoftwareFault;
 import libbun.util.BBooleanArray;
 import libbun.util.BFloatArray;
@@ -104,23 +104,23 @@ public class JavaCommonApi {
 	}
 
 	// ObjectArray
-	public final static <T> long ObjectArraySize(BArray<T> x) {
+	public final static <T> long ObjectArraySize(CommonArray<T> x) {
 		return x.size();
 	}
 
-	public final static <T> void ObjectArrayClear(BArray<T> x, long y) {
+	public final static <T> void ObjectArrayClear(CommonArray<T> x, long y) {
 		x.clear((int) y);
 	}
 
-	public final static <T> void ObjectArrayAdd(BArray<T> x, T y) {
+	public final static <T> void ObjectArrayAdd(CommonArray<T> x, T y) {
 		x.add(y);
 	}
 
-	public final static <T> void ObjectArrayInsert(BArray<T> x, long y, T z) {
+	public final static <T> void ObjectArrayInsert(CommonArray<T> x, long y, T z) {
 		x.add((int) y, z);
 	}
 
-	public final static <T> String ObjectArrayToString(BArray<T> x) {
+	public final static <T> String ObjectArrayToString(CommonArray<T> x) {
 		return x.toString();
 	}
 	// BooleanArray
@@ -185,15 +185,15 @@ public class JavaCommonApi {
 	}
 
 	// Map
-	public final static <T> boolean HasKey(BunMap<T> x, String y) {
+	public final static <T> boolean HasKey(CommonMap<T> x, String y) {
 		return x.HasKey(y);
 	}
 
-	public final static <T> BArray<String> Keys(BunMap<T> x) {
+	public final static <T> CommonArray<String> Keys(CommonMap<T> x) {
 		return x.keys();
 	}
 
-	public final static <T> String MapToString(BunMap<T> x) {
+	public final static <T> String MapToString(CommonMap<T> x) {
 		return x.toString();
 	}
 

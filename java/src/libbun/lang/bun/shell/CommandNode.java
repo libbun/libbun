@@ -7,15 +7,15 @@ import libbun.ast.SyntaxSugarNode;
 import libbun.ast.expression.FuncCallNode;
 import libbun.ast.expression.GetNameNode;
 import libbun.ast.literal.BunArrayLiteralNode;
+import libbun.common.CommonArray;
 import libbun.parser.classic.BToken;
 import libbun.parser.classic.LibBunTypeChecker;
 import libbun.type.BType;
-import libbun.util.BArray;
 import libbun.util.BField;
 import libbun.util.Var;
 
 public class CommandNode extends SyntaxSugarNode {
-	@BField private final BArray<BNode> ArgList;
+	@BField private final CommonArray<BNode> ArgList;
 	@BField private BType RetType = BType.VarType;
 	@BField public CommandNode PipedNextNode;
 
@@ -23,7 +23,7 @@ public class CommandNode extends SyntaxSugarNode {
 		super(ParentNode, 0);
 		this.SourceToken = Token;
 		this.PipedNextNode = null;
-		this.ArgList = new BArray<BNode>(new BNode[]{});
+		this.ArgList = new CommonArray<BNode>(new BNode[]{});
 		this.AppendArgNode(new ArgumentNode(ParentNode, Command));
 	}
 
@@ -45,11 +45,11 @@ public class CommandNode extends SyntaxSugarNode {
 	}
 
 	public void SetArgAt(int Index, BNode ArgNode) {
-		BArray.SetIndex(this.ArgList, Index, ArgNode);
+		CommonArray.SetIndex(this.ArgList, Index, ArgNode);
 	}
 
 	public BNode GetArgAt(int Index) {
-		return BArray.GetIndex(this.ArgList, Index);
+		return CommonArray.GetIndex(this.ArgList, Index);
 	}
 
 	public void SetType(BType Type) {

@@ -1,8 +1,8 @@
 package libbun.parser.peg;
 
+import libbun.common.CommonArray;
+import libbun.common.CommonMap;
 import libbun.parser.common.BunToken;
-import libbun.util.BArray;
-import libbun.util.BunMap;
 import libbun.util.LibBunSystem;
 
 public abstract class Peg {
@@ -70,7 +70,7 @@ public abstract class Peg {
 
 	protected abstract PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice);
 
-	public String firstChars(BunMap<Peg> m) {
+	public String firstChars(CommonMap<Peg> m) {
 		return "";
 	}
 
@@ -404,7 +404,7 @@ class PegString extends PegAbstractSymbol {
 		return sourceContext.newExpectedErrorNode(this, this, hasNextChoice);
 	}
 
-	@Override public String firstChars(BunMap<Peg> m) {
+	@Override public String firstChars(CommonMap<Peg> m) {
 		return ""+this.symbol.charAt(0);
 	}
 
@@ -467,7 +467,7 @@ class PegCharacter extends PegAbstractSymbol {
 	@Override protected String stringfy() {
 		return LibBunSystem._QuoteString("[", this.symbol, "]");
 	}
-	@Override public String firstChars(BunMap<Peg> m) {
+	@Override public String firstChars(CommonMap<Peg> m) {
 		return this.charSet;
 	}
 	@Override boolean check(PegParser p, String leftName, int order) {
@@ -486,7 +486,7 @@ class PegLabel extends PegAbstractSymbol {
 		return this.symbol;
 	}
 
-	@Override public String firstChars(BunMap<Peg> m) {
+	@Override public String firstChars(CommonMap<Peg> m) {
 		//		if(m != null) {
 		//			Peg e = m.GetValue(this.symbol, null);
 		//			if(e != null) {
@@ -505,7 +505,7 @@ class PegLabel extends PegAbstractSymbol {
 
 	@Override Peg removeLeftRecursion(PegParser p) {
 		if(this.nextExpr != null) {
-			BArray<String> list = p.pegMap.keys();
+			CommonArray<String> list = p.pegMap.keys();
 			for(int i = 0; i < list.size(); i++) {
 				String key = list.ArrayValues[i];
 				Peg e = p.pegMap.GetValue(key, null);
@@ -572,7 +572,7 @@ class PegOptionalExpr extends PegPredicate {
 		return node;
 	}
 
-	@Override public String firstChars(BunMap<Peg> m) {
+	@Override public String firstChars(CommonMap<Peg> m) {
 		if(this.nextExpr == null) {
 			return this.innerExpr.firstChars(m);
 		}
@@ -621,7 +621,7 @@ class PegOneMoreExpr extends PegPredicate {
 		return prevNode;
 	}
 
-	@Override public String firstChars(BunMap<Peg> m) {
+	@Override public String firstChars(CommonMap<Peg> m) {
 		if(this.nextExpr == null) {
 			return this.innerExpr.firstChars(m);
 		}
@@ -645,7 +645,7 @@ class PegAndPredicate extends PegPredicate {
 		sourceContext.popBack(stackPosition, Peg._BackTrack);
 		return node;
 	}
-	@Override public String firstChars(BunMap<Peg> m) {
+	@Override public String firstChars(CommonMap<Peg> m) {
 		return this.innerExpr.firstChars(m);
 	}
 
@@ -698,7 +698,7 @@ class PegChoice extends Peg {
 		return this.secondExpr.lazyMatchAll(parentNode, sourceContext, hasNextChoice);
 	}
 
-	@Override public String firstChars(BunMap<Peg> m) {
+	@Override public String firstChars(CommonMap<Peg> m) {
 		return this.firstExpr.firstChars(m) + this.secondExpr.firstChars(m);
 	}
 
@@ -748,7 +748,7 @@ class PegSetter extends PegPredicate {
 		}
 		return predicate + this.nodeAppendIndex + "=" + this.groupfy(this.innerExpr);
 	}
-	@Override public String firstChars(BunMap<Peg> m) {
+	@Override public String firstChars(CommonMap<Peg> m) {
 		return this.innerExpr.firstChars(m);
 	}
 	@Override boolean check(PegParser p, String leftName, int order) {
@@ -855,7 +855,7 @@ class PegNewObject extends PegPredicate {
 		}
 		return newnode;
 	}
-	@Override public String firstChars(BunMap<Peg> m) {
+	@Override public String firstChars(CommonMap<Peg> m) {
 		return this.innerExpr.firstChars(m);
 	}
 }

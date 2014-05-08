@@ -28,15 +28,15 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 
+import libbun.common.CommonArray;
+import libbun.common.CommonMap;
 import libbun.type.BFuncType;
 import libbun.type.BGenericType;
 import libbun.type.BType;
 import libbun.type.BTypePool;
-import libbun.util.BunMap;
 import libbun.util.LibBunSystem;
 import libbun.util.SoftwareFault;
 import libbun.util.Var;
-import libbun.util.BArray;
 import libbun.util.BBooleanArray;
 import libbun.util.BFloatArray;
 import libbun.util.BFunction;
@@ -56,8 +56,8 @@ public class JavaTypeTable {
 		JavaTypeTable.SetTypeTable(BType.FloatType, double.class);
 		JavaTypeTable.SetTypeTable(BType.StringType, String.class);
 		JavaTypeTable.SetTypeTable(BFuncType._FuncType, BFunction.class);
-		JavaTypeTable.SetTypeTable(BGenericType._ArrayType, BArray.class);
-		JavaTypeTable.SetTypeTable(BGenericType._MapType, BunMap.class);
+		JavaTypeTable.SetTypeTable(BGenericType._ArrayType, CommonArray.class);
+		JavaTypeTable.SetTypeTable(BGenericType._MapType, CommonMap.class);
 
 		BType BooleanArrayType = BTypePool._GetGenericType1(BGenericType._ArrayType, BType.BooleanType);
 		BType IntArrayType = BTypePool._GetGenericType1(BGenericType._ArrayType, BType.IntType);
@@ -112,7 +112,7 @@ public class JavaTypeTable {
 
 	public final static BFuncType ConvertToFuncType(Method JMethod) {
 		@Var Class<?>[] ParamTypes = JMethod.getParameterTypes();
-		@Var BArray<BType> TypeList = new BArray<BType>(new BType[LibBunSystem._Size(ParamTypes) + 2]);
+		@Var CommonArray<BType> TypeList = new CommonArray<BType>(new BType[LibBunSystem._Size(ParamTypes) + 2]);
 		if (!Modifier.isStatic(JMethod.getModifiers())) {
 			TypeList.add(JavaTypeTable.GetBunType(JMethod.getDeclaringClass()));
 		}
@@ -128,7 +128,7 @@ public class JavaTypeTable {
 	}
 
 	public final static BFuncType FuncType(Class<?> ReturnT, Class<?> ... paramsT) {
-		@Var BArray<BType> TypeList = new BArray<BType>(new BType[10]);
+		@Var CommonArray<BType> TypeList = new CommonArray<BType>(new BType[10]);
 		for(Class<?> C : paramsT) {
 			TypeList.add(JavaTypeTable.GetBunType(C));
 		}

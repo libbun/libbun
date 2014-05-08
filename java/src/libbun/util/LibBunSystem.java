@@ -38,6 +38,9 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 
 import libbun.ast.BNode;
+import libbun.common.CommonArray;
+import libbun.common.CommonMap;
+import libbun.common.CommonStringBuilder;
 import libbun.encode.LibBunGenerator;
 import libbun.encode.LibBunSourceBuilder;
 import libbun.encode.jvm.JavaTypeTable;
@@ -245,16 +248,6 @@ public class LibBunSystem {
 	//		return Text.substring((int)StartIdx, (int)EndIdx);
 	//	}
 
-	public final static String _JoinStrings(String Unit, int Times) {
-		@Var String s = "";
-		@Var int i = 0;
-		while(i < Times) {
-			s = s + Unit;
-			i = i + 1;
-		}
-		return s;
-	}
-
 	public static final String _UnquoteString(String Text) {
 		StringBuilder sb = new StringBuilder();
 		@Var char quote = _GetChar(Text, 0);
@@ -392,7 +385,7 @@ public class LibBunSystem {
 		return List.length;
 	}
 
-	public final static <T> int _Size(BArray<?> List) {
+	public final static <T> int _Size(CommonArray<?> List) {
 		if(List == null) {
 			return 0;
 		}
@@ -449,7 +442,7 @@ public class LibBunSystem {
 		return buffer;
 	}
 
-	public static void _LoadInlineLibrary(String Path, BunMap<String> SymbolMap, String Delim) {
+	public static void _LoadInlineLibrary(String Path, CommonMap<String> SymbolMap, String Delim) {
 		try {
 			InputStream Stream = LibBunSystem.class.getResourceAsStream("/" + Path);
 			if (Stream == null) {
@@ -500,19 +493,19 @@ public class LibBunSystem {
 	}
 
 
-	public static String _SourceBuilderToString(LibBunSourceBuilder Builder) {
-		return LibBunSystem._SourceBuilderToString(Builder, 0, Builder.SourceList.size());
+	public static String _SourceBuilderToString(CommonStringBuilder sb) {
+		return LibBunSystem._SourceBuilderToString(sb, 0, sb.SourceList.size());
 	}
 
-	public static String _SourceBuilderToString(LibBunSourceBuilder Builder, int BeginIndex, int EndIndex) {
-		StringBuilder builder = new StringBuilder();
-		for(int i = BeginIndex; i < EndIndex; i = i + 1) {
-			builder.append(Builder.SourceList.ArrayValues[i]);
+	public static String _SourceBuilderToString(CommonStringBuilder sb, int beginIndex, int endIndex) {
+		StringBuilder jsb = new StringBuilder();
+		for(int i = beginIndex; i < endIndex; i = i + 1) {
+			jsb.append(sb.SourceList.ArrayValues[i]);
 		}
-		return builder.toString();
+		return jsb.toString();
 	}
 
-	public final static void _WriteTo(String FileName, BArray<LibBunSourceBuilder> List) {
+	public final static void _WriteTo(String FileName, CommonArray<LibBunSourceBuilder> List) {
 		if(FileName == null) {
 			@Var int i = 0;
 			while(i < List.size()) {
@@ -551,7 +544,7 @@ public class LibBunSystem {
 		return MatchFunc.Invoke(ParentNode, TokenContext, LeftNode);
 	}
 
-	private final static BunMap<Class<?>> ClassMap = new BunMap<Class<?>>(null);
+	private final static CommonMap<Class<?>> ClassMap = new CommonMap<Class<?>>(null);
 
 	static {
 		ClassMap.put("syntax::bun", libbun.lang.bun.BunGrammar.class);

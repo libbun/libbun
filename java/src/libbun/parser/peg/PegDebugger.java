@@ -25,17 +25,18 @@ public class PegDebugger {
 		@Var String Line = null;
 		while ((Line = ReadLine2(">>> ", "    ")) != null) {
 			try {
-				PegContext source = new PegContext(p, new BunSource("(stdin)", linenum, Line, null), 0, Line.length());
-				BunToken token = source.newToken(0, Line.length());
-				PegObject po = source.parsePegNode(new PegParsedNode(null, 0, 0), "Stmt", false/*hasNextChoice*/);
+				BunSource source = new BunSource("(stdin)", linenum, Line, null);
+				PegContext context = new PegContext(p, source, 0, Line.length());
+				BunToken token = context.newToken(0, Line.length());
+				PegObject po = context.parsePegNode(new PegParsedNode(null, 0, 0), "Stmt", false/*hasNextChoice*/);
 				System.out.println("parsed: " + po.toString(token));
-				if(source.hasChar()) {
-					System.out.println("** uncosumed: '" + source + "' **");
+				if(context.hasChar()) {
+					System.out.println("** uncosumed: '" + context + "' **");
 				}
-				System.out.println("hit: " + source.memoHit + ", miss: " + source.memoMiss + ", object=" + source.objectCount + ", error=" + source.errorCount);
-				System.out.println("backtrackCount: " + source.backtrackCount + ", backtrackLength: " + source.backtrackSize);
+				System.out.println("hit: " + context.memoHit + ", miss: " + context.memoMiss + ", object=" + context.objectCount + ", error=" + context.errorCount);
+				System.out.println("backtrackCount: " + context.backtrackCount + ", backtrackLength: " + context.backtrackSize);
 
-				BNode bnode = po.eval(null);
+				BNode bnode = po.eval(source, null);
 				System.out.println("bun: " + bnode);
 				linenum = linenum + 1;
 			}

@@ -2,27 +2,27 @@ package libbun.type;
 
 import libbun.ast.BNode;
 import libbun.ast.decl.BunFunctionNode;
+import libbun.common.CommonArray;
 import libbun.parser.classic.LibBunTypeChecker;
 import libbun.parser.common.BunLogger;
 import libbun.parser.common.BunToken;
-import libbun.util.BArray;
 import libbun.util.BField;
 import libbun.util.Var;
 
 public final class BVarScope {
 	@BField public BVarScope Parent;
 	@BField public BunLogger Logger;
-	@BField BArray<BVarType> VarList;
+	@BField CommonArray<BVarType> VarList;
 	@BField int TypedNodeCount = 0;
 	@BField int VarNodeCount = 0;
 	@BField int UnresolvedSymbolCount = 0;
 
-	public BVarScope(BVarScope Parent, BunLogger Logger, BArray<BVarType> VarList) {
+	public BVarScope(BVarScope Parent, BunLogger Logger, CommonArray<BVarType> VarList) {
 		this.Parent = Parent;
 		this.Logger = Logger;
 		this.VarList = VarList;
 		if(this.VarList == null) {
-			this.VarList = new BArray<BVarType>(new BVarType[8]);
+			this.VarList = new CommonArray<BVarType>(new BVarType[8]);
 		}
 	}
 

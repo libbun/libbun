@@ -11,9 +11,9 @@ import java.util.Stack;
 import libbun.ast.BNode;
 import libbun.ast.binary.BunAddNode;
 import libbun.ast.literal.BunStringNode;
+import libbun.common.CommonArray;
 import libbun.parser.classic.BToken;
 import libbun.parser.classic.BTokenContext;
-import libbun.util.BArray;
 
 // you must implement this class if you use shell grammar
 public class ShellUtils {
@@ -38,11 +38,11 @@ public class ShellUtils {
 		return false;
 	}
 
-	public static BNode _ToNode(BNode ParentNode, BTokenContext TokenContext, BArray<BNode> NodeList) {
+	public static BNode _ToNode(BNode ParentNode, BTokenContext TokenContext, CommonArray<BNode> NodeList) {
 		BNode Node = new BunStringNode(ParentNode, null, "");
 		int size = NodeList.size();
 		for(int i = 0; i < size; i++) {
-			BNode CurrentNode = BArray.GetIndex(NodeList, i);
+			BNode CurrentNode = CommonArray.GetIndex(NodeList, i);
 			BunAddNode BinaryNode = new BunAddNode(ParentNode);
 			BinaryNode.SetLeftNode(Node);
 			BinaryNode.SetRightNode(CurrentNode);
@@ -150,31 +150,31 @@ public class ShellUtils {
 		}
 	}
 
-	public static long ExecCommandInt(BArray<BArray<String>> ArgsList) {
+	public static long ExecCommandInt(CommonArray<CommonArray<String>> ArgsList) {
 		return ExecCommand(ArgsList, null);
 	}
 
-	public static boolean ExecCommandBoolean(BArray<BArray<String>> ArgsList) {
+	public static boolean ExecCommandBoolean(CommonArray<CommonArray<String>> ArgsList) {
 		return ExecCommandInt(ArgsList) == 0;
 	}
 
-	public static String ExecCommandString(BArray<BArray<String>> ArgsList) {
+	public static String ExecCommandString(CommonArray<CommonArray<String>> ArgsList) {
 		ByteArrayOutputStream StreamBuffer = new ByteArrayOutputStream();
 		ExecCommand(ArgsList, StreamBuffer);
 		return ShellUtils.RemoveNewLine(StreamBuffer.toString());
 	}
 
-	private static int ExecCommand(BArray<BArray<String>> ArgsList, OutputStream TargetStream) {
+	private static int ExecCommand(CommonArray<CommonArray<String>> ArgsList, OutputStream TargetStream) {
 		StringBuilder ArgBuilder = new StringBuilder();
 		int ListSize = (int) ArgsList.size();
 		for(int i = 0; i < ListSize; i++) {
-			BArray<String> Args = (BArray<String>) BArray.GetIndex(ArgsList, i);
+			CommonArray<String> Args = (CommonArray<String>) CommonArray.GetIndex(ArgsList, i);
 			int Size = (int) Args.size();
-			if(!MatchRedireSymbol(BArray.GetIndex(Args, 0)) && i != 0) {
+			if(!MatchRedireSymbol(CommonArray.GetIndex(Args, 0)) && i != 0) {
 				ArgBuilder.append("| ");
 			}
 			for(int j = 0; j < Size; j++) {
-				ArgBuilder.append(BArray.GetIndex(Args, j));
+				ArgBuilder.append(CommonArray.GetIndex(Args, j));
 				ArgBuilder.append(" ");
 			}
 		}

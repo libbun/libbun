@@ -24,8 +24,8 @@
 
 package libbun.type;
 
+import libbun.common.CommonArray;
 import libbun.parser.common.BunToken;
-import libbun.util.BArray;
 import libbun.util.BField;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
@@ -33,7 +33,7 @@ import libbun.util.Var;
 public class BClassType extends BType {
 	public final static BClassType _ObjectType = new BClassType("Object");
 
-	@BField BArray<BClassField> FieldList = null;
+	@BField CommonArray<BClassField> FieldList = null;
 
 	private BClassType(String ShortName) {
 		super(BType.OpenTypeFlag|BType.UniqueTypeFlag, ShortName, BType.VarType);
@@ -50,7 +50,7 @@ public class BClassType extends BType {
 	public final void EnforceSuperClass(BClassType SuperClass) {
 		this.RefType = SuperClass;
 		if(SuperClass.FieldList != null) {
-			this.FieldList = new BArray<BClassField>(new BClassField[10]);
+			this.FieldList = new CommonArray<BClassField>(new BClassField[10]);
 			@Var int i = 0;
 			while(i < SuperClass.FieldList.size()) {
 				@Var BClassField Field = SuperClass.FieldList.ArrayValues[i];
@@ -103,7 +103,7 @@ public class BClassType extends BType {
 	public BClassField AppendField(BType FieldType, String FieldName, BunToken sourceToken) {
 		assert(!FieldType.IsVarType());
 		if(this.FieldList == null) {
-			this.FieldList = new BArray<BClassField>(new BClassField[4]);
+			this.FieldList = new CommonArray<BClassField>(new BClassField[4]);
 		}
 		@Var BClassField ClassField = new BClassField(this, FieldName, FieldType, sourceToken);
 		//		System.out.println("Append FieldName = " + ClassField.FieldName + ", " + ClassField.FieldType);

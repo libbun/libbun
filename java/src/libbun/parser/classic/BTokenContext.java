@@ -27,9 +27,9 @@ package libbun.parser.classic;
 import libbun.ast.BNode;
 import libbun.ast.EmptyNode;
 import libbun.ast.error.ErrorNode;
+import libbun.common.CommonArray;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.common.BunSource;
-import libbun.util.BArray;
 import libbun.util.BField;
 import libbun.util.BTokenFunction;
 import libbun.util.LibBunSystem;
@@ -46,7 +46,7 @@ public class BTokenContext {
 	@BField public LibBunParser    Parser;
 	@BField public LibBunGenerator Generator;
 	@BField public BSourceContext  SourceContext;
-	@BField public BArray<BToken>  TokenList = new BArray<BToken>(new BToken[128]);
+	@BField public CommonArray<BToken>  TokenList = new CommonArray<BToken>(new BToken[128]);
 
 	@BField private int CurrentPosition = 0;
 	@BField private boolean IsAllowSkipIndent = false;

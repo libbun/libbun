@@ -29,10 +29,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import libbun.common.CommonMap;
 import libbun.type.BType;
 import libbun.util.SoftwareFault;
 import libbun.util.Var;
-import libbun.util.BunMap;
 
 
 public final class JavaOperatorApi {
@@ -292,8 +292,8 @@ public final class JavaOperatorApi {
 			@Var List<?> a = (List<?>)x;
 			return a.get(((Number)y).intValue());
 		}
-		if(x instanceof BunMap && y instanceof String) {
-			@Var BunMap<?> m = (BunMap<?>)x;
+		if(x instanceof CommonMap && y instanceof String) {
+			@Var CommonMap<?> m = (CommonMap<?>)x;
 			return m.GetOrNull(y.toString());
 		}
 		throw new RuntimeException("unsupported operator: " + t(x) + "[" + t(y) + "]");
@@ -305,8 +305,8 @@ public final class JavaOperatorApi {
 			@Var ArrayList<T> a = (ArrayList<T>)x;
 			a.set(((Number)y).intValue(), z);
 		}
-		if(x instanceof BunMap && y instanceof String) {
-			@Var BunMap<T> m = (BunMap<T>)x;
+		if(x instanceof CommonMap && y instanceof String) {
+			@Var CommonMap<T> m = (CommonMap<T>)x;
 			m.put(y.toString(), z);
 		}
 		throw new RuntimeException("unsupported operator: " + t(x) + "[" + t(y) + "]");

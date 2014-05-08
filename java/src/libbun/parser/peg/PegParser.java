@@ -1,26 +1,26 @@
 package libbun.parser.peg;
 
+import libbun.common.CommonArray;
+import libbun.common.CommonMap;
 import libbun.parser.common.BunLogger;
 import libbun.parser.common.BunSource;
 import libbun.parser.common.BunToken;
-import libbun.util.BArray;
-import libbun.util.BunMap;
 import libbun.util.LibBunSystem;
 
 public final class PegParser {
 	public BunLogger logger;
 	PegParser stackedParser;
 	private int priorityCount = 1;
-	BunMap<Peg>  pegMap;
+	CommonMap<Peg>  pegMap;
 	//	BunMap<BNode>    nodeMap;
-	BunMap<Peg>      pegCache = null;
-	BunMap<String>   keywordCache = null;
-	BunMap<String>   firstCharCache = null;
+	CommonMap<Peg>      pegCache = null;
+	CommonMap<String>   keywordCache = null;
+	CommonMap<String>   firstCharCache = null;
 
 	boolean enableFirstCharChache = false;
 	boolean enableMemo = false;
 
-	BunMap<SemanticFunction> actionMap;
+	CommonMap<SemanticFunction> actionMap;
 
 	public PegParser(BunLogger logger, PegParser StackedParser) {
 		this.logger = logger;
@@ -29,8 +29,8 @@ public final class PegParser {
 	}
 
 	public void Init() {
-		this.pegMap = new BunMap<Peg>(null);
-		this.actionMap = new BunMap<SemanticFunction>(null);
+		this.pegMap = new CommonMap<Peg>(null);
+		this.actionMap = new CommonMap<SemanticFunction>(null);
 	}
 
 	public PegParser Pop() {
@@ -105,7 +105,7 @@ public final class PegParser {
 		return "+" + key;
 	}
 
-	private void insertOrderedPeg(BunMap<Peg> map, String key, Peg e) {
+	private void insertOrderedPeg(CommonMap<Peg> map, String key, Peg e) {
 		Peg defined = this.pegMap.GetValue(key, null);
 		if(defined != null) {
 			e = this.insert(defined, e);
@@ -136,15 +136,15 @@ public final class PegParser {
 	}
 
 	private void initCache() {
-		this.pegCache = new BunMap<Peg>(null);
-		this.keywordCache = new BunMap<String>(null);
-		this.firstCharCache = new BunMap<String>(null);
+		this.pegCache = new CommonMap<Peg>(null);
+		this.keywordCache = new CommonMap<String>(null);
+		this.firstCharCache = new CommonMap<String>(null);
 		this.firstCharCache.put("0", "");
 	}
 
 	public final void resetCache() {
 		this.initCache();
-		BArray<String> list = this.pegMap.keys();
+		CommonArray<String> list = this.pegMap.keys();
 		for(int i = 0; i < list.size(); i++) {
 			String key = list.ArrayValues[i];
 			Peg e = this.pegMap.GetValue(key, null);
@@ -191,7 +191,7 @@ public final class PegParser {
 		String chars = e.firstChars(this.pegMap);
 		//		System.out.println("key='"+key+"' " + e + "  chars='"+chars+"'");
 		if(chars == null || chars.length() == 0) {
-			BArray<String> list = this.firstCharCache.keys();
+			CommonArray<String> list = this.firstCharCache.keys();
 			for(int i = 0; i < list.size(); i++) {
 				String ch = list.ArrayValues[i];
 				this.insertOrderedPeg(this.pegCache, key + "$" + ch, e);

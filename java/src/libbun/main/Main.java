@@ -26,10 +26,10 @@ package libbun.main;
 
 import java.io.IOException;
 
+import libbun.common.CommonArray;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.classic.LibBunConst;
 import libbun.parser.peg.PegDebugger;
-import libbun.util.BArray;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
@@ -53,7 +53,7 @@ public class Main {
 	// -i
 	private static boolean ShellMode = false;
 
-	private static BArray<String> ARGV = null;
+	private static CommonArray<String> ARGV = null;
 
 	//
 	private static String InputFileName = null;
@@ -119,7 +119,7 @@ public class Main {
 		if(GivenParser != null) {
 			Parser = GivenParser;
 		}
-		ARGV = new BArray<String>(new String[4]);
+		ARGV = new CommonArray<String>(new String[4]);
 		while (Index < Args.length) {
 			ARGV.add(Args[Index]);
 			Index += 1;
