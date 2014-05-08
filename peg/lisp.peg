@@ -1,8 +1,11 @@
 
 Stmt    <- Expr
-Expr    <- '(' Space? List ')' { $List } / Integer / Symbol / Op
-Integer <- {[0-9]+ }
-List    <- (Expr Space+ { $Expr })*
-Symbol  <- { [a-zA-Z]+ }
-Op      <- { '+' } / { '-' } / { '*' } / { '/' } / { '%' } / { '<' } / { '>' }
-Space   <- [ \t\r\n] 
+Expr    <- {'(' _? ($Expr (_ $Expr)*)? ')'}  / Integer / Symbol
+Integer <- { [0-9]+ }  #Int
+Symbol  <- { [a-zA-Z]+ }  #Name
+Symbol  <- { '+'  /  '-' /  '*' / '/' / '%' / '<' / '>' } #Name
+_       <- [ \t\n]
+
+Expr    <- {'(+' _+ $Expr _+ $Expr _? ')' } #RaAdd 
+Expr    <- {'(+' _+ $Expr _? ')' } #PlusUnary
+

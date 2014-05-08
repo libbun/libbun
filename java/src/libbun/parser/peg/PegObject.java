@@ -47,6 +47,9 @@ public abstract class PegObject {
 		}
 		else {
 			node = new PegNode(parentNode, this.size());
+			if(this.size() > 0) {
+				this.copySub(source, node);
+			}
 		}
 		node.SourceToken = source.newToken(this.startIndex, this.endIndex);
 		return node;

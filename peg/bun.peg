@@ -39,11 +39,11 @@ Expr <- Expr _? {$ '>'  _? $Expr}          #RaLessThanEquals
 Expr <- Expr _? {$ '<=' _? $Expr}          #RaGreaterThan
 Expr <- Expr _? {$ '>=' _? $Expr}          #RaGreaterThanEquals
 
-Expr <- Expr _? {$ '+' _? $Expr}           #RaAdd
-Expr <- Expr _? {$ '-' _? $Expr}           #RaSub
-Expr <- Expr _? {$ '*' _? $Expr}           #RaMul
-Expr <- Expr _? {$ '/' _? $Expr}           #RaDiv
-Expr <- Expr _? {$ '%' _? $Expr}           #RaMod
+Expr <- Expr _? {$ '+' _? $Expr}           :RaAdd
+Expr <- Expr _? {$ '-' _? $Expr}           :RaSub
+Expr <- Expr _? {$ '*' _? $Expr}           :RaMul
+Expr <- Expr _? {$ '/' _? $Expr}           :RaDiv
+Expr <- Expr _? {$ '%' _? $Expr}           :RaMod
 
 Expr <- Expr _? {$ '(' _? ($Expr (_? ',' _? $Expr)*)? _? ')'}   #FuncCall
 Expr <- Expr {$ '.' $Name}                                      #Field
@@ -69,3 +69,7 @@ TypeAnno <- ':' _? Type _?
 
 Block <- {'{' (indent / ';' / $Stmt)* (!'}' $$Stmt)? '}'}   #Block
 
+PyBlock <- {':' (NestedIndent $Stmt)+ }
+
+a < b < c {$Expr < $Expr < $Expr} :(and (< $0 $1) (<$1 $2))
+{'while' _? '(' _? $Expr _? ')' _? $Block }  :(while $1 $3)

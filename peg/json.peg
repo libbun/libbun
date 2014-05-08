@@ -5,7 +5,7 @@ JSON ← S? ( Object / Array / String / True / False / Null / Number ) S?
 Object <- {"{" ( $String ":" $JSON ( "," $String ":" $JSON )* / S? ) "}" }
 Array  <- {"[" ( $JSON ( "," $JSON )* / S? ) "]"
 String <- S? ["] ( [^ " \ U+0000-U+001F ] / Escape )* ["] S?
-Escape <- [\] ( [ " / \ b f n r t ] / UnicodeEscape )
+Escape <- [\\] ( [ " / \ b f n r t ] / UnicodeEscape )
 UnicodeEscape <- "u" [0-9A-Fa-f] [0-9A-Fa-f] [0-9A-Fa-f] [0-9A-Fa-f]
 
 True   <- {'true'}
