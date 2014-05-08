@@ -49,16 +49,18 @@ public class BunToken {
 		return "";
 	}
 
-	//
-	//
-	//
-	//	public final String GetFileName() {
-	//		return this.source.FileName;
-	//	}
-	//
-	//	public final int GetLineNumber() {
-	//		return this.source.GetLineNumber(this.startIndex);
-	//	}
+	public final String GetTextAsName() {
+		return this.GetText();
+	}
+
+	public final String GetFileName() {
+		return this.source.fileName;
+	}
+
+	public final int GetLineNumber() {
+		return this.source.getLineNumber(this.startIndex);
+	}
+
 	//
 	//	public final char GetChar() {
 	//		if(this.source != null) {
@@ -68,9 +70,6 @@ public class BunToken {
 	//	}
 	//
 	//
-	//	public final String GetTextAsName() {
-	//		return this.GetText();
-	//	}
 	//
 	//	@Override public final String toString() {
 	//		@Var char ch = this.source.GetCharAt(this.startIndex-1);

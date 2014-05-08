@@ -26,7 +26,7 @@ import libbun.ast.unary.BunCastNode;
 import libbun.ast.unary.BunNotNode;
 import libbun.encode.LibBunSourceBuilder;
 import libbun.encode.obsolete.OldSourceGenerator;
-import libbun.parser.common.BToken;
+import libbun.parser.common.BunToken;
 import libbun.type.BClassType;
 import libbun.type.BType;
 import libbun.util.BField;
@@ -283,29 +283,31 @@ public class ErlangGenerator extends OldSourceGenerator {
 	// 	this.GenerateTypeName(Node.RightNode().Type);
 	// }
 
-	protected String GetBinaryOperator(BType Type, BToken Token) {
-		if(Token.EqualsText("<=")) {
-			return "=<";
-		}
-		if(Token.EqualsText("==")) {
-			return "=:=";
-		}
-		if(Token.EqualsText("!=")) {
-			return "=/=";
-		}
-		if(Token.EqualsText("<<")) {
-			return "bsl";
-		}
-		if(Token.EqualsText(">>")) {
-			return "bsr";
-		}
-		if(Token.EqualsText('%')) {
-			return "rem";
-		}
-		if(Token.EqualsText('/') && Type.Equals(BType.IntType)) {
-			return "div";
-		}
-		return Token.GetText();
+	protected String GetBinaryOperator(BType Type, BunToken sourceToken) {
+		//FIXME:
+		//sourceToken is deprecated
+		//		if(sourceToken.EqualsText("<=")) {
+		//			return "=<";
+		//		}
+		//		if(sourceToken.EqualsText("==")) {
+		//			return "=:=";
+		//		}
+		//		if(sourceToken.EqualsText("!=")) {
+		//			return "=/=";
+		//		}
+		//		if(sourceToken.EqualsText("<<")) {
+		//			return "bsl";
+		//		}
+		//		if(sourceToken.EqualsText(">>")) {
+		//			return "bsr";
+		//		}
+		//		if(sourceToken.EqualsText('%')) {
+		//			return "rem";
+		//		}
+		//		if(sourceToken.EqualsText('/') && Type.Equals(BType.IntType)) {
+		//			return "div";
+		//		}
+		return sourceToken.GetText();
 	}
 
 

@@ -621,10 +621,11 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 			this.CurrentScope.PushValue(TempVar);
 		}
 		else if(Node.LeftNode().Type.IsStringType()) {
-			if(Node.SourceToken.EqualsText('+') && Node.RightNode().Type.IsStringType()) {
-				this.DeclareExtrnalFunction("BString_StrCat", "%BString*", "(%BString*, %BString*)");
-				this.CallExternalFunction("BString_StrCat", "(" + this.GetTypeExpr(Node.LeftNode().Type) + " " + Left + ", " + this.GetTypeExpr(Node.RightNode().Type) + " " + Right + ")");
-			}
+			//FIXME: EqualsText is deprecated
+			//			if(Node.SourceToken.EqualsText('+') && Node.RightNode().Type.IsStringType()) {
+			//				this.DeclareExtrnalFunction("BString_StrCat", "%BString*", "(%BString*, %BString*)");
+			//				this.CallExternalFunction("BString_StrCat", "(" + this.GetTypeExpr(Node.LeftNode().Type) + " " + Left + ", " + this.GetTypeExpr(Node.RightNode().Type) + " " + Right + ")");
+			//			}
 		}
 		else {
 			BunLogger._LogError(Node.SourceToken, "Unknown binary \"" + Node.SourceToken.GetText() + "\" for this type");
@@ -734,26 +735,28 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 			this.CurrentScope.PushValue(Result);
 		}
 		else if(Node.LeftNode().Type.IsStringType()) {
-			if(Node.SourceToken.EqualsText("==") && Node.RightNode().Type.IsStringType()) {
-				this.DeclareExtrnalFunction("BString_EqualString", "i1", "(%BString*, %BString*)");
-				this.CallExternalFunction("BString_EqualString", "(" + this.GetTypeExpr(Node.LeftNode().Type) + " " + Left + ", " + this.GetTypeExpr(Node.RightNode().Type) + " " + Right + ")");
-			}
-			else if(Node.SourceToken.EqualsText("!=") && Node.RightNode().Type.IsStringType()) {
-				this.DeclareExtrnalFunction("BString_EqualString", "i1", "(%BString*, %BString*)");
-				this.CallExternalFunction("BString_EqualString", "(" + this.GetTypeExpr(Node.LeftNode().Type) + " " + Left + ", " + this.GetTypeExpr(Node.RightNode().Type) + " " + Right + ")");
-				@Var String CmpResult = this.CurrentScope.PopValue();
-
-				@Var String NotResult = this.CurrentScope.CreateTempLocalSymbol();
-				this.Source.AppendNewLine(NotResult);
-				this.Source.Append(" = ");
-				this.Source.Append("xor");
-				this.Source.Append(" ");
-				this.Source.Append(this.GetTypeExpr(BType.BooleanType));
-				this.Source.Append(" 1, ");
-				this.Source.Append(CmpResult);
-
-				this.CurrentScope.PushValue(NotResult);
-			}
+			//FIXME: EqualsText is deprecated
+			//
+			//			if(Node.SourceToken.EqualsText("==") && Node.RightNode().Type.IsStringType()) {
+			//				this.DeclareExtrnalFunction("BString_EqualString", "i1", "(%BString*, %BString*)");
+			//				this.CallExternalFunction("BString_EqualString", "(" + this.GetTypeExpr(Node.LeftNode().Type) + " " + Left + ", " + this.GetTypeExpr(Node.RightNode().Type) + " " + Right + ")");
+			//			}
+			//			else if(Node.SourceToken.EqualsText("!=") && Node.RightNode().Type.IsStringType()) {
+			//				this.DeclareExtrnalFunction("BString_EqualString", "i1", "(%BString*, %BString*)");
+			//				this.CallExternalFunction("BString_EqualString", "(" + this.GetTypeExpr(Node.LeftNode().Type) + " " + Left + ", " + this.GetTypeExpr(Node.RightNode().Type) + " " + Right + ")");
+			//				@Var String CmpResult = this.CurrentScope.PopValue();
+			//
+			//				@Var String NotResult = this.CurrentScope.CreateTempLocalSymbol();
+			//				this.Source.AppendNewLine(NotResult);
+			//				this.Source.Append(" = ");
+			//				this.Source.Append("xor");
+			//				this.Source.Append(" ");
+			//				this.Source.Append(this.GetTypeExpr(BType.BooleanType));
+			//				this.Source.Append(" 1, ");
+			//				this.Source.Append(CmpResult);
+			//
+			//				this.CurrentScope.PushValue(NotResult);
+			//			}
 		}
 		else {
 			@Var String LeftAddress = this.CurrentScope.CreateTempLocalSymbol();
@@ -1360,58 +1363,60 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 		this.GenerateExpression(Node.RecvNode());
 		@Var String Recv = this.CurrentScope.PopValue();
 
-		if(Node.SourceToken.EqualsText('+')) {
-			this.CurrentScope.PushValue(Recv);
-		}
-		else if(Node.SourceToken.EqualsText('-')){
-			if(Node.RecvNode() instanceof ConstNode) {
-				this.CurrentScope.PushValue("-" + Recv);
-			}
-			else {
-				@Var String TempVar = this.CurrentScope.CreateTempLocalSymbol();
-				this.Source.AppendNewLine(TempVar);
-				this.Source.Append(" = ");
-				if(Node.RecvNode().IsUntyped()) {
-					BunLogger._LogError(Node.SourceToken, "Unary \"-\" is untyped");
-				}
-				else if(Node.RecvNode().Type.IsIntType()) {
-					this.Source.Append("sub");
-					this.Source.Append(" i64 0, ");
-				}
-				else if(Node.RecvNode().Type.IsFloatType()) {
-					this.Source.Append("fsub");
-					this.Source.Append(" double 0.0, ");
-				}
-				else {
-					BunLogger._LogError(Node.SourceToken, "Unknown unary \"-\" for this type");
-				}
-				this.Source.Append(Recv);
+		//FIXME: EqualsText is deprecated
 
-				this.CurrentScope.PushValue(TempVar);
-			}
-		}
-		else if(Node.SourceToken.EqualsText('~')){
-			if(Node.RecvNode().IsUntyped()) {
-				BunLogger._LogError(Node.SourceToken, "Unary \"~\" is untyped");
-				return;
-			}
-			else if(!Node.RecvNode().Type.IsIntType()){
-				BunLogger._LogError(Node.SourceToken, "Unknown unary \"~\" for this type");
-				return;
-			}
-
-			@Var String TempVar = this.CurrentScope.CreateTempLocalSymbol();
-			this.Source.AppendNewLine(TempVar);
-			this.Source.Append(" = xor ");
-			this.Source.Append(this.GetTypeExpr(Node.RecvNode().Type));
-			this.Source.Append(" -1, ");
-			this.Source.Append(Recv);
-
-			this.CurrentScope.PushValue(TempVar);
-		}
-		else {
-			BunLogger._LogError(Node.SourceToken, "Unknown unary \"" + Node.SourceToken.GetText() + "\" for this type");
-		}
+		//		if(Node.SourceToken.EqualsText('+')) {
+		//			this.CurrentScope.PushValue(Recv);
+		//		}
+		//		else if(Node.SourceToken.EqualsText('-')){
+		//			if(Node.RecvNode() instanceof ConstNode) {
+		//				this.CurrentScope.PushValue("-" + Recv);
+		//			}
+		//			else {
+		//				@Var String TempVar = this.CurrentScope.CreateTempLocalSymbol();
+		//				this.Source.AppendNewLine(TempVar);
+		//				this.Source.Append(" = ");
+		//				if(Node.RecvNode().IsUntyped()) {
+		//					BunLogger._LogError(Node.SourceToken, "Unary \"-\" is untyped");
+		//				}
+		//				else if(Node.RecvNode().Type.IsIntType()) {
+		//					this.Source.Append("sub");
+		//					this.Source.Append(" i64 0, ");
+		//				}
+		//				else if(Node.RecvNode().Type.IsFloatType()) {
+		//					this.Source.Append("fsub");
+		//					this.Source.Append(" double 0.0, ");
+		//				}
+		//				else {
+		//					BunLogger._LogError(Node.SourceToken, "Unknown unary \"-\" for this type");
+		//				}
+		//				this.Source.Append(Recv);
+		//
+		//				this.CurrentScope.PushValue(TempVar);
+		//			}
+		//		}
+		//		else if(Node.SourceToken.EqualsText('~')){
+		//			if(Node.RecvNode().IsUntyped()) {
+		//				BunLogger._LogError(Node.SourceToken, "Unary \"~\" is untyped");
+		//				return;
+		//			}
+		//			else if(!Node.RecvNode().Type.IsIntType()){
+		//				BunLogger._LogError(Node.SourceToken, "Unknown unary \"~\" for this type");
+		//				return;
+		//			}
+		//
+		//			@Var String TempVar = this.CurrentScope.CreateTempLocalSymbol();
+		//			this.Source.AppendNewLine(TempVar);
+		//			this.Source.Append(" = xor ");
+		//			this.Source.Append(this.GetTypeExpr(Node.RecvNode().Type));
+		//			this.Source.Append(" -1, ");
+		//			this.Source.Append(Recv);
+		//
+		//			this.CurrentScope.PushValue(TempVar);
+		//		}
+		//		else {
+		//			BunLogger._LogError(Node.SourceToken, "Unknown unary \"" + Node.SourceToken.GetText() + "\" for this type");
+		//		}
 	}
 
 	@Override public void VisitVarBlockNode(BunVarBlockNode Node) {

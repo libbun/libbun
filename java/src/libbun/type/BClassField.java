@@ -24,7 +24,7 @@
 
 package libbun.type;
 
-import libbun.parser.common.BToken;
+import libbun.parser.common.BunToken;
 import libbun.util.BField;
 
 public class BClassField {
@@ -33,13 +33,13 @@ public class BClassField {
 	@BField public final BType	     FieldType;
 	@BField public final String	 FieldName;
 	@BField public final int        FieldNativeIndex = 0;
-	@BField public final BToken     SourceToken;
+	@BField public final BunToken     SourceToken;
 
-	public BClassField(BClassType ClassType, String FieldName, BType FieldType, BToken SourceToken) {
+	public BClassField(BClassType ClassType, String FieldName, BType FieldType, BunToken sourceToken2) {
 		this.ClassType = ClassType;
 		this.FieldType = FieldType;
 		this.FieldName = FieldName;
-		this.SourceToken = SourceToken;
+		this.SourceToken = sourceToken2;
 	}
 
 

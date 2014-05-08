@@ -25,21 +25,22 @@
 package libbun.type;
 
 import libbun.parser.common.BToken;
-import libbun.util.BField;
-import libbun.util.Var;
+import libbun.parser.common.BunToken;
 import libbun.util.BArray;
+import libbun.util.BField;
 import libbun.util.BIgnored;
+import libbun.util.Var;
 
 public class BVarType extends BType {
 
 	@BField public final BArray<BVarType> VarList;
-	@BField public BToken SourceToken;
+	@BField public BunToken SourceToken;
 	@BField public int GreekId;
 
-	public BVarType(BArray<BVarType> VarList, String Name, BToken SourceToken) {
+	public BVarType(BArray<BVarType> VarList, String Name, BunToken sourceToken2) {
 		super(0, Name, BType.VarType);
 		this.VarList = VarList;
-		this.SourceToken = SourceToken;
+		this.SourceToken = sourceToken2;
 		this.GreekId = VarList.size();
 		this.TypeId = this.RefType.TypeId;
 		VarList.add(this);
@@ -69,7 +70,7 @@ public class BVarType extends BType {
 		return "typeof(" + this.ShortName + "): " + this.RefType;
 	}
 
-	public void Infer(BType ContextType, BToken SourceToken) {
+	public void Infer(BType ContextType, BunToken sourceToken2) {
 		if(this.RefType.IsVarType()) {
 			if(ContextType instanceof BVarType && ContextType.IsVarType()) {
 				@Var BVarType VarType = (BVarType)ContextType;
@@ -82,7 +83,7 @@ public class BVarType extends BType {
 			}
 			else {
 				this.RefType = ContextType.GetRealType();
-				this.SourceToken = SourceToken;
+				this.SourceToken = sourceToken2;
 				this.TypeId = this.RefType.TypeId;
 				this.TypeFlag = this.RefType.TypeFlag;
 			}

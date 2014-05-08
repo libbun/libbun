@@ -18,23 +18,11 @@ public class BToken extends BunToken {
 		super(Source, StartIndex, EndIndex);
 	}
 
-	public final String GetFileName() {
-		return this.source.fileName;
-	}
-
-	public final int GetLineNumber() {
-		return this.source.getLineNumber(this.startIndex);
-	}
-
 	public final char GetChar() {
 		if(this.source != null) {
 			return LibBunSystem._GetChar(this.source.sourceText, this.startIndex);
 		}
 		return '\0';
-	}
-
-	public final String GetTextAsName() {
-		return this.GetText();
 	}
 
 	@Override public final String toString() {

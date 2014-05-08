@@ -27,10 +27,10 @@ package libbun.ast.literal;
 import libbun.ast.BNode;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.parser.common.BToken;
+import libbun.parser.common.BunToken;
 
 public final class BunNullNode extends LiteralNode {
-	public BunNullNode(BNode ParentNode, BToken SourceToken) {
+	public BunNullNode(BNode ParentNode, BunToken SourceToken) {
 		super(ParentNode, SourceToken);
 	}
 	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {

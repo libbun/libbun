@@ -24,11 +24,11 @@
 
 package libbun.type;
 
-import libbun.parser.common.BToken;
+import libbun.parser.common.BunToken;
+import libbun.util.BArray;
 import libbun.util.BField;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
-import libbun.util.BArray;
 
 public class BClassType extends BType {
 	public final static BClassType _ObjectType = new BClassType("Object");
@@ -100,12 +100,12 @@ public class BClassType extends BType {
 		return DefaultType;
 	}
 
-	public BClassField AppendField(BType FieldType, String FieldName, BToken SourceToken) {
+	public BClassField AppendField(BType FieldType, String FieldName, BunToken sourceToken) {
 		assert(!FieldType.IsVarType());
 		if(this.FieldList == null) {
 			this.FieldList = new BArray<BClassField>(new BClassField[4]);
 		}
-		@Var BClassField ClassField = new BClassField(this, FieldName, FieldType, SourceToken);
+		@Var BClassField ClassField = new BClassField(this, FieldName, FieldType, sourceToken);
 		//		System.out.println("Append FieldName = " + ClassField.FieldName + ", " + ClassField.FieldType);
 		assert(ClassField.FieldType != null);
 		this.FieldList.add(ClassField);

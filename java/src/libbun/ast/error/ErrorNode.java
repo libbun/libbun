@@ -27,13 +27,13 @@ package libbun.ast.error;
 import libbun.ast.BNode;
 import libbun.ast.literal.ConstNode;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.parser.common.BToken;
+import libbun.parser.common.BunToken;
 import libbun.util.BField;
 import libbun.util.BIgnored;
 
 public class ErrorNode extends ConstNode {
 	@BField public String ErrorMessage;
-	public ErrorNode(BNode ParentNode, BToken SourceToken, String ErrorMessage) {
+	public ErrorNode(BNode ParentNode, BunToken SourceToken, String ErrorMessage) {
 		super(ParentNode, SourceToken);
 		this.ErrorMessage = ErrorMessage;
 	}

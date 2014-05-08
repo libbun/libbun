@@ -25,10 +25,10 @@
 package libbun.ast.literal;
 
 import libbun.ast.BNode;
-import libbun.parser.common.BToken;
+import libbun.parser.common.BunToken;
 
 public abstract class ConstNode extends BNode {
-	protected ConstNode(BNode ParentNode, BToken SourceToken) {
+	protected ConstNode(BNode ParentNode, BunToken SourceToken) {
 		super(ParentNode, 0);
 		this.SourceToken = SourceToken;
 	}

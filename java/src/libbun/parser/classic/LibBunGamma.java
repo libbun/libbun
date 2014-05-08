@@ -29,6 +29,7 @@ import libbun.ast.BunBlockNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.common.BToken;
+import libbun.parser.common.BunToken;
 import libbun.type.BClassType;
 import libbun.type.BType;
 import libbun.util.BField;
@@ -135,10 +136,10 @@ public final class LibBunGamma {
 	}
 
 	// Type
-	public final void SetTypeName(String Name, BType Type, @Nullable BToken SourceToken) {
+	public final void SetTypeName(String Name, BType Type, @Nullable BunToken sourceToken) {
 		//@Var ZTypeNode Node = new ZTypeNode(null, SourceToken, Type);
 		@Var BunLetVarNode Node = new BunLetVarNode(null, BunLetVarNode._IsReadOnly, Type, Name);
-		Node.SourceToken = SourceToken;
+		Node.SourceToken = sourceToken;
 		this.SetSymbol(Name, Node);
 	}
 
@@ -146,14 +147,14 @@ public final class LibBunGamma {
 		this.SetTypeName(Type.ShortName, Type, SourceToken);
 	}
 
-	public final BType GetType(String TypeName, BToken SourceToken, boolean IsCreation) {
+	public final BType GetType(String TypeName, BunToken sourceToken, boolean IsCreation) {
 		@Var BunLetVarNode Node = this.GetSymbol(TypeName);
 		if(Node != null) {
 			return Node.DeclType();
 		}
 		if(IsCreation && LibBunSystem._IsSymbol(LibBunSystem._GetChar(TypeName, 0))) {
 			@Var BType Type = new BClassType(TypeName, BType.VarType);
-			this.GetRootGamma().SetTypeName(TypeName, Type, SourceToken);
+			this.GetRootGamma().SetTypeName(TypeName, Type, sourceToken);
 			return Type;
 		}
 		return null;

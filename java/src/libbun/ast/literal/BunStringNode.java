@@ -27,13 +27,13 @@ package libbun.ast.literal;
 import libbun.ast.BNode;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.parser.common.BToken;
+import libbun.parser.common.BunToken;
 import libbun.type.BType;
 import libbun.util.BField;
 
 public final class BunStringNode extends LiteralNode {
 	@BField public String	StringValue;
-	public BunStringNode(BNode ParentNode, BToken Token, String Value) {
+	public BunStringNode(BNode ParentNode, BunToken Token, String Value) {
 		super(ParentNode, Token);
 		this.Type = BType.StringType;
 		this.StringValue = Value;

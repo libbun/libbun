@@ -28,7 +28,7 @@ import libbun.ast.BNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.parser.common.BToken;
+import libbun.parser.common.BunToken;
 import libbun.util.BField;
 import libbun.util.Nullable;
 import libbun.util.Var;
@@ -38,9 +38,9 @@ public class GetNameNode extends MutableNode {
 	@BField @Nullable public BunLetVarNode ResolvedNode = null;
 	@BField public int     VarIndex = 0;
 
-	public GetNameNode(BNode ParentNode, BToken SourceToken, String GivenName) {
+	public GetNameNode(BNode ParentNode, BunToken sourceToken, String GivenName) {
 		super(ParentNode, 0);
-		this.SourceToken = SourceToken;
+		this.SourceToken = sourceToken;
 		this.GivenName = GivenName;
 	}
 

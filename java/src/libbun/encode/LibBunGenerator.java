@@ -44,6 +44,7 @@ import libbun.parser.classic.LibBunParser;
 import libbun.parser.classic.LibBunTypeChecker;
 import libbun.parser.common.BToken;
 import libbun.parser.common.BunLogger;
+import libbun.parser.common.BunToken;
 import libbun.type.BClassType;
 import libbun.type.BFormFunc;
 import libbun.type.BFunc;
@@ -431,14 +432,14 @@ public abstract class LibBunGenerator extends BunVisitor {
 		return true;
 	}
 
-	public final boolean RequireLibrary(String LibName, @Nullable BToken SourceToken) {
+	public final boolean RequireLibrary(String LibName, @Nullable BunToken sourceToken) {
 		@Var String Key = "_Z" + LibName.toLowerCase();
 		@Var String Value = this.ImportedLibraryMap.GetOrNull(Key);
 		if(Value == null) {
 			@Var String Path = this.LangInfo.GetLibPath(LibName);
 			@Var String Script = LibBunSystem._LoadTextFile(Path);
 			if(Script == null) {
-				BunLogger._LogErrorExit(SourceToken, "library not found: " + LibName + " as " + Path);
+				BunLogger._LogErrorExit(sourceToken, "library not found: " + LibName + " as " + Path);
 				return false;
 			}
 			@Var boolean Result = this.LoadScript(Script, Path, 1);

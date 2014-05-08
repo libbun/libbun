@@ -34,8 +34,8 @@ import libbun.encode.LibBunGenerator;
 import libbun.parser.classic.BTokenContext;
 import libbun.parser.classic.LibBunGamma;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.parser.common.BToken;
 import libbun.parser.common.BunSource;
+import libbun.parser.common.BunToken;
 import libbun.type.BFuncType;
 import libbun.type.BType;
 import libbun.util.BField;
@@ -49,11 +49,11 @@ public abstract class BNode {
 	public final static boolean _EnforcedParent = true;
 	public final static boolean _PreservedParent = false;
 
-	@BField public BNode   ParentNode;
-	@BField public BToken  SourceToken;
-	@BField public BNode   AST[] = null;
-	@BField public BType   Type = BType.VarType;
-	@BField public boolean HasUntyped = true;
+	@BField public BNode    ParentNode;
+	@BField public BunToken SourceToken;
+	@BField public BNode    AST[] = null;
+	@BField public BType    Type = BType.VarType;
+	@BField public boolean  HasUntyped = true;
 
 	public BNode(@Nullable BNode ParentNode, int Size) {
 		assert(this != ParentNode);
@@ -238,7 +238,7 @@ public abstract class BNode {
 		}
 	}
 
-	public final BToken GetAstToken(int TokenIndex) {
+	public final BunToken GetAstToken(int TokenIndex) {
 		if(TokenIndex >= 0 && this.AST[TokenIndex] != null) {
 			return this.AST[TokenIndex].SourceToken;
 		}

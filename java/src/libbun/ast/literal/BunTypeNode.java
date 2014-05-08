@@ -26,11 +26,11 @@ package libbun.ast.literal;
 
 import libbun.ast.BNode;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.parser.common.BToken;
+import libbun.parser.common.BunToken;
 import libbun.type.BType;
 
 public final class BunTypeNode extends LiteralNode {
-	public BunTypeNode(BNode ParentNode, BToken SourceToken, BType Type) {
+	public BunTypeNode(BNode ParentNode, BunToken SourceToken, BType Type) {
 		super(ParentNode, SourceToken);
 		this.Type = Type;
 	}

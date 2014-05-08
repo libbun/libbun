@@ -25,7 +25,6 @@
 package libbun.parser.common;
 
 import libbun.util.BArray;
-import libbun.util.BField;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
@@ -37,7 +36,7 @@ public final class BunLogger {
 		this.ReportedErrorList.add(Message);
 	}
 
-	public final static void _LogErrorExit(BToken Token, String Message) {
+	public final static void _LogErrorExit(BunToken Token, String Message) {
 		if(Token != null && Token.source != null) {
 			Message = Token.source.FormatErrorMarker("error", Token.startIndex, Message);
 			Token.source.logger.log(Message);
@@ -47,7 +46,7 @@ public final class BunLogger {
 		}
 	}
 
-	public final static String _LogError(BToken Token, String Message) {
+	public final static String _LogError(BunToken Token, String Message) {
 		if(Token != null && Token.source != null) {
 			Message = Token.source.FormatErrorMarker("error", Token.startIndex, Message);
 			Token.source.logger.log(Message);
@@ -59,21 +58,21 @@ public final class BunLogger {
 		return Message;
 	}
 
-	public final static void _LogWarning(BToken Token, String Message) {
+	public final static void _LogWarning(BunToken Token, String Message) {
 		if(Token != null) {
 			Message = Token.source.FormatErrorMarker("warning", Token.startIndex, Message);
 			Token.source.logger.log(Message);
 		}
 	}
 
-	public final static void _LogInfo(BToken Token, String Message) {
+	public final static void _LogInfo(BunToken Token, String Message) {
 		if(Token != null && Token.source != null) {
 			Message = Token.source.FormatErrorMarker("info", Token.startIndex, Message);
 			Token.source.logger.log(Message);
 		}
 	}
 
-	public final static void _LogDebug(BToken Token, String Message) {
+	public final static void _LogDebug(BunToken Token, String Message) {
 		if(Token != null && Token.source != null) {
 			Message = Token.source.FormatErrorMarker("debug", Token.startIndex, Message);
 			Token.source.logger.log(Message);

@@ -3,7 +3,7 @@ package libbun.ast.expression;
 import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.parser.common.BToken;
+import libbun.parser.common.BunToken;
 import libbun.type.BFormFunc;
 import libbun.type.BFuncType;
 import libbun.util.BField;
@@ -11,9 +11,9 @@ import libbun.util.BField;
 public class BunFormNode extends AbstractListNode {
 	@BField public final BFormFunc FormFunc;
 
-	public BunFormNode(BNode ParentNode, BToken SourceToken, BFormFunc FormFunc) {
+	public BunFormNode(BNode ParentNode, BunToken sourceToken, BFormFunc FormFunc) {
 		super(ParentNode, 0);
-		this.SourceToken = SourceToken;
+		this.SourceToken = sourceToken;
 		this.FormFunc = FormFunc;
 		assert(FormFunc != null);
 	}

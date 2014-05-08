@@ -39,8 +39,8 @@ import libbun.ast.expression.FuncCallNode;
 import libbun.ast.literal.BunAsmNode;
 import libbun.ast.unary.BunCastNode;
 import libbun.encode.LibBunGenerator;
-import libbun.parser.common.BToken;
 import libbun.parser.common.BunLogger;
+import libbun.parser.common.BunToken;
 import libbun.type.BFormFunc;
 import libbun.type.BFunc;
 import libbun.type.BFuncType;
@@ -107,7 +107,7 @@ public abstract class LibBunTypeChecker extends BunVisitor {
 		this.ReturnTypeNode(Node, Type);
 	}
 
-	public final void ReturnErrorNode(BNode Node, BToken ErrorToken, String Message) {
+	public final void ReturnErrorNode(BNode Node, BunToken ErrorToken, String Message) {
 		if(ErrorToken == null) {
 			ErrorToken = Node.SourceToken;
 		}
@@ -118,9 +118,9 @@ public abstract class LibBunTypeChecker extends BunVisitor {
 		this.ReturnNode(new TypeErrorNode(Message, ErrorNode));
 	}
 
-	protected final BNode CreateStupidCastNode(BType Requested, BNode Node, BToken SourceToken, String Message) {
+	protected final BNode CreateStupidCastNode(BType Requested, BNode Node, BunToken bunToken, String Message) {
 		@Var BNode ErrorNode = new TypeErrorNode(Message + ": " + Node.Type.GetName() + " must be " + Requested.GetName(), Node);
-		ErrorNode.SourceToken = SourceToken;
+		ErrorNode.SourceToken = bunToken;
 		ErrorNode.Type = Requested;
 		return ErrorNode;
 	}
@@ -349,19 +349,19 @@ public abstract class LibBunTypeChecker extends BunVisitor {
 	//		return NameNode;
 	//	}
 
-	public FuncCallNode CreateFuncCallNode(BNode ParentNode, BToken SourceToken, String FuncName, BFuncType FuncType) {
-		@Var FuncCallNode FuncNode = new FuncCallNode(ParentNode, new BunFuncNameNode(null, SourceToken, FuncName, FuncType));
+	public FuncCallNode CreateFuncCallNode(BNode ParentNode, BunToken sourceToken, String FuncName, BFuncType FuncType) {
+		@Var FuncCallNode FuncNode = new FuncCallNode(ParentNode, new BunFuncNameNode(null, sourceToken, FuncName, FuncType));
 		FuncNode.Type = FuncType.GetReturnType();
 		return FuncNode;
 	}
 
-	public final AbstractListNode CreateDefinedFuncCallNode(BNode ParentNode, BToken SourceToken, BFunc Func) {
+	public final AbstractListNode CreateDefinedFuncCallNode(BNode ParentNode, BunToken sourceToken, BFunc Func) {
 		@Var AbstractListNode FuncNode = null;
 		if(Func instanceof BFormFunc) {
-			FuncNode = new BunFormNode(ParentNode, SourceToken, (BFormFunc)Func);
+			FuncNode = new BunFormNode(ParentNode, sourceToken, (BFormFunc)Func);
 		}
 		else {
-			FuncNode = this.CreateFuncCallNode(ParentNode, SourceToken, Func.FuncName, Func.GetFuncType());
+			FuncNode = this.CreateFuncCallNode(ParentNode, sourceToken, Func.FuncName, Func.GetFuncType());
 		}
 		//		FuncNode.Type = Func.GetFuncType().GetRealType();
 		return FuncNode;

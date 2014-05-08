@@ -39,7 +39,7 @@ public final class BunFloatNode extends LiteralNode {
 		this.FloatValue = Value;
 	}
 	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunFloatNode(ParentNode, this.SourceToken, this.FloatValue));
+		return this.DupField(TypedClone, new BunFloatNode(ParentNode, null, this.FloatValue));
 	}
 	@Override public final String toString() {
 		return "" + this.FloatValue;

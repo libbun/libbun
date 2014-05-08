@@ -2,8 +2,8 @@ package libbun.ast.decl;
 
 import libbun.ast.BNode;
 import libbun.parser.classic.LibBunGamma;
-import libbun.parser.common.BToken;
 import libbun.parser.common.BunLogger;
+import libbun.parser.common.BunToken;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
@@ -17,7 +17,7 @@ public class BunRequireNode extends TopLevelNode {
 		return this.DupField(TypedClone, new BunRequireNode(ParentNode));
 	}
 	@Override public final void Perform(LibBunGamma Gamma) {
-		@Var BToken SourceToken = this.AST[BunRequireNode._Path].SourceToken;
+		@Var BunToken SourceToken = this.AST[BunRequireNode._Path].SourceToken;
 		@Var String Path = SourceToken.GetTextAsName();
 		if(Path.startsWith("syntax::")) {
 			if(!LibBunSystem._LoadGrammar(Gamma, Path)) {

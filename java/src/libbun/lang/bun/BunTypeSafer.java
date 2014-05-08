@@ -563,19 +563,19 @@ public class BunTypeSafer extends LibBunTypeChecker {
 	}
 
 	@Override public void VisitBinaryNode(BinaryOperatorNode Node) {
-		@Var BType ContextType = this.GetContextType();
-		@Var BType LeftType = this.GuessBinaryLeftType(Node.SourceToken, ContextType);
-		@Var BType RightType = this.GuessBinaryLeftType(Node.SourceToken, ContextType);
-		this.CheckTypeAt(Node, BinaryOperatorNode._Left, LeftType);
-		this.CheckTypeAt(Node, BinaryOperatorNode._Right, RightType);
-		if(Node.IsDifferentlyTyped()) {
-			if(Node.SourceToken.EqualsText('+')) {
-				this.UnifyBinaryEnforcedType(Node, BType.StringType);
-			}
-			this.TryUnifyBinaryType(Node, BType.FloatType);
-			this.CheckTypeAt(Node, BinaryOperatorNode._Left, Node.GetAstType(BinaryOperatorNode._Right));
-		}
-		this.ReturnBinaryTypeNode(Node, Node.GetAstType(BinaryOperatorNode._Left));
+		//		@Var BType ContextType = this.GetContextType();
+		//		@Var BType LeftType = this.GuessBinaryLeftType(Node.SourceToken, ContextType);
+		//		@Var BType RightType = this.GuessBinaryLeftType(Node.SourceToken, ContextType);
+		//		this.CheckTypeAt(Node, BinaryOperatorNode._Left, LeftType);
+		//		this.CheckTypeAt(Node, BinaryOperatorNode._Right, RightType);
+		//		if(Node.IsDifferentlyTyped()) {
+		//			if(Node.SourceToken.EqualsText('+')) {
+		//				this.UnifyBinaryEnforcedType(Node, BType.StringType);
+		//			}
+		//			this.TryUnifyBinaryType(Node, BType.FloatType);
+		//			this.CheckTypeAt(Node, BinaryOperatorNode._Left, Node.GetAstType(BinaryOperatorNode._Right));
+		//		}
+		//		this.ReturnBinaryTypeNode(Node, Node.GetAstType(BinaryOperatorNode._Left));
 	}
 
 	@Override public void VisitAndNode(BunAndNode Node) {

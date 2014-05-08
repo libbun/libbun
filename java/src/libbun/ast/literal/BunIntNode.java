@@ -27,13 +27,13 @@ package libbun.ast.literal;
 import libbun.ast.BNode;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.parser.common.BToken;
+import libbun.parser.common.BunToken;
 import libbun.type.BType;
 import libbun.util.BField;
 
 public final class BunIntNode extends LiteralNode {
 	@BField public long	IntValue;
-	public BunIntNode(BNode ParentNode, BToken Token, long Value) {
+	public BunIntNode(BNode ParentNode, BunToken Token, long Value) {
 		super(ParentNode, Token);
 		this.Type = BType.IntType;
 		this.IntValue = Value;

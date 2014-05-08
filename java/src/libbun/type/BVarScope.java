@@ -3,8 +3,8 @@ package libbun.type;
 import libbun.ast.BNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.parser.classic.LibBunTypeChecker;
-import libbun.parser.common.BToken;
 import libbun.parser.common.BunLogger;
+import libbun.parser.common.BunToken;
 import libbun.util.BArray;
 import libbun.util.BField;
 import libbun.util.Var;
@@ -38,10 +38,10 @@ public final class BVarScope {
 		}
 	}
 
-	public final BType NewVarType(BType VarType, String Name, BToken SourceToken) {
+	public final BType NewVarType(BType VarType, String Name, BunToken sourceToken) {
 		if(!(VarType instanceof BVarType) && VarType.IsVarType()) {
 			//System.out.println("@@ new var = " + Name);
-			VarType = new BVarType(this.VarList, Name, SourceToken);
+			VarType = new BVarType(this.VarList, Name, sourceToken);
 		}
 		return VarType;
 	}
