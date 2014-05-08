@@ -248,7 +248,7 @@ public abstract class Peg {
 			if(sourceContext.sliceQuotedTextUntil(source, ']', "")) {
 				source.endIndex = sourceContext.getPosition();
 				sourceContext.consume(1);
-				right = new PegCharacter(leftLabel, source, LibBunSystem._UnquoteString(source.GetText()));
+				right = new PegCharacter(leftLabel, source, source.GetText());
 				return Peg._ParsePostfix(leftLabel, sourceContext, right);
 			}
 		}
@@ -472,18 +472,18 @@ class PegCharacter extends PegAbstractSymbol {
 		//token = token.replaceAll("0-9", "0123456789");
 		//token = token.replaceAll("\\-", "-");
 		//this.charSet = token;
-		this.cclass = this.makeCharClass(token);
+		this.makeCharClass(token);
 	}
 
 	private boolean ishexnum(int c) {
-		return ('0' <= c && c <= '9') && ('a' <= c && c <= 'f') && ('A' <= c && c <= 'F');
+		return ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F');
 	}
 
 	private int cnext(TokenReader reader) {
 		int c = reader.get();
 		reader.consume();
 		if (c > 0) {
-			if ('\\' == c && reader.hasNext()) {
+			if (c == '\\' && reader.hasNext()) {
 				c = reader.get();
 				reader.consume();
 				switch (c) {
@@ -497,19 +497,20 @@ class PegCharacter extends PegAbstractSymbol {
 				case 'v':  c= '\013'; break; /* vt */
 				case 'u': /* unicode character */
 				case 'U': /* \U0010 */
-					if (this.ishexnum(c)) {
-						c -= '0';
-						if (this.ishexnum(reader.get())) {
+					if (this.ishexnum(reader.get())) {
+						c = reader.get() - '0';
+						reader.consume();
+						if (reader.hasNext() && this.ishexnum(reader.get())) {
+							c = (c * 16) + reader.get() - '0';
 							reader.consume();
-							c = (char) ((c * 16) + reader.get() - '0');
 						}
-						if (this.ishexnum(reader.get())) {
+						if (reader.hasNext() && this.ishexnum(reader.get())) {
+							c = (c * 16) + reader.get() - '0';
 							reader.consume();
-							c = (char) ((c * 16) + reader.get() - '0');
 						}
-						if (this.ishexnum(reader.get())) {
+						if (reader.hasNext() && this.ishexnum(reader.get())) {
+							c = (c * 16) + reader.get() - '0';
 							reader.consume();
-							c = (char) ((c * 16) + reader.get() - '0');
 						}
 					}
 					else {} /* case "\]", "\\" */
@@ -526,7 +527,9 @@ class PegCharacter extends PegAbstractSymbol {
 		int c;
 		int prev = -1;
 		boolean flip = false;
-		if(reader.get() == '^') { // convert [^0] to "!'0' ."
+		this.charSet = "";
+		this.cclass = bits;
+		if(reader.hasNext() && reader.get() == '^') { // convert [^0] to "!'0' ."
 			reader.consume();
 			flip = true;
 		}
