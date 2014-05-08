@@ -258,14 +258,19 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 			this.Source.Append(this.NameClass(Type));
 		}
 		else{
-			this.Source.Append(this.GetNativeTypeName(Type));
+			String name = this.GetNativeTypeName(Type);
+			if(name.equals("return")){
+				this.Source.Append("void");
+			}else{
+				this.Source.Append(name);
+			}
 		}
 	}
 
 
 	@BField private final BunMap<String> FuncNameMap = new BunMap<String>(null);
 
-	String AppendFuncTypeClass(BFuncType FuncType) {
+	void AppendFuncTypeClass(BFuncType FuncType) {
 		@Var String ClassName = this.FuncNameMap.GetOrNull(FuncType.GetUniqueName());
 		if(ClassName == null){
 			@Var LibBunSourceBuilder MainBuilder = this.Source;
@@ -294,7 +299,7 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 			this.Source = MainBuilder;
 			this.FuncNameMap.put(FuncType.GetUniqueName(), ClassName);
 		}
-		return ClassName;
+		this.Source.Append(ClassName);
 	}
 
 	@Override public void VisitFunctionNode(BunFunctionNode Node) {
@@ -690,8 +695,9 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 
 	@Override
 	public void VisitAssignNode(AssignNode Node) {
-		// TODO Auto-generated method stub
-
+		this.GenerateExpression(Node.LeftNode());
+		this.Source.Append(" = ");
+		this.GenerateExpression(Node.RightNode());
 	}
 
 
