@@ -383,8 +383,8 @@ public abstract class LibBunGenerator extends BunVisitor {
 		@Var BunBlockNode TopBlockNode = new BunBlockNode(null, this.RootGamma);
 		@Var BTokenContext TokenContext = new BTokenContext(this.RootParser, this, FileName, LineNumber, ScriptText);
 		TokenContext.SkipEmptyStatement();
+		TokenContext.SetParseFlag(BTokenContext._AllowSkipIndent);
 		while(TokenContext.HasNext()) {
-			TokenContext.SetParseFlag(BTokenContext._NotAllowSkipIndent);
 			@Var BNode StmtNode = TokenContext.ParsePattern(TopBlockNode, "$Statement$", BTokenContext._Required);
 			if(StmtNode.IsErrorNode()) {
 				@Var boolean SkipLine = false;
