@@ -2,8 +2,8 @@ package libbun.encode.jvm;
 
 import libbun.ast.BNode;
 import libbun.ast.expression.GetNameNode;
-import libbun.parser.classic.BToken;
 import libbun.parser.classic.BTokenContext;
+import libbun.parser.common.BToken;
 import libbun.util.Var;
 import libbun.util.BMatchFunction;
 

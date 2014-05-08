@@ -1,5 +1,8 @@
 package libbun.parser.classic;
 
+import libbun.parser.common.BToken;
+import libbun.parser.common.BunLogger;
+import libbun.parser.common.BunSource;
 import libbun.util.BArray;
 import libbun.util.BField;
 import libbun.util.BTokenFunction;
@@ -7,13 +10,13 @@ import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
 public final class BSourceContext /*extends LibBunSource*/ {
-	@BField public final ParserSource Source;
+	@BField public final BunSource Source;
 	@BField final LibBunParser Parser;
 	@BField final BArray<BToken>  ParsedTokenList;
 	@BField int SourcePosition = 0;
 	@BField final int EndPosition;
 
-	public BSourceContext(ParserSource Source, int StartIndex, int EndIndex, BTokenContext TokenContext) {
+	public BSourceContext(BunSource Source, int StartIndex, int EndIndex, BTokenContext TokenContext) {
 		this.Source = Source;
 		this.SourcePosition = StartIndex;
 		this.EndPosition = EndIndex;
@@ -34,12 +37,12 @@ public final class BSourceContext /*extends LibBunSource*/ {
 	}
 
 	public final char GetCurrentChar() {
-		return LibBunSystem._GetChar(this.Source.SourceText, this.SourcePosition);
+		return LibBunSystem._GetChar(this.Source.sourceText, this.SourcePosition);
 	}
 
 	public final char GetCharAtFromCurrentPosition(int n) {
 		if(this.SourcePosition+n < this.EndPosition) {
-			return this.Source.GetCharAt(this.SourcePosition+n);
+			return this.Source.charAt(this.SourcePosition+n);
 		}
 		return '\0';
 	}
@@ -78,7 +81,7 @@ public final class BSourceContext /*extends LibBunSource*/ {
 			@Var LibBunSyntax Pattern = this.Parser.GetSyntaxPattern(PatternName);
 			if(Pattern == null) {
 				@Var BToken Token = new BToken(this.Source, StartIndex, EndIndex);
-				LibBunLogger._LogInfo(Token, "unregistered token pattern: " + PatternName);
+				BunLogger._LogInfo(Token, "unregistered token pattern: " + PatternName);
 				this.ParsedTokenList.add(Token);
 			}
 			else {
@@ -90,7 +93,7 @@ public final class BSourceContext /*extends LibBunSource*/ {
 
 	public final boolean IsDefinedSyntax(int StartIndex, int EndIndex) {
 		if(EndIndex < this.EndPosition) {
-			@Var String Token = this.Source.SourceText.substring(StartIndex, EndIndex);
+			@Var String Token = this.Source.sourceText.substring(StartIndex, EndIndex);
 			@Var LibBunSyntax Pattern = this.Parser.GetRightSyntaxPattern(Token);
 			if(Pattern != null) {
 				return true;
@@ -156,7 +159,7 @@ public final class BSourceContext /*extends LibBunSource*/ {
 
 
 	public final void LogWarning(int Position, String Message) {
-		this.Source.Logger.Report(this.Source.FormatErrorMarker("warning", Position, Message));
+		this.Source.logger.log(this.Source.FormatErrorMarker("warning", Position, Message));
 	}
 
 }

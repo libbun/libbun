@@ -1,0 +1,21 @@
+; see http://json.org/ and ECMA-262 Ed.5
+
+JSON ← S? ( Object / Array / String / True / False / Null / Number ) S?
+
+Object <- {"{" ( $String ":" $JSON ( "," $String ":" $JSON )* / S? ) "}" }
+Array  <- {"[" ( $JSON ( "," $JSON )* / S? ) "]"
+String <- S? ["] ( [^ " \ U+0000-U+001F ] / Escape )* ["] S?
+Escape <- [\] ( [ " / \ b f n r t ] / UnicodeEscape )
+UnicodeEscape <- "u" [0-9A-Fa-f] [0-9A-Fa-f] [0-9A-Fa-f] [0-9A-Fa-f]
+
+True   <- {'true'}
+False  <- {'false'}
+Null   <- {'null'}
+Number <- {'-'? IntegralPart FractionalPart? ExponentPart?}
+
+IntegralPart <- "0" / [1-9] [0-9]*
+FractionalPart <- "." [0-9]+
+ExponentPart <- ( "e" / "E" ) ( "+" / "-" )? [0-9]+
+
+S <- [ \t\n\r]+
+

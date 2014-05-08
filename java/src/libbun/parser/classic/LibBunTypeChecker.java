@@ -39,6 +39,8 @@ import libbun.ast.expression.FuncCallNode;
 import libbun.ast.literal.BunAsmNode;
 import libbun.ast.unary.BunCastNode;
 import libbun.encode.LibBunGenerator;
+import libbun.parser.common.BToken;
+import libbun.parser.common.BunLogger;
 import libbun.type.BFormFunc;
 import libbun.type.BFunc;
 import libbun.type.BFuncType;
@@ -57,7 +59,7 @@ public abstract class LibBunTypeChecker extends BunVisitor {
 	@BField private BNode      ReturnedNode;
 
 	@BField public LibBunGenerator  Generator;
-	@BField public LibBunLogger     Logger;
+	@BField public BunLogger     Logger;
 	@BField public BVarScope   VarScope;
 	@BField public boolean     IsSupportNullable = false;
 	@BField public boolean     IsSupportMutable  = false;

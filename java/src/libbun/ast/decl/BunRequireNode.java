@@ -1,9 +1,9 @@
 package libbun.ast.decl;
 
 import libbun.ast.BNode;
-import libbun.parser.classic.BToken;
 import libbun.parser.classic.LibBunGamma;
-import libbun.parser.classic.LibBunLogger;
+import libbun.parser.common.BToken;
+import libbun.parser.common.BunLogger;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
@@ -21,7 +21,7 @@ public class BunRequireNode extends TopLevelNode {
 		@Var String Path = SourceToken.GetTextAsName();
 		if(Path.startsWith("syntax::")) {
 			if(!LibBunSystem._LoadGrammar(Gamma, Path)) {
-				LibBunLogger._LogErrorExit(SourceToken, "unknown syntax: " + Path.substring(8));
+				BunLogger._LogErrorExit(SourceToken, "unknown syntax: " + Path.substring(8));
 			}
 		}
 		else {

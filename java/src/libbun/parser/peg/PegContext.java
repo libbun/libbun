@@ -16,7 +16,6 @@ public final class PegContext  {
 
 	public final BArray<Log> logStack = new BArray<Log>(new Log[64]);
 	int stackTop = 0;
-	PegToken debugToken ;
 	int backtrackCount = 0;
 	int backtrackSize = 0;
 
@@ -25,7 +24,6 @@ public final class PegContext  {
 		this.source = Source;
 		this.sourcePosition = StartIndex;
 		this.endPosition = EndIndex;
-		this.debugToken = this.newToken(StartIndex, EndIndex);
 	}
 
 	PegContext(PegParser Parser, String source) {
@@ -113,6 +111,15 @@ public final class PegContext  {
 		}
 		return false;
 	}
+
+	public boolean checkSymbolLetter(int plus) {
+		char ch = this.getChar(plus);
+		if(this.isSymbolLetter(ch)) {
+			return true;
+		}
+		return false;
+	}
+
 
 	public void skipIndent(int indentSize) {
 		int pos = this.sourcePosition;
@@ -403,7 +410,7 @@ public final class PegContext  {
 
 	public PegParsedNode newPegNode(Peg created, int startIndex, int endIndex) {
 		PegParsedNode node = new PegParsedNode(created, startIndex, endIndex);
-		node.debugSource = this.debugToken;
+		node.debugSource = this.source;
 		this.objectCount = this.objectCount + 1;
 		//System.out.println("pos="+this.sourcePosition+", by " + created);
 		return node;
@@ -417,7 +424,7 @@ public final class PegContext  {
 		}
 		else {
 			PegObject node = new PegFailureNode(created, this.sourcePosition, msg);
-			node.debugSource = this.debugToken;
+			node.debugSource = this.source;
 			this.errorCount = this.errorCount + 1;
 			return node;
 		}
@@ -437,7 +444,7 @@ public final class PegContext  {
 		return this.newErrorNode(created, "unexpected " + e.stringfy(), false);
 	}
 
-	public PegObject newFunctionErrorNode(Peg created, PegFunction f, boolean hasNextChoice) {
+	public PegObject newFunctionErrorNode(Peg created, SemanticFunction f, boolean hasNextChoice) {
 		if(hasNextChoice) {
 			return this.defaultFailureNode;
 		}

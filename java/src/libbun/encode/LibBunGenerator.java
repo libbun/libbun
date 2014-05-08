@@ -36,14 +36,14 @@ import libbun.ast.decl.TopLevelNode;
 import libbun.ast.error.ErrorNode;
 import libbun.ast.literal.BunNullNode;
 import libbun.ast.literal.DefaultValueNode;
-import libbun.parser.classic.BToken;
 import libbun.parser.classic.BTokenContext;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunGamma;
 import libbun.parser.classic.LibBunLangInfo;
-import libbun.parser.classic.LibBunLogger;
 import libbun.parser.classic.LibBunParser;
 import libbun.parser.classic.LibBunTypeChecker;
+import libbun.parser.common.BToken;
+import libbun.parser.common.BunLogger;
 import libbun.type.BClassType;
 import libbun.type.BFormFunc;
 import libbun.type.BFunc;
@@ -65,7 +65,7 @@ public abstract class LibBunGenerator extends BunVisitor {
 
 	@BField public final LibBunGamma      RootGamma;
 	@BField public LibBunParser           RootParser;
-	@BField public LibBunLogger           Logger;
+	@BField public BunLogger           Logger;
 	@BField public LibBunTypeChecker      TypeChecker;
 	@BField public LibBunLangInfo         LangInfo;
 	@BField protected String              TopLevelSymbol = null;
@@ -74,7 +74,7 @@ public abstract class LibBunGenerator extends BunVisitor {
 	protected LibBunGenerator(LibBunLangInfo LangInfo) {
 		this.RootGamma     = new LibBunGamma(this, null);
 		this.RootParser    = new LibBunParser(null);
-		this.Logger        = new LibBunLogger();
+		this.Logger        = new BunLogger();
 		this.LangInfo      = LangInfo;
 		this.TypeChecker   = null;
 	}
@@ -219,13 +219,13 @@ public abstract class LibBunGenerator extends BunVisitor {
 		@Var BFunc Func = this.GetDefinedFunc(FuncName, FuncType);
 		if(Func != null) {
 			if(!FuncType.Equals(Func.GetFuncType())) {
-				LibBunLogger._LogError(Node.SourceToken, "function has been defined diffrently: " + Func.GetFuncType());
+				BunLogger._LogError(Node.SourceToken, "function has been defined diffrently: " + Func.GetFuncType());
 				return null;
 			}
 			if(Func instanceof BPrototype) {
 				return (BPrototype)Func;
 			}
-			LibBunLogger._LogError(Node.SourceToken, "function has been defined as macro" + Func);
+			BunLogger._LogError(Node.SourceToken, "function has been defined as macro" + Func);
 			return null;
 		}
 		@Var BPrototype	Proto= new BPrototype(0, FuncName, FuncType, Node.SourceToken);
@@ -421,7 +421,7 @@ public abstract class LibBunGenerator extends BunVisitor {
 	public final boolean LoadFile(String FileName, @Nullable BToken SourceToken) {
 		@Var String ScriptText = LibBunSystem._LoadTextFile(FileName);
 		if(ScriptText == null) {
-			LibBunLogger._LogErrorExit(SourceToken, "file not found: " + FileName);
+			BunLogger._LogErrorExit(SourceToken, "file not found: " + FileName);
 			return false;
 		}
 		if(!this.LoadScript(ScriptText, FileName, 1)) {
@@ -438,7 +438,7 @@ public abstract class LibBunGenerator extends BunVisitor {
 			@Var String Path = this.LangInfo.GetLibPath(LibName);
 			@Var String Script = LibBunSystem._LoadTextFile(Path);
 			if(Script == null) {
-				LibBunLogger._LogErrorExit(SourceToken, "library not found: " + LibName + " as " + Path);
+				BunLogger._LogErrorExit(SourceToken, "library not found: " + LibName + " as " + Path);
 				return false;
 			}
 			@Var boolean Result = this.LoadScript(Script, Path, 1);

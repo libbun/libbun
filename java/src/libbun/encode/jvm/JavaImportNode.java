@@ -3,7 +3,7 @@ package libbun.encode.jvm;
 import libbun.ast.BNode;
 import libbun.ast.decl.TopLevelNode;
 import libbun.parser.classic.LibBunGamma;
-import libbun.parser.classic.LibBunLogger;
+import libbun.parser.common.BunLogger;
 import libbun.type.BType;
 import libbun.util.Var;
 
@@ -39,7 +39,7 @@ public class JavaImportNode extends TopLevelNode {
 
 			Gamma.SetTypeName(Alias, Type, this.SourceToken);
 		} catch (ClassNotFoundException e) {
-			LibBunLogger._LogError(this.GetAstToken(JavaImportNode._Path), "unfound resource: "+ ResourcePath);
+			BunLogger._LogError(this.GetAstToken(JavaImportNode._Path), "unfound resource: "+ ResourcePath);
 		}
 	}
 }

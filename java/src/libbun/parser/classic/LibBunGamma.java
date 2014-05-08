@@ -28,6 +28,7 @@ import libbun.ast.BNode;
 import libbun.ast.BunBlockNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.encode.LibBunGenerator;
+import libbun.parser.common.BToken;
 import libbun.type.BClassType;
 import libbun.type.BType;
 import libbun.util.BField;

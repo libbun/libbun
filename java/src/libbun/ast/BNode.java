@@ -31,11 +31,11 @@ import libbun.ast.expression.GetNameNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.statement.BunIfNode;
 import libbun.encode.LibBunGenerator;
-import libbun.parser.classic.BToken;
 import libbun.parser.classic.BTokenContext;
 import libbun.parser.classic.LibBunGamma;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.parser.classic.ParserSource;
+import libbun.parser.common.BToken;
+import libbun.parser.common.BunSource;
 import libbun.type.BFuncType;
 import libbun.type.BType;
 import libbun.util.BField;
@@ -192,6 +192,12 @@ public abstract class BNode {
 		}
 	}
 
+	public final void expandAstToSize(int newSize) {
+		if(newSize > this.GetAstSize()) {
+			this.resizeAst(newSize);
+		}
+	}
+
 	public final void Append(BNode Node, boolean EnforcedParent) {
 		if(this.AST == null) {
 			this.AST = LibBunSystem._NewNodeArray(1);
@@ -324,7 +330,7 @@ public abstract class BNode {
 
 	public final BNode ParseExpression(String SourceText) {
 		LibBunGenerator Generator = this.GetGamma().Generator;
-		ParserSource Source = new ParserSource("(sugar)", 1, SourceText, Generator.Logger);
+		BunSource Source = new BunSource("(sugar)", 1, SourceText, Generator.Logger);
 		BTokenContext TokenContext = new BTokenContext(Generator.RootParser, Generator, Source, 0, SourceText.length());
 		return TokenContext.ParsePattern(this, "$Expression$", BTokenContext._Required);
 	}

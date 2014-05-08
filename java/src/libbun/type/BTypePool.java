@@ -1,7 +1,7 @@
 package libbun.type;
 
-import libbun.parser.classic.BToken;
 import libbun.parser.classic.LibBunTypeChecker;
+import libbun.parser.common.BToken;
 import libbun.util.Nullable;
 import libbun.util.Var;
 import libbun.util.BArray;

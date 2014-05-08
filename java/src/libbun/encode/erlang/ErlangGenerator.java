@@ -26,7 +26,7 @@ import libbun.ast.unary.BunCastNode;
 import libbun.ast.unary.BunNotNode;
 import libbun.encode.LibBunSourceBuilder;
 import libbun.encode.obsolete.OldSourceGenerator;
-import libbun.parser.classic.BToken;
+import libbun.parser.common.BToken;
 import libbun.type.BClassType;
 import libbun.type.BType;
 import libbun.util.BField;

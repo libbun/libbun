@@ -57,7 +57,7 @@ import libbun.ast.unary.BunPlusNode;
 import libbun.ast.unary.UnaryOperatorNode;
 import libbun.encode.LibBunSourceGenerator;
 import libbun.parser.classic.LibBunLangInfo;
-import libbun.parser.classic.LibBunLogger;
+import libbun.parser.common.BunLogger;
 import libbun.type.BType;
 import libbun.util.BField;
 import libbun.util.Var;
@@ -428,7 +428,7 @@ public class RGenerator extends LibBunSourceGenerator {
 	@Override public void VisitGetNameNode(GetNameNode Node) {
 		@Var BNode ResolvedNode = Node.ResolvedNode;
 		if(ResolvedNode == null && !this.LangInfo.AllowUndefinedSymbol) {
-			LibBunLogger._LogError(Node.SourceToken, "undefined symbol: " + Node.GivenName);
+			BunLogger._LogError(Node.SourceToken, "undefined symbol: " + Node.GivenName);
 		}
 		this.Source.Append(Node.GetUniqueName(this));
 	}

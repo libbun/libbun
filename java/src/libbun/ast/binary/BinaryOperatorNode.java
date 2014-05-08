@@ -140,4 +140,5 @@ public abstract class BinaryOperatorNode extends BNode {
 		return !(this.GetAstType(BinaryOperatorNode._Left).Equals(this.GetAstType(BinaryOperatorNode._Right)));
 	}
 
+
 }

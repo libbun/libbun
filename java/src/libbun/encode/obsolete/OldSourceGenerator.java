@@ -88,7 +88,7 @@ import libbun.encode.LibBunSourceGenerator;
 import libbun.lang.bun.BunTypeSafer;
 import libbun.parser.classic.LibBunGamma;
 import libbun.parser.classic.LibBunLangInfo;
-import libbun.parser.classic.LibBunLogger;
+import libbun.parser.common.BunLogger;
 import libbun.type.BType;
 import libbun.util.BField;
 import libbun.util.LibBunSystem;
@@ -281,7 +281,7 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 	@Override public void VisitGetNameNode(GetNameNode Node) {
 		@Var BNode ResolvedNode = Node.ResolvedNode;
 		if(ResolvedNode == null && !this.LangInfo.AllowUndefinedSymbol) {
-			LibBunLogger._LogError(Node.SourceToken, "undefined symbol: " + Node.GivenName);
+			BunLogger._LogError(Node.SourceToken, "undefined symbol: " + Node.GivenName);
 		}
 		this.Source.Append(this.NameLocalVariable(Node.GetGamma(), Node.GetUniqueName(this)));
 	}
@@ -565,7 +565,7 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitErrorNode(ErrorNode Node) {
-		@Var String Message = LibBunLogger._LogError(Node.SourceToken, Node.ErrorMessage);
+		@Var String Message = BunLogger._LogError(Node.SourceToken, Node.ErrorMessage);
 		this.Source.Append(this.ErrorFunc, "(");
 		this.Source.Append(LibBunSystem._QuoteString(Message));
 		this.Source.Append(")");

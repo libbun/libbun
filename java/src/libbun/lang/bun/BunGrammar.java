@@ -88,11 +88,11 @@ import libbun.ast.unary.BunPlusNode;
 import libbun.ast.unary.UnaryOperatorNode;
 import libbun.parser.classic.BPatternToken;
 import libbun.parser.classic.BSourceContext;
-import libbun.parser.classic.BToken;
 import libbun.parser.classic.BTokenContext;
 import libbun.parser.classic.LibBunGamma;
 import libbun.parser.classic.LibBunSyntax;
 import libbun.parser.classic.LibBunTypeChecker;
+import libbun.parser.common.BToken;
 import libbun.type.BClassType;
 import libbun.type.BFuncType;
 import libbun.type.BGenericType;
@@ -1342,7 +1342,7 @@ public class BunGrammar {
 
 	public final static LibBunSyntax _GetRightPattern(LibBunGamma Gamma, BTokenContext TokenContext) {
 		@Var BToken Token = TokenContext.GetToken();
-		if(Token != BToken._NullToken) {
+		if(!Token.IsNull()) {
 			@Var LibBunSyntax Pattern = Gamma.GetRightSyntaxPattern(Token.GetText());
 			return Pattern;
 		}

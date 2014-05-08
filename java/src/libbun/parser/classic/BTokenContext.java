@@ -28,6 +28,8 @@ import libbun.ast.BNode;
 import libbun.ast.EmptyNode;
 import libbun.ast.error.ErrorNode;
 import libbun.encode.LibBunGenerator;
+import libbun.parser.common.BToken;
+import libbun.parser.common.BunSource;
 import libbun.util.BArray;
 import libbun.util.BField;
 import libbun.util.BTokenFunction;
@@ -56,10 +58,10 @@ public class BTokenContext {
 	public BTokenContext(LibBunParser Parser, LibBunGenerator Generator, String FileName, int LineNumber, String SourceText) {
 		this.Generator = Generator;
 		this.Parser = Parser;
-		this.SourceContext = new BSourceContext(new ParserSource(FileName, LineNumber, SourceText, Generator.Logger), 0, SourceText.length(), this);
+		this.SourceContext = new BSourceContext(new BunSource(FileName, LineNumber, SourceText, Generator.Logger), 0, SourceText.length(), this);
 	}
 
-	public BTokenContext(LibBunParser Parser, LibBunGenerator Generator, ParserSource Source, int StartIndex, int EndIndex) {
+	public BTokenContext(LibBunParser Parser, LibBunGenerator Generator, BunSource Source, int StartIndex, int EndIndex) {
 		this.Generator = Generator;
 		this.Parser = Parser;
 		this.SourceContext = new BSourceContext(Source, StartIndex, EndIndex, this);
@@ -132,7 +134,7 @@ public class BTokenContext {
 				return Token;
 			}
 		}
-		return BToken._NullToken;
+		return this.SourceContext.Source.newToken(this.CurrentPosition, this.CurrentPosition);
 	}
 
 	public BToken GetToken() {
@@ -140,7 +142,7 @@ public class BTokenContext {
 	}
 
 	public boolean HasNext() {
-		return (this.GetToken() != BToken._NullToken);
+		return (!this.GetToken().IsNull());
 	}
 
 	public void SkipIndent() {

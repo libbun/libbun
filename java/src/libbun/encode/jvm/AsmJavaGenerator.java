@@ -127,7 +127,7 @@ import libbun.parser.classic.BSourceContext;
 import libbun.parser.classic.BTokenContext;
 import libbun.parser.classic.LibBunGamma;
 import libbun.parser.classic.LibBunLangInfo;
-import libbun.parser.classic.LibBunLogger;
+import libbun.parser.common.BunLogger;
 import libbun.type.BClassField;
 import libbun.type.BClassType;
 import libbun.type.BFunc;
@@ -1278,7 +1278,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 	}
 
 	@Override public void VisitErrorNode(ErrorNode Node) {
-		@Var String Message = LibBunLogger._LogError(Node.SourceToken, Node.ErrorMessage);
+		@Var String Message = BunLogger._LogError(Node.SourceToken, Node.ErrorMessage);
 		this.AsmBuilder.PushConst(Message);
 		@Var Method sMethod = JavaMethodTable.GetStaticMethod("ThrowError");
 		this.AsmBuilder.ApplyStaticMethod(Node, sMethod);

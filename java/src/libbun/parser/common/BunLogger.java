@@ -22,35 +22,25 @@
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // **************************************************************************
 
-package libbun.parser.classic;
+package libbun.parser.common;
 
 import libbun.util.BArray;
 import libbun.util.BField;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
-public final class LibBunLogger {
+public final class BunLogger {
 
-	@BField public BArray<String>  ReportedErrorList = new BArray<String>(new String[10]);
-	//	@Field public ZenMap<ZCounter> StatMap;
+	public BArray<String>  ReportedErrorList = new BArray<String>(new String[10]);
 
-	//	public ZLogger() {
-	//		if(LibZen._GetEnv("ZENSTAT") != null) {
-	//			this.StatMap = new ZenMap<ZCounter>(null);
-	//		}
-	//		else {
-	//		this.StatMap = null;
-	//		}
-	//	}
-
-	final void Report(String Message) {
+	public final void log(String Message) {
 		this.ReportedErrorList.add(Message);
 	}
 
 	public final static void _LogErrorExit(BToken Token, String Message) {
 		if(Token != null && Token.Source != null) {
 			Message = Token.Source.FormatErrorMarker("error", Token.StartIndex, Message);
-			Token.Source.Logger.Report(Message);
+			Token.Source.logger.log(Message);
 		}
 		else {
 			LibBunSystem._Exit(1, Message);
@@ -60,7 +50,7 @@ public final class LibBunLogger {
 	public final static String _LogError(BToken Token, String Message) {
 		if(Token != null && Token.Source != null) {
 			Message = Token.Source.FormatErrorMarker("error", Token.StartIndex, Message);
-			Token.Source.Logger.Report(Message);
+			Token.Source.logger.log(Message);
 			@Var int loc = Message.indexOf("\n");
 			if(loc > 0) {
 				Message = Message.substring(0, loc);
@@ -72,21 +62,21 @@ public final class LibBunLogger {
 	public final static void _LogWarning(BToken Token, String Message) {
 		if(Token != null) {
 			Message = Token.Source.FormatErrorMarker("warning", Token.StartIndex, Message);
-			Token.Source.Logger.Report(Message);
+			Token.Source.logger.log(Message);
 		}
 	}
 
 	public final static void _LogInfo(BToken Token, String Message) {
 		if(Token != null && Token.Source != null) {
 			Message = Token.Source.FormatErrorMarker("info", Token.StartIndex, Message);
-			Token.Source.Logger.Report(Message);
+			Token.Source.logger.log(Message);
 		}
 	}
 
 	public final static void _LogDebug(BToken Token, String Message) {
 		if(Token != null && Token.Source != null) {
 			Message = Token.Source.FormatErrorMarker("debug", Token.StartIndex, Message);
-			Token.Source.Logger.Report(Message);
+			Token.Source.logger.log(Message);
 		}
 	}
 
@@ -105,37 +95,5 @@ public final class LibBunLogger {
 		}
 	}
 
-	//	public final void Count(String EventName) {
-	//		if(this.StatMap != null) {
-	//			@Var ZCounter Counter = this.StatMap.GetOrNull(EventName);
-	//			if(Counter == null) {
-	//				Counter = new ZCounter();
-	//				this.StatMap.put(EventName, Counter);
-	//			}
-	//			else {
-	//				Counter.count = Counter.count + 1;
-	//			}
-	//		}
-	//	}
-	//
-	//	public final void CountCreation(Object CreatedObject) {
-	//		if(this.StatMap != null) {
-	//			@Var String EventName = "CreationOf" + LibZen.GetClassName(CreatedObject);
-	//			@Var ZCounter Counter = this.StatMap.GetOrNull(EventName);
-	//			if(Counter == null) {
-	//				Counter = new ZCounter();
-	//				this.StatMap.put(EventName, Counter);
-	//			}
-	//			else {
-	//				Counter.count = Counter.count + 1;
-	//			}
-	//		}
-	//	}
-
 }
 
-//class ZCounter {
-//	@Field public int count = 1;
-//	ZCounter() {
-//	}
-//}

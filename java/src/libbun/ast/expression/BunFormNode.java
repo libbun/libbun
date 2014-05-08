@@ -2,8 +2,8 @@ package libbun.ast.expression;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
-import libbun.parser.classic.BToken;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.BToken;
 import libbun.type.BFormFunc;
 import libbun.type.BFuncType;
 import libbun.util.BField;

@@ -40,6 +40,10 @@ public abstract class UnaryOperatorNode extends BNode {
 		return this.AST[UnaryOperatorNode._Recv ];
 	}
 
+	public final void setRecvNode(BNode node) {
+		this.SetNode(UnaryOperatorNode._Recv, node);
+	}
+
 	@Override public void Accept(LibBunVisitor Visitor) {
 		Visitor.VisitUnaryNode(this);
 	}

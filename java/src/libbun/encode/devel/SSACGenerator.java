@@ -44,7 +44,7 @@ import libbun.ast.literal.BunMapLiteralNode;
 import libbun.ast.statement.BunThrowNode;
 import libbun.ast.statement.BunTryNode;
 import libbun.encode.obsolete.OldSourceGenerator;
-import libbun.parser.classic.LibBunLogger;
+import libbun.parser.common.BunLogger;
 import libbun.parser.ssa.NodeLib;
 import libbun.parser.ssa.PHINode;
 import libbun.parser.ssa.SSAConverter;
@@ -81,7 +81,7 @@ public class SSACGenerator extends OldSourceGenerator {
 	@Override protected void GenerateExpression(BNode Node) {
 		if(Node.IsUntyped() && !Node.IsErrorNode() && !(Node instanceof BunFuncNameNode)) {
 			this.Source.Append("/*untyped*/" + this.NullLiteral);
-			LibBunLogger._LogError(Node.SourceToken, "untyped error: " + Node);
+			BunLogger._LogError(Node.SourceToken, "untyped error: " + Node);
 		}
 		else {
 			//			if(ContextType != null && Node.Type != ContextType) {
@@ -95,7 +95,7 @@ public class SSACGenerator extends OldSourceGenerator {
 
 	@Override public void VisitGetNameNode(GetNameNode Node) {
 		if(Node.ResolvedNode == null && !this.LangInfo.AllowUndefinedSymbol) {
-			LibBunLogger._LogError(Node.SourceToken, "undefined symbol: " + Node.GetUniqueName(this));
+			BunLogger._LogError(Node.SourceToken, "undefined symbol: " + Node.GetUniqueName(this));
 		}
 		this.Source.Append(Node.GetUniqueName(this) + Node.VarIndex);
 	}

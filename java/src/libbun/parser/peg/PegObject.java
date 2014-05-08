@@ -1,13 +1,18 @@
 package libbun.parser.peg;
 
+import libbun.ast.BNode;
+import libbun.ast.binary.BinaryOperatorNode;
 import libbun.encode.LibBunSourceBuilder;
 import libbun.util.BArray;
+import libbun.util.LibBunSystem;
 
 public abstract class PegObject {
-	PegToken debugSource;
+	PegSource debugSource;
 	Peg createdPeg;
 	int startIndex;
 	int endIndex;
+	BArray<PegObject> elementList;
+	SemanticFunction semanticAction;
 
 	PegObject(Peg createdPeg, int startIndex, int endIndex) {
 		this.createdPeg = createdPeg;
@@ -28,10 +33,54 @@ public abstract class PegObject {
 		return sb.toString();
 	}
 
+	void setSemanticAction(SemanticFunction f) {
+		this.semanticAction = f;
+	}
+
+	public final BNode eval(BNode parentNode) {
+		if(this.semanticAction != null) {
+			return this.semanticAction.Invoke(parentNode, this);
+		}
+		LibBunSystem._Exit(1, "undefined semantic action: " + this);
+		return null;
+	}
+
+	public final PegToken getToken() {
+		return this.debugSource.newToken(this.startIndex, this.endIndex);
+	}
+
+	int size() {
+		if(this.elementList != null) {
+			return this.elementList.size();
+		}
+		return 0;
+	}
+
+	public final BNode get(BNode parentNode, int index) {
+		PegObject po = this.elementList.ArrayValues[index];
+		return po.eval(parentNode);
+	}
+
+	public BNode copySub(BNode node) {
+		node.expandAstToSize(this.size());
+		for(int i = 0; i < this.size(); i++) {
+			node.AST[i] = this.get(node, i);
+			if(node.AST[i] != null) {
+				node.AST[i].ParentNode = node;
+			}
+		}
+		return node;
+	}
+
+	public BNode copySubAsBinary(BinaryOperatorNode node) {
+		node.expandAstToSize(2);
+		node.AST[0] = this.get(node, 0);
+		node.SetRightBinaryNode(this.get(node, 1));
+		return node;
+	}
 }
 
 class PegParsedNode extends PegObject {
-	BArray<PegObject> elementList;
 
 	PegParsedNode(Peg createdPeg, int startIndex, int endIndex) {
 		super(createdPeg, startIndex, endIndex);
@@ -96,7 +145,7 @@ class PegFailureNode extends PegObject {
 
 	@Override void stringfy(PegToken source, LibBunSourceBuilder sb) {
 		if(this.debugSource != null) {
-			sb.AppendNewLine(this.debugSource.Source.formatErrorLineMarker("error", this.startIndex, this.errorMessage + "   ## by " + this.createdPeg));
+			sb.AppendNewLine(this.debugSource.formatErrorLineMarker("error", this.startIndex, this.errorMessage + "   ## by " + this.createdPeg));
 		}
 		else {
 			sb.AppendNewLine("Nothing");

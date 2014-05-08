@@ -2,6 +2,7 @@ package libbun.parser.peg;
 
 import java.io.IOException;
 
+import libbun.ast.BNode;
 import libbun.parser.classic.LibBunConst;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
@@ -9,25 +10,9 @@ import libbun.util.Var;
 public class PegDebugger {
 	public final static void test(String FileName) {
 		PegParser p = new PegParser(null, null);
-		//		p.setPegRule("number", new PegFunctionExpr(new NumberLiteral()));
-		//		p.setPegRule("const", new PegFunctionExpr(new ConstLiteral()));
-		//		p.setPegRule("string", new PegFunctionExpr(new StringLiteral()));
-		//		p.setPegRule("variable", new PegFunctionExpr(new Variable()));
+		BunGran.LoadGrammar(p);
 		p.loadPegFile(FileName);
-		//		p.setNode("+",  new BunPlusNode(null));
-		//		p.setNode("Expr:+", new BunAddNode(null));
-		//		p.setNode("Expr:*", new BunMulNode(null));
-		//		p.setNode("null",  new PegNullNode(null));
-		//		p.setNode("true",  new PegTrueNode(null));
-		//		p.setNode("false", new PegFalseNode(null));
-		//		p.setNode("0-9", new PegNumberNode(null));
 		PerformShell(p);
-		//		ParserContext source = new ParserContext(p, "+123");
-		//		BNode node = source.parseBunNode(new BunBlockNode(null, null), "Stmt");
-		//		System.out.println("parsed node: " + node);
-		//		source = new ParserContext(p, "1.2+123");
-		//		node = source.parseBunNode(new BunBlockNode(null, null), "Stmt");
-		//		System.out.println("parsed node: " + node);
 	}
 
 	public final static void PerformShell(PegParser p) {
@@ -40,13 +25,16 @@ public class PegDebugger {
 			try {
 				PegContext source = new PegContext(p, new PegSource("(stdin)", linenum, Line), 0, Line.length());
 				PegToken token = source.newToken(0, Line.length());
-				PegObject node = source.parsePegNode(new PegParsedNode(null, 0, 0), "Stmt", false/*hasNextChoice*/);
-				System.out.println("parsed: " + node.toString(token));
+				PegObject po = source.parsePegNode(new PegParsedNode(null, 0, 0), "Stmt", false/*hasNextChoice*/);
+				System.out.println("parsed: " + po.toString(token));
 				if(source.hasChar()) {
 					System.out.println("** uncosumed: '" + source + "' **");
 				}
 				System.out.println("hit: " + source.memoHit + ", miss: " + source.memoMiss + ", object=" + source.objectCount + ", error=" + source.errorCount);
 				System.out.println("backtrackCount: " + source.backtrackCount + ", backtrackLength: " + source.backtrackSize);
+
+				BNode bnode = po.eval(null);
+				System.out.println("bun: " + bnode);
 				linenum = linenum + 1;
 			}
 			catch (Exception e) {

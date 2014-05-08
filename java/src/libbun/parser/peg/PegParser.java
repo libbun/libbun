@@ -1,12 +1,12 @@
 package libbun.parser.peg;
 
-import libbun.parser.classic.LibBunLogger;
+import libbun.parser.common.BunLogger;
 import libbun.util.BArray;
 import libbun.util.BunMap;
 import libbun.util.LibBunSystem;
 
 public final class PegParser {
-	public LibBunLogger logger;
+	public BunLogger logger;
 	PegParser stackedParser;
 	private int priorityCount = 1;
 	BunMap<Peg>  pegMap;
@@ -18,7 +18,9 @@ public final class PegParser {
 	boolean enableFirstCharChache = false;
 	boolean enableMemo = false;
 
-	public PegParser(LibBunLogger logger, PegParser StackedParser) {
+	BunMap<SemanticFunction> actionMap;
+
+	public PegParser(BunLogger logger, PegParser StackedParser) {
 		this.logger = logger;
 		this.stackedParser = StackedParser;
 		this.Init();
@@ -26,7 +28,7 @@ public final class PegParser {
 
 	public void Init() {
 		this.pegMap = new BunMap<Peg>(null);
-		//		this.nodeMap = new BunMap<BNode>(null);
+		this.actionMap = new BunMap<SemanticFunction>(null);
 	}
 
 	public PegParser Pop() {
@@ -217,6 +219,14 @@ public final class PegParser {
 
 	public final Peg getRightPattern(String name, String firstChar) {
 		return this.getPattern(this.nameRightJoinName(name), firstChar);
+	}
+
+
+	public final void setSemanticAction(String name, SemanticFunction f) {
+		this.actionMap.put(name, f);
+	}
+	public final SemanticFunction getSemanticAction(String name) {
+		return this.actionMap.GetValue(name, null);
 	}
 
 }

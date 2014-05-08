@@ -1,24 +1,24 @@
-package libbun.parser.classic;
+package libbun.parser.common;
 
-import libbun.util.BField;
+import libbun.parser.classic.BIndentToken;
 import libbun.util.BIgnored;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
 public class BToken {
-	public final static BToken _NullToken = new BToken();
+	//	public final static BToken _NullToken = new BToken();
+	//
+	//	private BToken() {
+	//		this.Source = new BunSource();
+	//		this.StartIndex = 0;
+	//		this.EndIndex = 0;
+	//	}
 
-	private BToken() {
-		this.Source = new ParserSource();
-		this.StartIndex = 0;
-		this.EndIndex = 0;
-	}
+	public final BunSource Source;
+	public int  StartIndex;
+	public int  EndIndex;
 
-	@BField public final ParserSource Source;
-	@BField public int  StartIndex;
-	@BField public int  EndIndex;
-
-	public BToken(ParserSource Source, int StartIndex, int EndIndex) {
+	public BToken(BunSource Source, int StartIndex, int EndIndex) {
 		this.Source = Source;
 		this.StartIndex = StartIndex;
 		this.EndIndex = EndIndex;
@@ -33,7 +33,7 @@ public class BToken {
 	}
 
 	public final int indexOf(String s) {
-		int loc = this.Source.SourceText.indexOf(s, this.StartIndex);
+		int loc = this.Source.sourceText.indexOf(s, this.StartIndex);
 		if(loc != -1 && loc < this.EndIndex) {
 			return loc - this.StartIndex;
 		}
@@ -41,14 +41,14 @@ public class BToken {
 	}
 
 	public final String substring(int startIndex) {
-		return this.Source.SourceText.substring(startIndex + this.StartIndex, this.EndIndex);
+		return this.Source.sourceText.substring(startIndex + this.StartIndex, this.EndIndex);
 	}
 
 	public final String substring(int startIndex, int endIndex) {
 		startIndex = startIndex + this.StartIndex;
 		endIndex = endIndex + this.StartIndex;
 		if(endIndex <= this.EndIndex) {
-			return this.Source.SourceText.substring(startIndex, endIndex);
+			return this.Source.sourceText.substring(startIndex, endIndex);
 		}
 		return null;
 	}
@@ -73,23 +73,23 @@ public class BToken {
 
 
 	public final String GetFileName() {
-		return this.Source.FileName;
+		return this.Source.fileName;
 	}
 
 	public final int GetLineNumber() {
-		return this.Source.GetLineNumber(this.StartIndex);
+		return this.Source.getLineNumber(this.StartIndex);
 	}
 
 	public final char GetChar() {
 		if(this.Source != null) {
-			return LibBunSystem._GetChar(this.Source.SourceText, this.StartIndex);
+			return LibBunSystem._GetChar(this.Source.sourceText, this.StartIndex);
 		}
 		return '\0';
 	}
 
 	public final String GetText() {
 		if(this.Source != null) {
-			return this.Source.SourceText.substring(this.StartIndex, this.EndIndex);
+			return this.Source.sourceText.substring(this.StartIndex, this.EndIndex);
 		}
 		return "";
 	}
@@ -99,7 +99,7 @@ public class BToken {
 	}
 
 	@Override public final String toString() {
-		@Var char ch = this.Source.GetCharAt(this.StartIndex-1);
+		@Var char ch = this.Source.charAt(this.StartIndex-1);
 		if(ch == '\"') {
 			return "\"" + this.GetText() + "\"";
 		}
@@ -108,7 +108,7 @@ public class BToken {
 
 	@BIgnored public final boolean EqualsText(char ch) {
 		if(this.EndIndex - this.StartIndex == 1) {
-			if(LibBunSystem._GetChar(this.Source.SourceText, this.StartIndex) == ch) {
+			if(LibBunSystem._GetChar(this.Source.sourceText, this.StartIndex) == ch) {
 				return true;
 			}
 		}
@@ -117,7 +117,7 @@ public class BToken {
 
 	public final boolean EqualsText(String Text) {
 		if(Text.length() == this.EndIndex - this.StartIndex) {
-			@Var String s = this.Source.SourceText;
+			@Var String s = this.Source.sourceText;
 			@Var int i = 0;
 			while(i < Text.length()) {
 				if(LibBunSystem._GetChar(s, this.StartIndex+i) != LibBunSystem._GetChar(Text, i)) {
@@ -132,7 +132,7 @@ public class BToken {
 
 	public final boolean StartsWith(String Text) {
 		if(Text.length() <= this.EndIndex - this.StartIndex) {
-			@Var String s = this.Source.SourceText;
+			@Var String s = this.Source.sourceText;
 			@Var int i = 0;
 			while(i < Text.length()) {
 				if(LibBunSystem._GetChar(s, this.StartIndex+i) != LibBunSystem._GetChar(Text, i)) {
@@ -148,7 +148,7 @@ public class BToken {
 	public final boolean EndsWith(String Text) {
 		@Var int i = this.EndIndex - 1;
 		@Var int j = Text.length() - 1;
-		@Var String s = this.Source.SourceText;
+		@Var String s = this.Source.sourceText;
 		while(i >= this.StartIndex && j >= 0) {
 			if(LibBunSystem._GetChar(s, i) != LibBunSystem._GetChar(Text, j)) {
 				return false;
@@ -165,7 +165,7 @@ public class BToken {
 	}
 
 	public final boolean IsNextWhiteSpace() {
-		@Var char ch = this.Source.GetCharAt(this.EndIndex);
+		@Var char ch = this.Source.charAt(this.EndIndex);
 		if(ch == ' ' || ch == '\t' || ch == '\n') {
 			return true;
 		}
@@ -173,7 +173,7 @@ public class BToken {
 	}
 
 	public final boolean IsNameSymbol() {
-		@Var char ch = this.Source.GetCharAt(this.StartIndex);
+		@Var char ch = this.Source.charAt(this.StartIndex);
 		return LibBunSystem._IsSymbol(ch);
 	}
 

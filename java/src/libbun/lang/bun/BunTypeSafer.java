@@ -91,10 +91,10 @@ import libbun.ast.unary.BunPlusNode;
 import libbun.ast.unary.UnaryOperatorNode;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.classic.BNodeUtils;
-import libbun.parser.classic.BToken;
 import libbun.parser.classic.LibBunGamma;
-import libbun.parser.classic.LibBunLogger;
 import libbun.parser.classic.LibBunTypeChecker;
+import libbun.parser.common.BToken;
+import libbun.parser.common.BunLogger;
 import libbun.type.BClassType;
 import libbun.type.BFormFunc;
 import libbun.type.BFunc;
@@ -525,7 +525,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 	@Override public void VisitInstanceOfNode(BunInstanceOfNode Node) {
 		this.CheckTypeAt(Node, BinaryOperatorNode._Left, BType.VarType);
 		if(!(Node.TargetType() instanceof BClassType)) {
-			LibBunLogger._LogWarning(Node.GetAstToken(BunInstanceOfNode._TypeInfo), "instanceof takes a class type; the result is implementation-dependant.");
+			BunLogger._LogWarning(Node.GetAstToken(BunInstanceOfNode._TypeInfo), "instanceof takes a class type; the result is implementation-dependant.");
 		}
 		this.ReturnTypeNode(Node, BType.BooleanType);
 	}
@@ -748,7 +748,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 		this.VisitVarDeclNode(Node.GetBlockGamma(), Node.VarDeclNode());
 		this.VisitBlockNode(Node);
 		if(Node.GetListSize() == 0) {
-			LibBunLogger._LogWarning(Node.SourceToken, "unused variable: " + Node.VarDeclNode().GetGivenName());
+			BunLogger._LogWarning(Node.SourceToken, "unused variable: " + Node.VarDeclNode().GetGivenName());
 		}
 	}
 
@@ -771,7 +771,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 			Node.AST[BunReturnNode._Expr] = null;
 		}
 		else if(!Node.HasReturnExpr() && !ReturnType.IsVarType() && !ReturnType.IsVoidType()) {
-			LibBunLogger._LogWarning(Node.SourceToken, "returning default value of " + ReturnType);
+			BunLogger._LogWarning(Node.SourceToken, "returning default value of " + ReturnType);
 			Node.SetNode(BunReturnNode._Expr, new DefaultValueNode(Node));
 		}
 		if(Node.HasReturnExpr()) {
@@ -869,7 +869,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 				if(Func != null) {
 					Func.Defined();
 					if(Func.DefinedCount > 1) {
-						LibBunLogger._LogError(FunctionNode.SourceToken, "redefinition of function: " + Func);
+						BunLogger._LogError(FunctionNode.SourceToken, "redefinition of function: " + Func);
 					}
 				}
 			}
@@ -975,14 +975,14 @@ public class BunTypeSafer extends LibBunTypeChecker {
 					FieldNode.SetDeclType(FieldNode.InitValueNode().Type);
 				}
 				if(FieldNode.DeclType().IsVarType()) {
-					LibBunLogger._LogError(FieldNode.SourceToken, "type of " + FieldNode.GetGivenName() + " is unspecific");
+					BunLogger._LogError(FieldNode.SourceToken, "type of " + FieldNode.GetGivenName() + " is unspecific");
 				}
 				else {
 					Node.ClassType.AppendField(FieldNode.DeclType(), FieldNode.GetGivenName(), FieldNode.SourceToken);
 				}
 			}
 			else {
-				LibBunLogger._LogError(FieldNode.SourceToken, "duplicated field: " + FieldNode.GetGivenName());
+				BunLogger._LogError(FieldNode.SourceToken, "duplicated field: " + FieldNode.GetGivenName());
 			}
 			FieldNode.Type = BType.VoidType;
 			i = i + 1;

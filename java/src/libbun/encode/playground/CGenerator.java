@@ -83,7 +83,7 @@ import libbun.ast.unary.BunPlusNode;
 import libbun.ast.unary.UnaryOperatorNode;
 import libbun.encode.LibBunSourceGenerator;
 import libbun.parser.classic.LibBunLangInfo;
-import libbun.parser.classic.LibBunLogger;
+import libbun.parser.common.BunLogger;
 import libbun.type.BClassField;
 import libbun.type.BClassType;
 import libbun.type.BFunc;
@@ -791,7 +791,7 @@ public class CGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitErrorNode(ErrorNode Node) {
-		@Var String Message = LibBunLogger._LogError(Node.SourceToken, Node.ErrorMessage);
+		@Var String Message = BunLogger._LogError(Node.SourceToken, Node.ErrorMessage);
 		this.Source.Append("libbun_perror(");
 		this.Source.Append(LibBunSystem._QuoteString(Message));
 		this.Source.Append(")");

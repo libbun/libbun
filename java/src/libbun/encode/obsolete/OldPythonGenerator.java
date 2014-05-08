@@ -40,7 +40,7 @@ import libbun.ast.statement.BunIfNode;
 import libbun.ast.statement.BunThrowNode;
 import libbun.ast.statement.BunTryNode;
 import libbun.ast.unary.BunCastNode;
-import libbun.parser.classic.LibBunLogger;
+import libbun.parser.common.BunLogger;
 import libbun.type.BClassField;
 import libbun.type.BClassType;
 import libbun.type.BFuncType;
@@ -301,7 +301,7 @@ public class OldPythonGenerator extends OldSourceGenerator {
 			this.GenerateExpression(ErrorNode.ErrorNode);
 		}
 		else {
-			@Var String Message = LibBunLogger._LogError(Node.SourceToken, Node.ErrorMessage);
+			@Var String Message = BunLogger._LogError(Node.SourceToken, Node.ErrorMessage);
 			this.Source.AppendWhiteSpace();
 			this.Source.Append("LibZen.ThrowError(");
 			this.Source.Append(LibBunSystem._QuoteString(Message));

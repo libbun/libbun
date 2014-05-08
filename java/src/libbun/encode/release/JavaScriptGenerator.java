@@ -84,7 +84,7 @@ import libbun.ast.unary.BunPlusNode;
 import libbun.ast.unary.UnaryOperatorNode;
 import libbun.encode.LibBunSourceGenerator;
 import libbun.parser.classic.LibBunLangInfo;
-import libbun.parser.classic.LibBunLogger;
+import libbun.parser.common.BunLogger;
 import libbun.type.BClassType;
 import libbun.type.BFuncType;
 import libbun.type.BType;
@@ -261,7 +261,7 @@ public class JavaScriptGenerator extends LibBunSourceGenerator {
 		}
 		else {
 			this.ImportLibrary("@SoftwareFault");
-			@Var String Message = LibBunLogger._LogError(Node.SourceToken, Node.ErrorMessage);
+			@Var String Message = BunLogger._LogError(Node.SourceToken, Node.ErrorMessage);
 			this.Source.AppendWhiteSpace();
 			this.Source.Append("(function(){ throw new SoftwareFault(");
 			this.Source.Append(LibBunSystem._QuoteString(Message));
@@ -430,7 +430,7 @@ public class JavaScriptGenerator extends LibBunSourceGenerator {
 	@Override public void VisitGetNameNode(GetNameNode Node) {
 		@Var BNode ResolvedNode = Node.ResolvedNode;
 		if(ResolvedNode == null && !this.LangInfo.AllowUndefinedSymbol) {
-			LibBunLogger._LogError(Node.SourceToken, "undefined symbol: " + Node.GivenName);
+			BunLogger._LogError(Node.SourceToken, "undefined symbol: " + Node.GivenName);
 		}
 		this.Source.Append(Node.GetUniqueName(this));
 	}

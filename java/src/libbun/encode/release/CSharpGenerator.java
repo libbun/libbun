@@ -83,7 +83,7 @@ import libbun.ast.unary.UnaryOperatorNode;
 import libbun.encode.LibBunSourceBuilder;
 import libbun.encode.LibBunSourceGenerator;
 import libbun.parser.classic.LibBunLangInfo;
-import libbun.parser.classic.LibBunLogger;
+import libbun.parser.common.BunLogger;
 import libbun.type.BClassType;
 import libbun.type.BFuncType;
 import libbun.type.BType;
@@ -430,7 +430,7 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitErrorNode(ErrorNode Node) {
-		LibBunLogger._LogError(Node.SourceToken, Node.ErrorMessage);
+		BunLogger._LogError(Node.SourceToken, Node.ErrorMessage);
 		this.ImportLibrary("@Error");
 		this.Source.Append("Lib.Error(");
 		this.Source.Append(LibBunSystem._QuoteString(Node.ErrorMessage));
@@ -660,7 +660,7 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 	@Override public void VisitGetNameNode(GetNameNode Node) {
 		@Var BNode ResolvedNode = Node.ResolvedNode;
 		if(ResolvedNode == null && !this.LangInfo.AllowUndefinedSymbol) {
-			LibBunLogger._LogError(Node.SourceToken, "undefined symbol: " + Node.GivenName);
+			BunLogger._LogError(Node.SourceToken, "undefined symbol: " + Node.GivenName);
 		}
 		this.Source.Append(Node.GetUniqueName(this));
 	}

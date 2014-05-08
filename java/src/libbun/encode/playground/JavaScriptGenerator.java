@@ -29,7 +29,7 @@ import libbun.ast.error.ErrorNode;
 import libbun.ast.error.TypeErrorNode;
 import libbun.ast.expression.GetIndexNode;
 import libbun.ast.statement.BunTryNode;
-import libbun.parser.classic.LibBunLogger;
+import libbun.parser.common.BunLogger;
 import libbun.type.BType;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
@@ -66,7 +66,7 @@ public class JavaScriptGenerator extends libbun.encode.release.JavaScriptGenerat
 			this.GenerateExpression(ErrorNode.ErrorNode);
 		}
 		else {
-			@Var String Message = LibBunLogger._LogError(Node.SourceToken, Node.ErrorMessage);
+			@Var String Message = BunLogger._LogError(Node.SourceToken, Node.ErrorMessage);
 			this.Source.AppendWhiteSpace();
 			this.Source.Append("(function(){ throw new Error(");
 			this.Source.Append(LibBunSystem._QuoteString(Message));

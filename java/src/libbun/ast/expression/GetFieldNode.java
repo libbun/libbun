@@ -45,6 +45,10 @@ public class GetFieldNode extends MutableNode {
 		this(ParentNode, RecvNode, 2);
 	}
 
+	public GetFieldNode(BNode ParentNode) {
+		super(ParentNode, 2);
+	}
+
 	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
 		@Var GetFieldNode NewNode = new GetFieldNode(ParentNode, null);
 		if(TypedClone) {

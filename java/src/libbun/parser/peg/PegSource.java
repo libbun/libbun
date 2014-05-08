@@ -8,16 +8,18 @@ public class PegSource {
 	int    LineNumber;
 	public String  SourceText;
 
-	PegSource() {
-		this.FileName = null;
-		this.LineNumber = 0;
-		this.SourceText ="";
-	}
-
 	public PegSource(String FileName, int LineNumber, String Source) {
 		this.FileName = FileName;
 		this.LineNumber = LineNumber;
 		this.SourceText = Source;
+	}
+
+	public final PegToken newToken(int startIndex, int endIndex) {
+		return new PegToken(this, startIndex, endIndex);
+	}
+
+	public final String substring(int startIndex, int endIndex) {
+		return this.SourceText.substring(startIndex, endIndex);
 	}
 
 	public final int GetLineNumber(int Position) {

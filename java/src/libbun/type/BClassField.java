@@ -24,7 +24,7 @@
 
 package libbun.type;
 
-import libbun.parser.classic.BToken;
+import libbun.parser.common.BToken;
 import libbun.util.BField;
 
 public class BClassField {

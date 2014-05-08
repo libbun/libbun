@@ -216,6 +216,20 @@ public abstract class Peg {
 				return Peg._ParsePostfix(leftLabel, sourceContext, right);
 			}
 		}
+		if(sourceContext.match('#')) {
+			if(sourceContext.sliceSymbol(source, ".")) {
+				String name = source.GetText();
+				SemanticFunction f = sourceContext.parser.getSemanticAction(name);
+				right = new PegSemanticAction(leftLabel, source, name, f);
+				if(f == null) {
+					right.warning("undefined semantic function: " + name);
+				}
+				Peg._ParsePostfix(leftLabel, sourceContext, right);  // ignored
+				return right;
+			}
+			sourceContext.showErrorMessage("expected semantic action name'" + sourceContext.getChar() + "'");
+			return null;
+		}
 		sourceContext.consume(1);
 		if(ch == '\'' || ch == '"') {
 			if(sourceContext.sliceQuotedTextUntil(source, ch, "")) {
@@ -840,32 +854,26 @@ class PegNewObject extends PegPredicate {
 		}
 		return newnode;
 	}
-
 	@Override public String firstChars(BunMap<Peg> m) {
 		return this.innerExpr.firstChars(m);
 	}
-
 }
 
-class PegFunctionExpr extends Peg {
-	PegFunction f;
-	PegFunctionExpr(String leftLabel, PegFunction f) {
-		super(leftLabel, null);
+class PegSemanticAction extends Peg {
+	String name;
+	SemanticFunction f;
+	PegSemanticAction(String leftLabel, PegToken source, String name, SemanticFunction f) {
+		super(leftLabel, source);
+		this.name = name;
 		this.f = f;
 	}
 	@Override protected String stringfy() {
-		return "(peg function " + this.f + ")";
+		return "   " + this.name;
 	}
-
 	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
-		PegObject node = this.f.Invoke(parentNode, sourceContext);
-		if(node == null) {
-			return sourceContext.newFunctionErrorNode(this, this.f, hasNextChoice);
-		}
-		node.createdPeg = this;
-		return node;
+		parentNode.setSemanticAction(this.f);
+		return parentNode;
 	}
-
 	@Override boolean check(PegParser p, String leftName, int order) {
 		return true;
 	}
