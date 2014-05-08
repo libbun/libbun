@@ -3,16 +3,17 @@ package libbun.parser.peg;
 import libbun.ast.BNode;
 import libbun.common.CommonArray;
 import libbun.common.CommonMap;
+import libbun.parser.common.BunParserContext;
 import libbun.parser.common.BunSource;
 import libbun.parser.common.BunToken;
 import libbun.util.BField;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
-public final class PegContext  {
+public final class PegContext extends BunParserContext {
 	@BField public final      BunSource source;
 	@BField private int       sourcePosition = 0;
-	@BField public final int endPosition;
+	@BField public final int  endPosition;
 	@BField public  PegParser    parser;
 	@BField private final boolean IsAllowSkipIndent = false;
 
@@ -27,6 +28,17 @@ public final class PegContext  {
 		this.sourcePosition = StartIndex;
 		this.endPosition = EndIndex;
 	}
+
+	@Override public boolean hasNode() {
+		this.skipWhiteSpace(true);
+		return this.sourcePosition < this.endPosition;
+	}
+
+	@Override public BNode parseNode(BNode parentNode, String key) {
+		PegObject po = this.parsePegNode(new PegParsedNode(null, 0, 0), key, false);
+		return po.eval(this.source, parentNode);
+	}
+
 
 	//	PegContext(PegParser Parser, String source) {
 	//		this(Parser, new BunSource("", 0, source), 0, source.length());
@@ -463,6 +475,7 @@ public final class PegContext  {
 		System.out.println(this.source.formatErrorLineMarker("error", this.sourcePosition, msg));
 		LibBunSystem._Exit(1, msg);
 	}
+
 
 
 }

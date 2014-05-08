@@ -26,7 +26,7 @@ public class PegDebugger {
 		while ((Line = ReadLine2(">>> ", "    ")) != null) {
 			try {
 				BunSource source = new BunSource("(stdin)", linenum, Line, null);
-				PegContext context = new PegContext(p, source, 0, Line.length());
+				PegContext context = (PegContext) p.newContext(source, 0, Line.length());
 				BunToken token = context.newToken(0, Line.length());
 				PegObject po = context.parsePegNode(new PegParsedNode(null, 0, 0), "Stmt", false/*hasNextChoice*/);
 				System.out.println("parsed: " + po.toString(token));

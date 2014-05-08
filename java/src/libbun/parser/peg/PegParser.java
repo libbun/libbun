@@ -3,11 +3,13 @@ package libbun.parser.peg;
 import libbun.common.CommonArray;
 import libbun.common.CommonMap;
 import libbun.parser.common.BunLogger;
+import libbun.parser.common.BunParser;
+import libbun.parser.common.BunParserContext;
 import libbun.parser.common.BunSource;
 import libbun.parser.common.BunToken;
 import libbun.util.LibBunSystem;
 
-public final class PegParser {
+public final class PegParser extends BunParser {
 	public BunLogger logger;
 	PegParser stackedParser;
 	private int priorityCount = 1;
@@ -33,6 +35,11 @@ public final class PegParser {
 		this.actionMap = new CommonMap<SemanticFunction>(null);
 	}
 
+	@Override public BunParserContext newContext(BunSource source, int startIndex, int endIndex) {
+		return new PegContext(this, source, startIndex, endIndex);
+	}
+
+
 	public PegParser Pop() {
 		return this.stackedParser;
 	}
@@ -48,7 +55,7 @@ public final class PegParser {
 			int loc = line.indexOf("<-");
 			if(loc > 0) {
 				String name = line.substring(0,loc).trim();
-				PegContext sub = sourceContext.subContext(loc+2, line.endIndex);
+				PegContext sub = sourceContext.subContext(loc+2 + line.startIndex, line.endIndex);
 				Peg e = Peg._ParsePegExpr(name, sub);
 				if(e != null) {
 					this.setPegRule(name, e);
@@ -230,5 +237,6 @@ public final class PegParser {
 	public final SemanticFunction getSemanticAction(String name) {
 		return this.actionMap.GetValue(name, null);
 	}
+
 
 }
