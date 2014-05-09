@@ -25,6 +25,7 @@
 package libbun.ast.literal;
 
 import libbun.ast.BNode;
+import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.parser.common.BunToken;
 import libbun.type.BType;
@@ -34,8 +35,11 @@ public final class BunTypeNode extends LiteralNode {
 		super(ParentNode, SourceToken);
 		this.Type = Type;
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunTypeNode(ParentNode, this.SourceToken, this.Type));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunTypeNode(ParentNode, this.SourceToken, this.Type));
+	}
+	@Override public void bunfy(CommonStringBuilder builder) {
+		this.Type.bunfy(builder);
 	}
 	@Override public final void Accept(LibBunVisitor Visitor) {
 		Visitor.VisitLiteralNode(this);

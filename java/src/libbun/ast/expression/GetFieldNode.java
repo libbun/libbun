@@ -26,6 +26,7 @@ package libbun.ast.expression;
 
 import libbun.ast.BNode;
 import libbun.ast.literal.BunTypeNode;
+import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.util.BField;
 import libbun.util.Var;
@@ -49,13 +50,17 @@ public class GetFieldNode extends MutableNode {
 		super(ParentNode, 2);
 	}
 
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
+	@Override public void bunfy(CommonStringBuilder builder) {
+		this.bunfyAST(builder, "(field", 0, ")");
+	}
+
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
 		@Var GetFieldNode NewNode = new GetFieldNode(ParentNode, null);
 		if(TypedClone) {
 			NewNode.IsImmutable = this.IsImmutable;
 		}
 		NewNode.GivenName = this.GivenName;
-		return this.DupField(TypedClone, NewNode);
+		return this.dupField(TypedClone, NewNode);
 	}
 
 	public final BNode RecvNode() {

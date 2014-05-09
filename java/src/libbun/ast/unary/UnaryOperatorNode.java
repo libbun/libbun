@@ -26,12 +26,21 @@ package libbun.ast.unary;
 
 
 import libbun.ast.BNode;
+import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 
 public abstract class UnaryOperatorNode extends BNode {
 	public final static int _Recv = 0;
 	public UnaryOperatorNode(BNode ParentNode) {
 		super(ParentNode, 1);
+	}
+
+	@Override public void bunfy(CommonStringBuilder builder) {
+		/* -1 is bunfied to (--- 1) because of efficient peg parsing */
+		builder.Append("(", this.GetOperator(), this.GetOperator());
+		builder.Append(this.GetOperator(), " ");
+		this.RecvNode().bunfy(builder);
+		builder.Append(")");
 	}
 
 	public abstract String GetOperator();

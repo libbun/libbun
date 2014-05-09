@@ -38,6 +38,7 @@ public class PegDebugger {
 
 				BNode bnode = po.eval(source, null);
 				System.out.println("bun: " + bnode);
+				System.out.println("bunfy: " + bnode.bunfy());
 				linenum = linenum + 1;
 			}
 			catch (Exception e) {

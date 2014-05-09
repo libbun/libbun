@@ -1,0 +1,72 @@
+
+_       <- [ \t]+
+indent  <- [ \t\n]+
+Comment <- '/*' (!'*/' .)*  '*/'
+Comment <- '//' (!'\n' .)*
+
+Name    <- {[A-z_] [A-z0-9_]* ('::' [A-z_] [A-z0-9_]*)?} :Name
+Value   <- Name
+Value   <- {[0-9]+}                               :Int 
+Value   <- {[0-9]+ '.' [0-9]+}                    :Float
+Value   <- {'"' (!'"' .)* '"'}                    :String
+Value   <- 'null'     :Null
+Value   <- 'true'     :True
+Value   <- 'false'    :False
+
+Type   <- Name                                   :Type
+Type   <- Type {$ '[]'}                          :ArrayType
+Type   <- Type {$ '<' $Type (',' $Type)* '>'}    :GenericType
+
+Term <- Value
+Term <- {'+' _? $Term}                     :Plus
+Term <- {'-' _? $Term}                     :Minus
+Term <- {'!' _? $Term}                     :Not
+Term <- {'~' _? $Term}                     :Complement
+Term <- {'(' _? $Expr _? ')'}              :Group
+Term <- {'(' _? Type _? ')' _? $Expr}      :Cast
+
+Term <- {'new' _ $Type _? '(' _? ($Expr _? (',' _? $Expr)*)? _? ')'}  :NewObject
+Term <- {'[' _? ($Expr _? (',' _? $Expr)*)? _? ']'}                   :ArrayLiteral
+
+Expr <- Term
+Expr <- Expr _? {$ '&&' _? $Expr}          :RaAnd
+Expr <- Expr _? {$ '||' _? $Expr}          :RaOr
+
+Expr <- Expr _? {$ '==' _? $Expr}          :RaEquals
+Expr <- Expr _? {$ '!=' _? $Expr}          :RaNotEquals
+Expr <- Expr _? {$ '<'  _? $Expr}          :RaLessThan
+Expr <- Expr _? {$ '>'  _? $Expr}          :RaLessThanEquals
+Expr <- Expr _? {$ '<=' _? $Expr}          :RaGreaterThan
+Expr <- Expr _? {$ '>=' _? $Expr}          :RaGreaterThanEquals
+
+Expr <- Expr _? {$ '+' _? $Expr}           :RaAdd
+Expr <- Expr _? {$ '-' _? $Expr}           :RaSub
+Expr <- Expr _? {$ '*' _? $Expr}           :RaMul
+Expr <- Expr _? {$ '/' _? $Expr}           :RaDiv
+Expr <- Expr _? {$ '%' _? $Expr}           :RaMod
+
+Expr <- Expr _? {$ '(' _? ($Expr (_? ',' _? $Expr)*)? _? ')'}   :FuncCall
+Expr <- Expr {$ '.' $Name}                                      :Field
+Expr <- Expr {$ '.' $Name '(' _? ($Expr (_? ',' _? $Expr)*)?  _? ')'}  :MethodCall
+Expr <- Expr {$ '[' _? $Expr _? ']'}                            :Indexer
+
+Stmt <- Expr
+LValue <- Name / Expr {$ '.' $Name} / Expr {+ '[' _? $Expr _? ']'}
+Stmt <- {&[A-z_] $LValue _? '=' _? $Expr}          :RaAssign
+
+if    <- {'if' _? '(' _? $Expr _? ')' _? $Block (_? 'else' _? $(if / Block))? }  :If
+Stmt  <- if
+Stmt  <- {'while' _? '(' _? $Expr _? ')' _? $Block }    :While
+Stmt  <- {'break'}                                      :Break
+Stmt  <- {'try' _? $Block _? ('catch' _? '(' _? $Name _? ')' _? $Block)? ('finally' _? $Block)?} :Try
+Stmt  <- {'throw' _? $Expr}                             :Throw
+Stmt  <- {'return' _? ($Expr)?}                         :Return
+Stmt  <- {'var' _ $Name _? ($TypeAnno)? '=' _? $Expr (_ 'in' _? $Block)?}     :Var
+Stmt  <- {'let' _ $Name _? ($TypeAnno)? '=' _? $Expr (_ 'in' _? $Block)?}     :Let
+Stmt  <- {'function' _ $Name _? '(' _? ($Param (_? ',' _? $Param)*)? _? ')' _? ($TypeAnno)? $Block}   :Function
+Param <- {$Name _? ($TypeAnno)?}    :Param
+TypeAnno <- ':' _? Type _?
+
+Block <- {'{' (indent / ';' / $Stmt)* (!'}' $$Stmt)? '}'}   :Block
+
+

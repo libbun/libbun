@@ -5,22 +5,22 @@ import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
 public abstract class AbstractListNode extends BNode {
-	@BField public int ListStartIndex;
+	@BField public int vargStartIndex;
 	public AbstractListNode(BNode ParentNode, int Size) {
 		super(ParentNode, Size);
-		this.ListStartIndex = Size;
+		this.vargStartIndex = Size;
 	}
 
 	public final int GetListSize() {
-		return this.GetAstSize() - this.ListStartIndex;
+		return this.GetAstSize() - this.vargStartIndex;
 	}
 
 	public final BNode GetListAt(int Index) {
-		return this.AST[this.ListStartIndex + Index];
+		return this.AST[this.vargStartIndex + Index];
 	}
 
 	public final void SetListAt(int Index, BNode Node) {
-		this.SetNode(Index + this.ListStartIndex, Node);
+		this.SetNode(Index + this.vargStartIndex, Node);
 	}
 
 	public final void InsertListAt(int Index, BNode Node) {
@@ -29,7 +29,7 @@ public abstract class AbstractListNode extends BNode {
 		} else {
 			@Var BNode[] newAST = LibBunSystem._NewNodeArray(this.AST.length + 1);
 			@Var BNode[] oldAST = this.AST;
-			Index = this.ListStartIndex + Index;
+			Index = this.vargStartIndex + Index;
 			this.AST = newAST;
 			LibBunSystem._ArrayCopy(oldAST, 0, newAST, 0, Index);
 			this.SetNode(Index, Node);
@@ -40,7 +40,7 @@ public abstract class AbstractListNode extends BNode {
 	public final BNode RemoveListAt(int Index) {
 		@Var BNode Removed = this.GetListAt(Index);
 		@Var BNode[] newAST = LibBunSystem._NewNodeArray(this.AST.length - 1);
-		@Var int RemovedIndex = this.ListStartIndex + Index;
+		@Var int RemovedIndex = this.vargStartIndex + Index;
 		LibBunSystem._ArrayCopy(this.AST, 0, newAST, 0, RemovedIndex);
 		LibBunSystem._ArrayCopy(this.AST, RemovedIndex + 1, newAST, RemovedIndex, this.AST.length - (RemovedIndex + 1));
 		this.AST = newAST;
@@ -49,7 +49,7 @@ public abstract class AbstractListNode extends BNode {
 
 	public final void ClearListToSize(int Size) {
 		if(Size < this.GetListSize()) {
-			@Var int newsize = this.ListStartIndex + Size;
+			@Var int newsize = this.vargStartIndex + Size;
 			if(newsize == 0) {
 				this.AST = null;
 			}

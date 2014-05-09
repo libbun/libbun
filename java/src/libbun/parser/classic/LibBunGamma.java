@@ -27,9 +27,9 @@ package libbun.parser.classic;
 import libbun.ast.BNode;
 import libbun.ast.BunBlockNode;
 import libbun.ast.decl.BunLetVarNode;
-import libbun.common.CommonMap;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.common.BunToken;
+import libbun.parser.common.SymbolTable;
 import libbun.type.BClassType;
 import libbun.type.BType;
 import libbun.util.BField;
@@ -39,60 +39,18 @@ import libbun.util.LibBunSystem;
 import libbun.util.Nullable;
 import libbun.util.Var;
 
-public final class LibBunGamma {
+public final class LibBunGamma extends SymbolTable {
 	@BField public final LibBunGenerator   Generator;
-	@BField public final BunBlockNode      BlockNode;
-	@BField CommonMap<BunLetVarNode>          SymbolTable = null;
 
-	public LibBunGamma(LibBunGenerator Generator, BunBlockNode BlockNode) {
-		this.BlockNode = BlockNode;   // rootname is null
+	public LibBunGamma(LibBunGenerator Generator, BunBlockNode blockNode) {
+		super(null);
+		this.blockNode = blockNode;   // rootname is null
 		this.Generator = Generator;
 		assert(this.Generator != null);
 	}
 
-	@Override public String toString() {
-		return "NS[" + this.BlockNode + "]";
-	}
-
-	public final LibBunGamma GetParentGamma() {
-		if(this.BlockNode != null) {
-			@Var BNode Node = this.BlockNode.ParentNode;
-			while(Node != null) {
-				if(Node instanceof BunBlockNode) {
-					@Var BunBlockNode blockNode = (BunBlockNode)Node;
-					if(blockNode.NullableGamma != null) {
-						return blockNode.NullableGamma;
-					}
-				}
-				Node = Node.ParentNode;
-			}
-		}
-		return null;
-	}
-
 	public final LibBunGamma GetRootGamma() {
 		return this.Generator.RootGamma;
-	}
-
-	public final void SetSymbol(String Symbol, BunLetVarNode EntryNode) {
-		if(this.SymbolTable == null) {
-			this.SymbolTable = new CommonMap<BunLetVarNode>(null);
-		}
-		this.SymbolTable.put(Symbol, EntryNode);
-	}
-
-	public final BunLetVarNode GetSymbol(String Symbol) {
-		@Var LibBunGamma Gamma = this;
-		while(Gamma != null) {
-			if(Gamma.SymbolTable != null) {
-				@Var BunLetVarNode EntryNode = Gamma.SymbolTable.GetOrNull(Symbol);
-				if(EntryNode != null) {
-					return EntryNode;
-				}
-			}
-			Gamma = Gamma.GetParentGamma();
-		}
-		return null;
 	}
 
 	public final void SetDebugSymbol(String Symbol, BunLetVarNode EntryNode) {
@@ -108,15 +66,15 @@ public final class LibBunGamma {
 
 	public final int GetNameIndex(String Name) {
 		@Var int NameIndex = -1;
-		@Var LibBunGamma Gamma = this;
-		while(Gamma != null) {
-			if(Gamma.SymbolTable != null) {
-				@Var BNode EntryNode = Gamma.SymbolTable.GetOrNull(Name);
+		@Var SymbolTable table = this;
+		while(table != null) {
+			if(table.symbolTable != null) {
+				@Var BNode EntryNode = table.symbolTable.GetOrNull(Name);
 				if(EntryNode != null) {
 					NameIndex = NameIndex + 1;
 				}
 			}
-			Gamma = Gamma.GetParentGamma();
+			table = table.getParentTable();
 		}
 		return NameIndex;
 	}

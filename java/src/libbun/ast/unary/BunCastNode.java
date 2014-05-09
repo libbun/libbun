@@ -26,6 +26,7 @@ package libbun.ast.unary;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
+import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunTypeChecker;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BFunc;
@@ -43,8 +44,16 @@ public class BunCastNode extends BNode {
 			this.SetNode(BunCastNode._Expr, Node);
 		}
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunCastNode(ParentNode, this.Type, null));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunCastNode(ParentNode, this.Type, null));
+	}
+
+	@Override public void bunfy(CommonStringBuilder builder) {
+		builder.Append("(to ");
+		this.CastType().bunfy(builder);
+		builder.Append(" ");
+		this.ExprNode().bunfy(builder);
+		builder.Append(")");
 	}
 
 	public final BNode ExprNode() {

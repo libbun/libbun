@@ -25,6 +25,7 @@
 package libbun.ast.literal;
 
 import libbun.ast.BNode;
+import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.parser.common.BunToken;
@@ -38,9 +39,14 @@ public final class BunFloatNode extends LiteralNode {
 		this.Type = BType.FloatType;
 		this.FloatValue = Value;
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunFloatNode(ParentNode, null, this.FloatValue));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunFloatNode(ParentNode, null, this.FloatValue));
 	}
+
+	@Override public void bunfy(CommonStringBuilder builder) {
+		builder.Append("" + this.FloatValue);
+	}
+
 	@Override public final String toString() {
 		return "" + this.FloatValue;
 	}

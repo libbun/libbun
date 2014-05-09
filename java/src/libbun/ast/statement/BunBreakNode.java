@@ -25,14 +25,18 @@
 package libbun.ast.statement;
 
 import libbun.ast.BNode;
+import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 
 public final class BunBreakNode extends BNode {
 	public BunBreakNode(BNode ParentNode) {
 		super(ParentNode, 0);
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunBreakNode(ParentNode));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunBreakNode(ParentNode));
+	}
+	@Override public void bunfy(CommonStringBuilder builder) {
+		builder.Append("(break)");
 	}
 	@Override public void Accept(LibBunVisitor Visitor) {
 		Visitor.VisitBreakNode(this);

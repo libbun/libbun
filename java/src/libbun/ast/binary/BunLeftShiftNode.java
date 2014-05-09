@@ -9,8 +9,8 @@ public class BunLeftShiftNode extends BitwiseOperatorNode {
 	public BunLeftShiftNode(BNode ParentNode) {
 		super(ParentNode, BunPrecedence._CStyleSHIFT);
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunLeftShiftNode(ParentNode));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunLeftShiftNode(ParentNode));
 	}
 
 	@Override public final String GetOperator() {

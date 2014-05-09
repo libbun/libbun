@@ -26,6 +26,7 @@ package libbun.ast.statement;
 
 import libbun.ast.BNode;
 import libbun.ast.BunBlockNode;
+import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.util.Var;
 
@@ -39,8 +40,12 @@ public final class BunTryNode extends BNode {
 		super(ParentNode, 4);
 	}
 
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunTryNode(ParentNode));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunTryNode(ParentNode));
+	}
+
+	@Override public void bunfy(CommonStringBuilder builder) {
+		this.bunfyAST(builder, "(while", 0, ")");
 	}
 
 	public final BunBlockNode TryBlockNode() {

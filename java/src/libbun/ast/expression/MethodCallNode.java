@@ -26,6 +26,7 @@ package libbun.ast.expression;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
+import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunTypeChecker;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BFunc;
@@ -46,8 +47,12 @@ public final class MethodCallNode extends AbstractListNode {
 		this.GivenName = MethodName;
 	}
 
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new MethodCallNode(ParentNode, null, this.GivenName));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new MethodCallNode(ParentNode, null, this.GivenName));
+	}
+
+	@Override public void bunfy(CommonStringBuilder builder) {
+		this.bunfyAST(builder, "(methodcall", 0, ")");
 	}
 
 	public final BNode RecvNode() {

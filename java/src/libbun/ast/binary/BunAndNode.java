@@ -34,8 +34,8 @@ public final class BunAndNode extends BinaryOperatorNode {
 	public BunAndNode(BNode ParentNode) {
 		super(ParentNode, BunPrecedence._CStyleAND);
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunAndNode(ParentNode));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunAndNode(ParentNode));
 	}
 	@Override public final String GetOperator() {
 		return "&&";

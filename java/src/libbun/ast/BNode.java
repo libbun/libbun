@@ -30,6 +30,7 @@ import libbun.ast.error.ErrorNode;
 import libbun.ast.expression.GetNameNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.statement.BunIfNode;
+import libbun.common.CommonStringBuilder;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.classic.BTokenContext;
 import libbun.parser.classic.LibBunGamma;
@@ -63,11 +64,11 @@ public abstract class BNode {
 		}
 	}
 
-	protected BNode DupField(boolean TypedClone, BNode NewNode) {
+	protected BNode dupField(boolean TypedClone, BNode NewNode) {
 		@Var int i = 0;
 		while(i < this.AST.length) {
 			if(this.AST[i] != null) {
-				NewNode.AST[i] = this.AST[i].Dup(TypedClone, NewNode);
+				NewNode.AST[i] = this.AST[i].dup(TypedClone, NewNode);
 				assert(NewNode.AST[i].getClass() == this.AST[i].getClass());
 			}
 			else {
@@ -81,13 +82,13 @@ public abstract class BNode {
 			NewNode.HasUntyped = this.HasUntyped;
 		}
 		if(NewNode instanceof AbstractListNode) {
-			((AbstractListNode)NewNode).ListStartIndex = ((AbstractListNode)this).ListStartIndex;
+			((AbstractListNode)NewNode).vargStartIndex = ((AbstractListNode)this).vargStartIndex;
 		}
 		return NewNode;
 	}
 
 	//	public abstract BNode Dup(boolean TypedClone, BNode ParentNode);
-	public BNode Dup(boolean TypedClone, BNode ParentNode) {
+	public BNode dup(boolean TypedClone, BNode ParentNode) {
 		throw new RuntimeException("TODO: Implement Dup method for " + this.getClass());
 	}
 
@@ -129,6 +130,28 @@ public abstract class BNode {
 			Self = Self + "]";
 		}
 		return Self;
+	}
+
+	protected final void bunfyAST(CommonStringBuilder builder, String openClause, int startIdx, String closeClause) {
+		builder.Append(openClause);
+		for(int i = startIdx; i < this.GetAstSize(); i++) {
+			if(this.AST[i] != null) {
+				builder.Append(" ");
+				this.AST[i].bunfy(builder);
+			}
+		}
+		builder.Append(closeClause);
+	}
+
+	//	public abstract void bunfy(CommonStringBuilder builder);
+	public void bunfy(CommonStringBuilder builder) {
+		this.bunfyAST(builder, "/*(", 0, ")*/");
+	}
+
+	public String bunfy() {
+		CommonStringBuilder builder = new CommonStringBuilder();
+		this.bunfy(builder);
+		return builder.toString();
 	}
 
 	// AST[]
@@ -298,7 +321,7 @@ public abstract class BNode {
 				assert(SafeCount < 100);
 			}
 		}
-		return BlockNode.NullableGamma;
+		return (LibBunGamma)BlockNode.NullableGamma;
 	}
 
 	public final boolean IsErrorNode() {

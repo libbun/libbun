@@ -10,8 +10,8 @@ public class BunNotEqualsNode extends ComparatorNode {
 	public BunNotEqualsNode(BNode ParentNode) {
 		super(ParentNode, BunPrecedence._CStyleEquals);
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunNotEqualsNode(ParentNode));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunNotEqualsNode(ParentNode));
 	}
 
 	@Override public final String GetOperator() {

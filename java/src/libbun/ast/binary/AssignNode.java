@@ -14,9 +14,10 @@ public class AssignNode extends BinaryOperatorNode {
 		this.SetLeftNode(new GetNameNode(null, null, Name));
 		this.SetRightNode(RightNode);
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new AssignNode(ParentNode));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new AssignNode(ParentNode));
 	}
+
 	@Override public String GetOperator() {
 		return "=";
 	}

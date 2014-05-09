@@ -1,9 +1,11 @@
 package libbun.ast.literal;
 
 import libbun.ast.BNode;
+import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BType;
 import libbun.util.BField;
+import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
 public class BunAsmNode extends BNode {
@@ -21,9 +23,16 @@ public class BunAsmNode extends BNode {
 		this.FormType = FormType;
 	}
 
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunAsmNode(ParentNode, this.RequiredLibrary, this.FormText, this.FormType));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunAsmNode(ParentNode, this.RequiredLibrary, this.FormText, this.FormType));
 	}
+
+	@Override public void bunfy(CommonStringBuilder builder) {
+		builder.Append("(asm ", LibBunSystem._QuoteString("\"", this.GetFormText(), "\""), " ");
+		this.FormType().bunfy(builder);
+		builder.Append(")");
+	}
+
 
 	public final BType FormType() {
 		if(this.FormType == null) {

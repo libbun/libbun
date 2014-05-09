@@ -17,8 +17,8 @@ public class BunFormNode extends AbstractListNode {
 		this.FormFunc = FormFunc;
 		assert(FormFunc != null);
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunFormNode(ParentNode, this.SourceToken, this.FormFunc));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunFormNode(ParentNode, this.SourceToken, this.FormFunc));
 	}
 
 	public final BFuncType GetFuncType() {

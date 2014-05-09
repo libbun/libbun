@@ -25,11 +25,13 @@
 package libbun.ast.literal;
 
 import libbun.ast.BNode;
+import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.parser.common.BunToken;
 import libbun.type.BType;
 import libbun.util.BField;
+import libbun.util.LibBunSystem;
 
 public final class BunStringNode extends LiteralNode {
 	@BField public String	StringValue;
@@ -38,8 +40,11 @@ public final class BunStringNode extends LiteralNode {
 		this.Type = BType.StringType;
 		this.StringValue = Value;
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunStringNode(ParentNode, this.SourceToken, this.StringValue));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunStringNode(ParentNode, this.SourceToken, this.StringValue));
+	}
+	@Override public void bunfy(CommonStringBuilder builder) {
+		builder.Append(LibBunSystem._QuoteString("\"", this.StringValue, "\""));
 	}
 	@Override public final void Accept(LibBunVisitor Visitor) {
 		if(Visitor instanceof BunVisitor) {

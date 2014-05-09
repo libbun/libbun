@@ -9,8 +9,8 @@ public class BunDivNode extends ArithmeticOperatorNode {
 	public BunDivNode(BNode ParentNode) {
 		super(ParentNode, BunPrecedence._CStyleMUL);
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunDivNode(ParentNode));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunDivNode(ParentNode));
 	}
 	@Override public final String GetOperator() {
 		return "/";

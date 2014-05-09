@@ -24,6 +24,7 @@
 
 package libbun.ast;
 
+import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 
 public final class GroupNode extends BNode {
@@ -31,8 +32,14 @@ public final class GroupNode extends BNode {
 	public GroupNode(BNode ParentNode) {
 		super(ParentNode, 1);
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new GroupNode(ParentNode));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new GroupNode(ParentNode));
+	}
+
+	@Override public void bunfy(CommonStringBuilder builder) {
+		builder.Append("(group ");
+		this.ExprNode().bunfy(builder);
+		builder.Append(")");
 	}
 
 	@Override public void Accept(LibBunVisitor Visitor) {
@@ -41,4 +48,6 @@ public final class GroupNode extends BNode {
 	public final BNode ExprNode() {
 		return this.AST[GroupNode._Expr];
 	}
+
+
 }

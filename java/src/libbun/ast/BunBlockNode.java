@@ -25,33 +25,39 @@
 package libbun.ast;
 
 import libbun.ast.decl.BunLetVarNode;
+import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunGamma;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.SymbolTable;
 import libbun.util.BField;
 import libbun.util.Nullable;
 import libbun.util.Var;
 
 public class BunBlockNode extends AbstractListNode {
-	@BField public LibBunGamma NullableGamma;
+	@BField public SymbolTable NullableGamma;
 
-	public BunBlockNode(BNode ParentNode, @Nullable LibBunGamma Gamma) {
+	public BunBlockNode(BNode ParentNode, @Nullable SymbolTable Gamma) {
 		super(ParentNode, 0);
 		this.NullableGamma = Gamma;
 	}
 
-	protected BunBlockNode(BNode ParentNode, @Nullable LibBunGamma Gamma, int Init) {  // call by ZVarNode
+	protected BunBlockNode(BNode ParentNode, @Nullable SymbolTable Gamma, int Init) {  // call by ZVarNode
 		super(ParentNode, Init);
 		this.NullableGamma = Gamma;
 	}
 
-	public BunBlockNode(BNode ParentNode, @Nullable LibBunGamma Gamma, BunLetVarNode VarNode) {
+	public BunBlockNode(BNode ParentNode, @Nullable SymbolTable Gamma, BunLetVarNode VarNode) {
 		super(ParentNode, 1);
 		this.NullableGamma = Gamma;
 		this.SetNode(0, VarNode);
 	}
 
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunBlockNode(ParentNode, this.NullableGamma));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunBlockNode(ParentNode, this.NullableGamma));
+	}
+
+	@Override public void bunfy(CommonStringBuilder builder) {
+		this.bunfyAST(builder, "(block", this.vargStartIndex, ")");
 	}
 
 	public final LibBunGamma GetBlockGamma() {
@@ -59,7 +65,7 @@ public class BunBlockNode extends AbstractListNode {
 			@Var LibBunGamma Gamma = this.GetGamma();
 			this.NullableGamma = new LibBunGamma(Gamma.Generator, this);
 		}
-		return this.NullableGamma;
+		return (LibBunGamma)this.NullableGamma;
 	}
 
 	@Override public void Accept(LibBunVisitor Visitor) {

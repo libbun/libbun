@@ -17,8 +17,8 @@ public class BunDefineNode extends TopLevelNode {
 		super(ParentNode, 0);
 		this.DefineNode = DefineNode;
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunDefineNode(ParentNode, this.DefineNode));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunDefineNode(ParentNode, this.DefineNode));
 	}
 
 	private String GetFormText() {

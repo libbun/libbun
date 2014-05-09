@@ -1,5 +1,6 @@
 package libbun.ast;
 
+import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunTypeChecker;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BType;
@@ -13,6 +14,10 @@ public abstract class SyntaxSugarNode extends BNode {
 
 	@Override public void Accept(LibBunVisitor Visitor) {
 		Visitor.VisitSyntaxSugarNode(this);
+	}
+
+	@Override public void bunfy(CommonStringBuilder builder) {
+		builder.Append("(syntax sugar)");
 	}
 
 	public abstract void PerformTyping(LibBunTypeChecker TypeChecker, BType ContextType);

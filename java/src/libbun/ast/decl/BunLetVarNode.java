@@ -3,6 +3,7 @@ package libbun.ast.decl;
 import libbun.ast.BNode;
 import libbun.ast.literal.ConstNode;
 import libbun.ast.literal.DefaultValueNode;
+import libbun.common.CommonStringBuilder;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BType;
@@ -33,10 +34,18 @@ public class BunLetVarNode extends BNode {
 		this.GivenName = GivenName;
 	}
 
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
 		@Var BunLetVarNode NewNode = new BunLetVarNode(ParentNode, this.NameFlag, this.GivenType, this.GivenName);
 		NewNode.NameIndex = this.NameIndex;
-		return this.DupField(TypedClone, NewNode);
+		return this.dupField(TypedClone, NewNode);
+	}
+
+	@Override public void bunfy(CommonStringBuilder builder) {
+		String predicate = "(var";
+		if(this.IsReadOnly()) {
+			predicate = "(let";
+		}
+		this.bunfyAST(builder, predicate, 0, ")");
 	}
 
 	public final boolean IsExport() {  // export let at top level

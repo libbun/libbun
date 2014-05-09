@@ -20,8 +20,8 @@ public class BunContinueNode extends SyntaxSugarNode {
 		super(ParentNode, 0);
 	}
 
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunContinueNode(ParentNode));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunContinueNode(ParentNode));
 	}
 
 	/**

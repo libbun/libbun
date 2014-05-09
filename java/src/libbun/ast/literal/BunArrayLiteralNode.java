@@ -26,14 +26,18 @@ package libbun.ast.literal;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
+import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 
 public final class BunArrayLiteralNode extends AbstractListNode {
 	public BunArrayLiteralNode(BNode ParentNode) {
 		super(ParentNode, 0);
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunArrayLiteralNode(ParentNode));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunArrayLiteralNode(ParentNode));
+	}
+	@Override public void bunfy(CommonStringBuilder builder) {
+		this.bunfyAST(builder, "(array", this.vargStartIndex, ")");
 	}
 	@Override public void Accept(LibBunVisitor Visitor) {
 		Visitor.VisitArrayLiteralNode(this);

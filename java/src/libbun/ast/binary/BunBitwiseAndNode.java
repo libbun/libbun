@@ -9,8 +9,8 @@ public class BunBitwiseAndNode extends BitwiseOperatorNode {
 	public BunBitwiseAndNode(BNode ParentNode) {
 		super(ParentNode, BunPrecedence._CStyleBITAND);
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunBitwiseAndNode(ParentNode));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunBitwiseAndNode(ParentNode));
 	}
 	@Override public final String GetOperator() {
 		return "&";

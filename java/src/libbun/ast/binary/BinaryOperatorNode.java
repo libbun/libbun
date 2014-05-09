@@ -25,6 +25,7 @@
 package libbun.ast.binary;
 
 import libbun.ast.BNode;
+import libbun.common.CommonStringBuilder;
 import libbun.lang.bun.BunPrecedence;
 import libbun.parser.classic.BTokenContext;
 import libbun.util.BField;
@@ -39,6 +40,10 @@ public abstract class BinaryOperatorNode extends BNode {
 	public BinaryOperatorNode(BNode ParentNode, int Precedence) {
 		super(ParentNode, 2);
 		this.Precedence = Precedence;
+	}
+
+	@Override public void bunfy(CommonStringBuilder builder) {
+		this.bunfyAST(builder, "(" + this.GetOperator(), 0, ")");
 	}
 
 	public abstract String GetOperator();

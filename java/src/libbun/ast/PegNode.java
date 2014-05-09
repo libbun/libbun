@@ -9,7 +9,6 @@ public class PegNode extends BNode {
 	}
 
 	@Override public void Accept(LibBunVisitor Visitor) {
-
 	}
 
 }

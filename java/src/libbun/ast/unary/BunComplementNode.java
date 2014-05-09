@@ -8,8 +8,8 @@ public class BunComplementNode extends UnaryOperatorNode {
 	public BunComplementNode(BNode ParentNode) {
 		super(ParentNode);
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunComplementNode(ParentNode));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunComplementNode(ParentNode));
 	}
 
 	@Override public final String GetOperator() {

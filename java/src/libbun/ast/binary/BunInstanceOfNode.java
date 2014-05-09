@@ -39,8 +39,8 @@ public final class BunInstanceOfNode extends BinaryOperatorNode {
 		super(ParentNode, BunPrecedence._Instanceof);
 	}
 
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunInstanceOfNode(ParentNode));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunInstanceOfNode(ParentNode));
 	}
 
 	@Override public String GetOperator() {

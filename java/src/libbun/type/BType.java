@@ -24,6 +24,7 @@
 
 
 package libbun.type;
+import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.BToken;
 import libbun.parser.classic.LibBunTypeChecker;
 import libbun.util.BField;
@@ -208,6 +209,10 @@ public class BType  {
 	}
 
 	public void Maybe(BType T, BToken SourceToken) {
+	}
+
+	public void bunfy(CommonStringBuilder builder) {
+		builder.Append(this.GetName());
 	}
 
 

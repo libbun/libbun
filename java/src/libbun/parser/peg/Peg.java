@@ -217,9 +217,9 @@ public abstract class Peg {
 				return Peg._ParsePostfix(leftLabel, sourceContext, right);
 			}
 		}
-		if(sourceContext.match('#')) {
+		if(sourceContext.match(':') || sourceContext.match('#')) {
 			if(sourceContext.sliceSymbol(source, ".")) {
-				String name = source.GetText();
+				String name = source.GetText().substring(1);
 				SemanticFunction f = sourceContext.parser.getSemanticAction(name);
 				right = new PegSemanticAction(leftLabel, source, name, f);
 				if(f == null) {
@@ -988,7 +988,7 @@ class PegSemanticAction extends Peg {
 		this.f = f;
 	}
 	@Override protected String stringfy() {
-		return "   " + this.name;
+		return "    :" + this.name;
 	}
 	@Override public PegObject lazyMatch(PegObject parentNode, PegContext sourceContext, boolean hasNextChoice) {
 		parentNode.setSemanticAction(this.f);

@@ -17,8 +17,8 @@ public final class BunForInNode extends SyntaxSugarNode {
 		super(ParentNode, 3);
 	}
 
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunForInNode(ParentNode));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunForInNode(ParentNode));
 	}
 
 	public final BNode VarNode() {

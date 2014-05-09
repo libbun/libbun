@@ -14,7 +14,7 @@ public class BunPrototypeNode extends TopLevelNode {
 		this.SetNode(BunPrototypeNode._FuncInfo, FunctionNode);
 		this.FunctionNode = FunctionNode;
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
 		return null; // FIXME
 	}
 

@@ -26,6 +26,7 @@ package libbun.ast.literal;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
+import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.util.Var;
 
@@ -33,8 +34,11 @@ public final class BunMapLiteralNode extends AbstractListNode {
 	public BunMapLiteralNode(BNode ParentNode) {
 		super(ParentNode, 0);
 	}
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new BunMapLiteralNode(ParentNode));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new BunMapLiteralNode(ParentNode));
+	}
+	@Override public void bunfy(CommonStringBuilder builder) {
+		this.bunfyAST(builder, "(map", this.vargStartIndex, ")");
 	}
 	public final BunMapEntryNode GetMapEntryNode(int Index) {
 		@Var BNode Node = this.GetListAt(Index);

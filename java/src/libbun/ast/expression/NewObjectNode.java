@@ -26,6 +26,7 @@ package libbun.ast.expression;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
+import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunTypeChecker;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BFunc;
@@ -42,8 +43,14 @@ public final class NewObjectNode extends AbstractListNode {
 		super(ParentNode, 1);
 	}
 
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
-		return this.DupField(TypedClone, new NewObjectNode(ParentNode));
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+		return this.dupField(TypedClone, new NewObjectNode(ParentNode));
+	}
+
+	@Override public void bunfy(CommonStringBuilder builder) {
+		builder.Append("(new ");
+		this.ClassType().bunfy(builder);
+		this.bunfyAST(builder, "", this.vargStartIndex, ")");
 	}
 
 	public final BType ClassType() {

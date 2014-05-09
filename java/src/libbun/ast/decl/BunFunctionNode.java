@@ -28,6 +28,7 @@ import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
 import libbun.ast.BunBlockNode;
 import libbun.common.CommonArray;
+import libbun.common.CommonStringBuilder;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BFuncType;
@@ -52,15 +53,24 @@ public class BunFunctionNode extends AbstractListNode {
 		super(ParentNode, 3);
 	}
 
-	@Override public BNode Dup(boolean TypedClone, BNode ParentNode) {
+	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
 		@Var BunFunctionNode NewNode = new BunFunctionNode(ParentNode);
 		NewNode.GivenType = this.GivenType;
 		NewNode.GivenName = this.GivenName;
 		NewNode.IsExport  = this.IsExport;
 		NewNode.ParentFunctionNode = this.ParentFunctionNode;
 		NewNode.ResolvedFuncType = this.ResolvedFuncType;
-		return this.DupField(TypedClone, NewNode);
+		return this.dupField(TypedClone, NewNode);
 	}
+
+	@Override public void bunfy(CommonStringBuilder builder) {
+		builder.Append("(function ", this.FuncName(), " ");
+		this.ReturnType().bunfy(builder);
+		this.bunfyAST(builder, " (", this.vargStartIndex, ") ");
+		this.BlockNode().bunfy(builder);
+		builder.Append(")");
+	}
+
 
 	public final BType ReturnType() {
 		if(this.GivenType == null) {
