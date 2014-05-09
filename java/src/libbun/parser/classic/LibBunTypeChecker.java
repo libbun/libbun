@@ -32,31 +32,25 @@ import libbun.ast.binary.BinaryOperatorNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.TopLevelNode;
 import libbun.ast.error.ErrorNode;
-import libbun.ast.error.TypeErrorNode;
 import libbun.ast.expression.BunFormNode;
 import libbun.ast.expression.BunFuncNameNode;
 import libbun.ast.expression.FuncCallNode;
 import libbun.ast.literal.BunAsmNode;
-import libbun.ast.unary.BunCastNode;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.common.BunLogger;
 import libbun.parser.common.BunToken;
+import libbun.parser.common.TypeChecker;
 import libbun.type.BFormFunc;
 import libbun.type.BFunc;
 import libbun.type.BFuncType;
-import libbun.type.BGreekType;
 import libbun.type.BType;
 import libbun.type.BVarScope;
 import libbun.util.BField;
-import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
-public abstract class LibBunTypeChecker extends BunVisitor {
+public abstract class LibBunTypeChecker extends TypeChecker {
 	public final static int _DefaultTypeCheckPolicy			= 0;
 	public final static int _NoCheckPolicy                  = 1;
-
-	@BField private BType      StackedContextType;
-	@BField private BNode      ReturnedNode;
 
 	@BField public LibBunGenerator  Generator;
 	@BField public BunLogger     Logger;
@@ -67,29 +61,12 @@ public abstract class LibBunTypeChecker extends BunVisitor {
 	public LibBunTypeChecker(LibBunGenerator Generator) {
 		this.Generator = Generator;
 		this.Logger = Generator.Logger;
-		this.StackedContextType = null;
-		this.ReturnedNode = null;
 		this.VarScope = new BVarScope(null, this.Logger, null);
 	}
 
-	public final BType GetContextType() {
-		return this.StackedContextType;
-	}
-
-	public final void ReturnNode(BNode Node) {
-		if(this.ReturnedNode != null) {
-			LibBunSystem._PrintDebug("previous returned node " + Node);
-		}
-		this.ReturnedNode = Node;
-	}
-
+	@Override
 	public final void TypeNode(BNode Node, BType Type) {
 		this.VarScope.TypeNode(Node, Type);
-	}
-
-	public final void ReturnTypeNode(BNode Node, BType Type) {
-		this.VarScope.TypeNode(Node, Type);
-		this.ReturnNode(Node);
 	}
 
 	public final void ReturnBinaryTypeNode(BinaryOperatorNode Node, BType Type) {
@@ -107,28 +84,7 @@ public abstract class LibBunTypeChecker extends BunVisitor {
 		this.ReturnTypeNode(Node, Type);
 	}
 
-	public final void ReturnErrorNode(BNode Node, BunToken ErrorToken, String Message) {
-		if(ErrorToken == null) {
-			ErrorToken = Node.SourceToken;
-		}
-		this.ReturnNode(new ErrorNode(Node.ParentNode, ErrorToken, Message));
-	}
-
-	public final void ReturnTypeErrorNode(String Message, BNode ErrorNode) {
-		this.ReturnNode(new TypeErrorNode(Message, ErrorNode));
-	}
-
-	protected final BNode CreateStupidCastNode(BType Requested, BNode Node, BunToken bunToken, String Message) {
-		@Var BNode ErrorNode = new TypeErrorNode(Message + ": " + Node.Type.GetName() + " must be " + Requested.GetName(), Node);
-		ErrorNode.SourceToken = bunToken;
-		ErrorNode.Type = Requested;
-		return ErrorNode;
-	}
-
-	public final BNode CreateStupidCastNode(BType Requested, BNode Node) {
-		return this.CreateStupidCastNode(Requested, Node, Node.SourceToken, "type error");
-	}
-
+	@Override
 	public final BNode EnforceNodeType(BNode Node, BType EnforcedType) {
 		@Var BFunc Func = this.Generator.LookupConverterFunc(Node.Type, EnforcedType);
 		if(Func == null && EnforcedType.IsStringType()) {
@@ -142,120 +98,130 @@ public abstract class LibBunTypeChecker extends BunVisitor {
 		return this.CreateStupidCastNode(EnforcedType, Node);
 	}
 
-	private final BNode TypeCheckImpl(BNode Node, BType ContextType, int TypeCheckPolicy) {
-		if(Node.IsErrorNode()) {
-			if(!ContextType.IsVarType()) {
-				this.VarScope.TypeNode(Node, ContextType);
-			}
-			return Node;
-		}
-		if(Node.IsUntyped() || ContextType.IsVarType() || LibBunSystem._IsFlag(TypeCheckPolicy, LibBunTypeChecker._NoCheckPolicy)) {
-			return Node;
-		}
-		if(Node.Type == ContextType || ContextType.Accept(Node.Type)) {
-			return Node;
-		}
-		if(ContextType.IsVoidType() && !Node.Type.IsVoidType()) {
-			return new BunCastNode(Node.ParentNode, BType.VoidType, Node);
-		}
-		if(ContextType.IsFloatType() && Node.Type.IsIntType()) {
-			return this.EnforceNodeType(Node, ContextType);
-		}
-		if(ContextType.IsIntType() && Node.Type.IsFloatType()) {
-			return this.EnforceNodeType(Node, ContextType);
-		}
-		return this.CreateStupidCastNode(ContextType, Node);
+	@Override
+	public final void InferType(BType contextType, BNode bnode) {
+		this.VarScope.InferType(contextType, bnode);
 	}
 
-	private BNode VisitNode(BNode Node, BType ContextType) {
-		@Var BNode ParentNode = Node.ParentNode;
-		this.StackedContextType = ContextType;
-		this.ReturnedNode = null;
-		Node.Accept(this);
-		if(this.ReturnedNode == null) {  /* debug check */
-			LibBunSystem._PrintDebug("!! returns no value: " + Node);
-		}
-		else {
-			Node = this.ReturnedNode;
-		}
-		if(ParentNode != Node.ParentNode && ParentNode != null) {
-			if(Node.ParentNode != null) {
-				LibBunSystem._PrintDebug("Preserving parent of typed new node: " + Node);
-			}
-			ParentNode.SetChild(Node, BNode._PreservedParent);
-		}
-		return Node;
-	}
+	//	private final BNode TypeCheckImpl(BNode Node, BType ContextType, int TypeCheckPolicy) {
+	//		if(Node.IsErrorNode()) {
+	//			if(!ContextType.IsVarType()) {
+	//				this.VarScope.TypeNode(Node, ContextType);
+	//			}
+	//			return Node;
+	//		}
+	//		if(Node.IsUntyped() || ContextType.IsVarType() || LibBunSystem._IsFlag(TypeCheckPolicy, LibBunTypeChecker._NoCheckPolicy)) {
+	//			return Node;
+	//		}
+	//		if(Node.Type == ContextType || ContextType.Accept(Node.Type)) {
+	//			return Node;
+	//		}
+	//		if(ContextType.IsVoidType() && !Node.Type.IsVoidType()) {
+	//			return new BunCastNode(Node.ParentNode, BType.VoidType, Node);
+	//		}
+	//		if(ContextType.IsFloatType() && Node.Type.IsIntType()) {
+	//			return this.EnforceNodeType(Node, ContextType);
+	//		}
+	//		if(ContextType.IsIntType() && Node.Type.IsFloatType()) {
+	//			return this.EnforceNodeType(Node, ContextType);
+	//		}
+	//		return this.CreateStupidCastNode(ContextType, Node);
+	//	}
+	//
+	//	private BNode VisitNode(BNode Node, BType ContextType) {
+	//		@Var BNode ParentNode = Node.ParentNode;
+	//		this.StackedContextType = ContextType;
+	//		this.ReturnedNode = null;
+	//		Node.Accept(this);
+	//		if(this.ReturnedNode == null) {  /* debug check */
+	//			LibBunSystem._PrintDebug("!! returns no value: " + Node);
+	//		}
+	//		else {
+	//			Node = this.ReturnedNode;
+	//		}
+	//		if(ParentNode != Node.ParentNode && ParentNode != null) {
+	//			if(Node.ParentNode != null) {
+	//				LibBunSystem._PrintDebug("Preserving parent of typed new node: " + Node);
+	//			}
+	//			ParentNode.SetChild(Node, BNode._PreservedParent);
+	//		}
+	//		return Node;
+	//	}
+	//
+	//	private final BNode TypeCheck(BNode Node, BType ContextType, int TypeCheckPolicy) {
+	//		if(this.IsVisitable() && Node != null) {
+	//			if(Node.HasUntypedNode()) {
+	//				Node = this.VisitNode(Node, ContextType);
+	//				this.VarScope.InferType(ContextType, Node);
+	//			}
+	//			Node = this.TypeCheckImpl(Node, ContextType, TypeCheckPolicy);
+	//			this.VarScope.InferType(ContextType, Node);
+	//		}
+	//		this.ReturnedNode = null;
+	//		return Node;
+	//	}
 
-	private final BNode TypeCheck(BNode Node, BType ContextType, int TypeCheckPolicy) {
-		if(this.IsVisitable() && Node != null) {
-			if(Node.HasUntypedNode()) {
-				Node = this.VisitNode(Node, ContextType);
-				this.VarScope.InferType(ContextType, Node);
-			}
-			Node = this.TypeCheckImpl(Node, ContextType, TypeCheckPolicy);
-			this.VarScope.InferType(ContextType, Node);
-		}
-		this.ReturnedNode = null;
-		return Node;
-	}
+	//	@Override
+	//	public final BNode TryType(BNode Node, BType ContextType) {
+	//		return this.TypeCheck(Node, ContextType, LibBunTypeChecker._NoCheckPolicy);
+	//	}
+	//
+	//	@Override
+	//	public final void TryTypeAt(BNode Node, int Index, BType ContextType) {
+	//		//		@Var ZNode N = Node.AST[Index];
+	//		Node.SetNode(Index, this.TypeCheck(Node.AST[Index], ContextType, LibBunTypeChecker._NoCheckPolicy));
+	//		//		if(N != Node.AST[Index]) {
+	//		//			System.out.println("Node="+Node+"\n\tFrom="+N+"\n\tTo="+Node.AST[Index]);
+	//		//		}
+	//	}
+	//
+	//	@Override
+	//	public final BNode CheckType(BNode Node, BType ContextType) {
+	//		return this.TypeCheck(Node, ContextType, LibBunTypeChecker._DefaultTypeCheckPolicy);
+	//	}
+	//
+	//	@Override
+	//	public final void CheckTypeAt(BNode Node, int Index, BType ContextType) {
+	//		//		@Var ZNode N = Node.AST[Index];
+	//		Node.SetNode(Index, this.TypeCheck(Node.AST[Index], ContextType, LibBunTypeChecker._DefaultTypeCheckPolicy));
+	//		//		if(N != Node.AST[Index]) {
+	//		//			System.out.println("Node="+Node+"\n\tFrom="+N+"\n\tTo="+Node.AST[Index]);
+	//		//		}
+	//	}
 
+	//	@Override
+	//	public final void TypeCheckNodeList(AbstractListNode List) {
+	//		@Var int i = 0;
+	//		while(i < List.GetListSize()) {
+	//			@Var BNode SubNode = List.GetListAt(i);
+	//			SubNode = this.CheckType(SubNode, BType.VarType);
+	//			List.SetListAt(i, SubNode);
+	//			i = i + 1;
+	//		}
+	//	}
 
-	public final BNode TryType(BNode Node, BType ContextType) {
-		return this.TypeCheck(Node, ContextType, LibBunTypeChecker._NoCheckPolicy);
-	}
-
-	public final void TryTypeAt(BNode Node, int Index, BType ContextType) {
-		//		@Var ZNode N = Node.AST[Index];
-		Node.SetNode(Index, this.TypeCheck(Node.AST[Index], ContextType, LibBunTypeChecker._NoCheckPolicy));
-		//		if(N != Node.AST[Index]) {
-		//			System.out.println("Node="+Node+"\n\tFrom="+N+"\n\tTo="+Node.AST[Index]);
-		//		}
-	}
-
-	public final BNode CheckType(BNode Node, BType ContextType) {
-		return this.TypeCheck(Node, ContextType, LibBunTypeChecker._DefaultTypeCheckPolicy);
-	}
-
-	public final void CheckTypeAt(BNode Node, int Index, BType ContextType) {
-		//		@Var ZNode N = Node.AST[Index];
-		Node.SetNode(Index, this.TypeCheck(Node.AST[Index], ContextType, LibBunTypeChecker._DefaultTypeCheckPolicy));
-		//		if(N != Node.AST[Index]) {
-		//			System.out.println("Node="+Node+"\n\tFrom="+N+"\n\tTo="+Node.AST[Index]);
-		//		}
-	}
-
-	public final void TypeCheckNodeList(AbstractListNode List) {
-		@Var int i = 0;
-		while(i < List.GetListSize()) {
-			@Var BNode SubNode = List.GetListAt(i);
-			SubNode = this.CheckType(SubNode, BType.VarType);
-			List.SetListAt(i, SubNode);
-			i = i + 1;
-		}
-	}
-
-	public final BNode TypeListNodeAsFuncCall(AbstractListNode FuncNode, BFuncType FuncType) {
-		@Var int i = 0;
-		@Var BType[] Greek = BGreekType._NewGreekTypes(null);
-		//		if(FuncNode.GetListSize() != FuncType.GetFuncParamSize()) {
-		//			System.err.println(ZLogger._LogError(FuncNode.SourceToken, "mismatch " + FuncType + ", " + FuncNode.GetListSize()+": " + FuncNode));
-		//		}
-		while(i < FuncNode.GetListSize()) {
-			@Var BNode SubNode = FuncNode.GetListAt(i);
-			@Var BType ParamType =  FuncType.GetFuncParamType(i);
-			SubNode = this.TryType(SubNode, ParamType);
-			if(!SubNode.IsUntyped() || !ParamType.IsVarType()) {
-				if(!ParamType.AcceptValueType(SubNode.Type, false, Greek)) {
-					SubNode = this.CreateStupidCastNode(ParamType.GetGreekRealType(Greek), SubNode);
-				}
-			}
-			FuncNode.SetListAt(i, SubNode);
-			i = i + 1;
-		}
-		this.VarScope.TypeNode(FuncNode, FuncType.GetReturnType().GetGreekRealType(Greek));
-		return FuncNode;
-	}
+	//	@Override
+	//	public final BNode TypeListNodeAsFuncCall(AbstractListNode FuncNode, BFuncType FuncType) {
+	//		@Var int i = 0;
+	//		@Var BType[] Greek = BGreekType._NewGreekTypes(null);
+	//		//		if(FuncNode.GetListSize() != FuncType.GetFuncParamSize()) {
+	//		//			System.err.println(ZLogger._LogError(FuncNode.SourceToken, "mismatch " + FuncType + ", " + FuncNode.GetListSize()+": " + FuncNode));
+	//		//		}
+	//		while(i < FuncNode.GetListSize()) {
+	//			@Var BNode SubNode = FuncNode.GetListAt(i);
+	//			@Var BType ParamType =  FuncType.GetFuncParamType(i);
+	//			SubNode = this.TryType(SubNode, ParamType);
+	//			if(!SubNode.IsUntyped() || !ParamType.IsVarType()) {
+	//				if(!ParamType.AcceptValueType(SubNode.Type, false, Greek)) {
+	//					SubNode = this.CreateStupidCastNode(ParamType.GetGreekRealType(Greek), SubNode);
+	//				}
+	//			}
+	//			FuncNode.SetListAt(i, SubNode);
+	//			i = i + 1;
+	//		}
+	//		this.VarScope.TypeNode(FuncNode, FuncType.GetReturnType().GetGreekRealType(Greek));
+	//		return FuncNode;
+	//	}
 
 	public abstract void DefineFunction(BunFunctionNode FunctionNode, boolean Enforced);
 
@@ -349,23 +315,25 @@ public abstract class LibBunTypeChecker extends BunVisitor {
 	//		return NameNode;
 	//	}
 
+	@Override
 	public FuncCallNode CreateFuncCallNode(BNode ParentNode, BunToken sourceToken, String FuncName, BFuncType FuncType) {
 		@Var FuncCallNode FuncNode = new FuncCallNode(ParentNode, new BunFuncNameNode(null, sourceToken, FuncName, FuncType));
 		FuncNode.Type = FuncType.GetReturnType();
 		return FuncNode;
 	}
 
-	public final AbstractListNode CreateDefinedFuncCallNode(BNode ParentNode, BunToken sourceToken, BFunc Func) {
-		@Var AbstractListNode FuncNode = null;
-		if(Func instanceof BFormFunc) {
-			FuncNode = new BunFormNode(ParentNode, sourceToken, (BFormFunc)Func);
-		}
-		else {
-			FuncNode = this.CreateFuncCallNode(ParentNode, sourceToken, Func.FuncName, Func.GetFuncType());
-		}
-		//		FuncNode.Type = Func.GetFuncType().GetRealType();
-		return FuncNode;
-	}
+	//	@Override
+	//	public final AbstractListNode CreateDefinedFuncCallNode(BNode ParentNode, BunToken sourceToken, BFunc Func) {
+	//		@Var AbstractListNode FuncNode = null;
+	//		if(Func instanceof BFormFunc) {
+	//			FuncNode = new BunFormNode(ParentNode, sourceToken, (BFormFunc)Func);
+	//		}
+	//		else {
+	//			FuncNode = this.CreateFuncCallNode(ParentNode, sourceToken, Func.FuncName, Func.GetFuncType());
+	//		}
+	//		//		FuncNode.Type = Func.GetFuncType().GetRealType();
+	//		return FuncNode;
+	//	}
 
 }
 

@@ -37,6 +37,7 @@ import libbun.parser.classic.LibBunGamma;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.parser.common.BunSource;
 import libbun.parser.common.BunToken;
+import libbun.parser.common.SymbolTable;
 import libbun.type.BFuncType;
 import libbun.type.BType;
 import libbun.util.BField;
@@ -310,6 +311,20 @@ public abstract class BNode {
 		return null;
 	}
 
+	public final SymbolTable getSymbolTable() {
+		@Var int SafeCount = 0;
+		@Var BunBlockNode BlockNode = this.GetScopeBlockNode();
+		while(BlockNode.NullableGamma == null) {
+			@Var BunBlockNode ParentBlockNode = BlockNode.ParentNode.GetScopeBlockNode();
+			BlockNode = ParentBlockNode;
+			if(LibBunSystem.DebugMode) {
+				SafeCount = SafeCount + 1;
+				assert(SafeCount < 100);
+			}
+		}
+		return BlockNode.NullableGamma;
+	}
+
 	public final LibBunGamma GetGamma() {
 		@Var int SafeCount = 0;
 		@Var BunBlockNode BlockNode = this.GetScopeBlockNode();
@@ -323,6 +338,7 @@ public abstract class BNode {
 		}
 		return (LibBunGamma)BlockNode.NullableGamma;
 	}
+
 
 	public final boolean IsErrorNode() {
 		return (this instanceof ErrorNode);
