@@ -400,14 +400,14 @@ public class BunGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitFunctionNode(BunFunctionNode Node) {
-		if(Node.IsExport) {
+		if(Node.IsExport()) {
 			this.Source.Append("export ");
 		}
 		this.Source.Append("function ");
 		if(Node.FuncName() != null) {
 			this.Source.Append(Node.FuncName());
 		}
-		this.GenerateListNode("(", Node, ",", ")");
+		this.GenerateListNode("(", Node.ParamNode(), ",", ")");
 		this.GenerateTypeAnnotation(Node.ReturnType());
 		this.GenerateExpression(Node.BlockNode());
 	}

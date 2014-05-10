@@ -24,7 +24,6 @@
 
 package libbun.ast.decl;
 
-import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
 import libbun.ast.BunBlockNode;
 import libbun.common.CommonArray;
@@ -34,58 +33,52 @@ import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BFuncType;
 import libbun.type.BType;
 import libbun.type.BTypePool;
-import libbun.util.BField;
 import libbun.util.Var;
 
-public class BunFunctionNode extends AbstractListNode {
+public class BunFunctionNode extends DefSymbolNode {
 	public static final int _NameInfo = 0;
-	public static final int _TypeInfo = 1;
+	//	public static final int _TypeInfo = 1;  // unused
 	public final static int _Block    = 2;
+	public final static int _Params   = 3;
+	public final static int _ReturnTypeInfo = 4;
 
-	@BField public BType  GivenType = null;
-	@BField public String GivenName = null;
+	public BType ReturnType = null;
 
-	@BField public boolean       IsExport = false;
-	@BField public BunFunctionNode ParentFunctionNode = null;
-	@BField public BFuncType     ResolvedFuncType = null;
-
-	public BunFunctionNode(BNode ParentNode) {
-		super(ParentNode, 3);
+	public BunFunctionNode(BNode ParentNode, int symbolFlag) {
+		super(ParentNode, 5, symbolFlag);
 	}
 
 	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
-		@Var BunFunctionNode NewNode = new BunFunctionNode(ParentNode);
+		@Var BunFunctionNode NewNode = new BunFunctionNode(ParentNode, this.symbolFlag);
 		NewNode.GivenType = this.GivenType;
 		NewNode.GivenName = this.GivenName;
-		NewNode.IsExport  = this.IsExport;
 		NewNode.ParentFunctionNode = this.ParentFunctionNode;
-		NewNode.ResolvedFuncType = this.ResolvedFuncType;
+		NewNode.ReturnType = this.ReturnType;
 		return this.dupField(TypedClone, NewNode);
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {
 		builder.Append("(function ", this.FuncName(), " ");
 		this.ReturnType().bunfy(builder);
-		this.bunfyAST(builder, " (", this.vargStartIndex, ") ");
+		this.ParamNode().bunfyAST(builder, " (", 0, ") ");
 		this.BlockNode().bunfy(builder);
 		builder.Append(")");
 	}
 
-
 	public final BType ReturnType() {
-		if(this.GivenType == null) {
-			if(this.AST[BunFunctionNode._TypeInfo] != null) {
-				this.GivenType = this.AST[BunFunctionNode._TypeInfo].Type;
+		if(this.ReturnType == null) {
+			if(this.AST[BunFunctionNode._ReturnTypeInfo] != null) {
+				this.ReturnType = this.AST[BunFunctionNode._ReturnTypeInfo].Type;
 			}
 			else {
-				this.GivenType = BType.VarType;
+				this.ReturnType = BType.VarType;
 			}
 		}
-		return this.GivenType;
+		return this.ReturnType;
 	}
 
 	public final void SetReturnType(BType Type) {
-		this.GivenType = Type;
+		this.ReturnType = Type;
 	}
 
 	public final String FuncName() {
@@ -95,6 +88,7 @@ public class BunFunctionNode extends AbstractListNode {
 		return this.GivenName;
 	}
 
+	@Override
 	public final String GetUniqueName(LibBunGenerator Generator) {
 		@Var String FuncName = this.FuncName();
 		if(FuncName == null) {
@@ -117,19 +111,36 @@ public class BunFunctionNode extends AbstractListNode {
 		Visitor.VisitFunctionNode(this);
 	}
 
+	public final int getParamSize() {
+		if(this.AST[BunFunctionNode._Params] != null) {
+			return this.AST[BunFunctionNode._Params].GetAstSize();
+		}
+		return 0;
+	}
+
 	public final BunLetVarNode GetParamNode(int Index) {
-		@Var BNode Node = this.GetListAt(Index);
+		@Var BNode Node = this.AST[BunFunctionNode._Params].AST[Index];
 		if(Node instanceof BunLetVarNode) {
 			return (BunLetVarNode)Node;
 		}
 		return null;
 	}
 
+	public final BunBlockNode ParamNode() {
+		@Var BNode BlockNode = this.AST[BunFunctionNode._Params];
+		if(BlockNode instanceof BunBlockNode) {
+			return (BunBlockNode)BlockNode;
+		}
+		assert(BlockNode == null); // this must not happen
+		return null;
+	}
+
+
 	public final BFuncType GetFuncType() {
-		if(this.ResolvedFuncType == null) {
-			@Var CommonArray<BType> TypeList = new CommonArray<BType>(new BType[this.GetListSize()+2]);
+		if(this.GivenType == null) {
+			@Var CommonArray<BType> TypeList = new CommonArray<BType>(new BType[this.getParamSize()+1]);
 			@Var int i = 0;
-			while(i < this.GetListSize()) {
+			while(i < this.getParamSize()) {
 				@Var BunLetVarNode Node = this.GetParamNode(i);
 				@Var BType ParamType = Node.DeclType().GetRealType();
 				TypeList.add(ParamType);
@@ -138,17 +149,21 @@ public class BunFunctionNode extends AbstractListNode {
 			TypeList.add(this.ReturnType().GetRealType());
 			@Var BFuncType FuncType = BTypePool._LookupFuncType2(TypeList);
 			if(!FuncType.IsVarType()) {
-				this.ResolvedFuncType = FuncType;
+				this.GivenType = FuncType;
 			}
 			return FuncType;
 		}
-		return this.ResolvedFuncType;
+		return (BFuncType)this.GivenType;
 	}
 
 	public final String GetSignature() {
 		@Var BFuncType FuncType = this.GetFuncType();
 		return FuncType.StringfySignature(this.FuncName());
 	}
+
+	//	@BField public BFuncType       ResolvedFuncType = null;
+
+	public BunFunctionNode ParentFunctionNode = null;
 
 	public final BunFunctionNode Push(BunFunctionNode Parent) {
 		this.ParentFunctionNode = Parent;

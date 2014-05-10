@@ -528,18 +528,18 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 	}
 
 	protected void VisitFuncParamNode(String OpenToken, BunFunctionNode VargNode, String CloseToken) {
-		this.GenerateListNode(OpenToken, VargNode, this.Camma, CloseToken);
+		this.GenerateListNode(OpenToken, VargNode.ParamNode(), this.Camma, CloseToken);
 	}
 
 	@Override public void VisitFunctionNode(BunFunctionNode Node) {
-		if(Node.IsExport) {
+		if(Node.IsExport()) {
 			this.Source.Append("export ");
 		}
 		this.Source.Append("function ");
 		if(Node.FuncName() != null) {
 			this.Source.Append(Node.FuncName());
 		}
-		this.GenerateListNode("(", Node, ",", ")");
+		this.GenerateListNode("(", Node.ParamNode(), ",", ")");
 		this.GenerateTypeAnnotation(Node.ReturnType());
 		this.GenerateExpression(Node.BlockNode());
 	}
@@ -611,7 +611,7 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 	protected void GenerateWrapperCall(String OpenToken, BunFunctionNode FuncNode, String CloseToken) {
 		this.Source.Append(OpenToken);
 		@Var int i = 0;
-		while(i < FuncNode.GetListSize()) {
+		while(i < FuncNode.getParamSize()) {
 			@Var BunLetVarNode ParamNode = FuncNode.GetParamNode(i);
 			if (i > 0) {
 				this.Source.Append(this.Camma);

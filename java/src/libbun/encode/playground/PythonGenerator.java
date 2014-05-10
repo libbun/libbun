@@ -433,7 +433,7 @@ public class PythonGenerator extends LibBunSourceGenerator {
 			@Var String FuncName = Node.GetUniqueName(this);
 			this.Source = this.InsertNewSourceBuilder();
 			this.Source.AppendNewLine("def ", FuncName);
-			this.GenerateListNode("(", Node, ", ", ")");
+			this.GenerateListNode("(", Node.ParamNode(), ", ", ")");
 			this.GenerateExpression(Node.BlockNode());
 			this.Source = this.Source.Pop();
 			this.Source.Append(FuncName);
@@ -441,9 +441,9 @@ public class PythonGenerator extends LibBunSourceGenerator {
 		else {
 			@Var BFuncType FuncType = Node.GetFuncType();
 			this.Source.AppendNewLine("def ", Node.GetSignature());
-			this.GenerateListNode("(", Node, ", ", ")");
+			this.GenerateListNode("(", Node.ParamNode(), ", ", ")");
 			this.GenerateExpression(Node.BlockNode());
-			if(Node.IsExport) {
+			if(Node.IsExport()) {
 				this.Source.AppendNewLine(Node.FuncName(), " = ", FuncType.StringfySignature(Node.FuncName()));
 				if(Node.FuncName().equals("main")) {
 					this.HasMainFunction = true;

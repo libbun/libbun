@@ -318,7 +318,7 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 		}
 		else {
 			this.GenerateFunctionAsClass(Node.FuncName(), Node);
-			if(Node.IsExport) {
+			if(Node.IsExport()) {
 				if(Node.FuncName().equals("main")) {
 					this.ImportLibrary("@main");
 				}
@@ -330,7 +330,7 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 	}
 
 	private void GenerateLambdaFunction(BunFunctionNode Node){
-		this.GenerateListNode("(", Node, ", ", ") => ");
+		this.GenerateListNode("(", Node.ParamNode(), ", ", ") => ");
 		if(Node.BlockNode().GetListSize() == 1){
 			@Var BNode FirstNode = Node.BlockNode().GetListAt(0);
 			if(FirstNode instanceof BunReturnNode){
@@ -342,7 +342,7 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 	}
 
 	private String GenerateFunctionAsClass(String FuncName, BunFunctionNode Node) {
-		@Var BunLetVarNode FirstParam = Node.GetListSize() == 0 ? null : (BunLetVarNode)Node.GetListAt(0);
+		@Var BunLetVarNode FirstParam = Node.getParamSize() == 0 ? null : (BunLetVarNode)Node.GetParamNode(0);
 		@Var boolean IsInstanceMethod = FirstParam != null && FirstParam.GetGivenName().equals("this");
 
 		this.OpenMainClass();
@@ -351,9 +351,9 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 		this.Source.Append(" ");
 		this.Source.Append(FuncName);
 		if(IsInstanceMethod){
-			this.GenerateListNode("(this ", Node, ", ", ")");
+			this.GenerateListNode("(this ", Node.ParamNode(), ", ", ")");
 		}else{
-			this.GenerateListNode("(", Node, ", ", ")");
+			this.GenerateListNode("(", Node.ParamNode(), ", ", ")");
 		}
 
 		this.GenerateExpression(Node.BlockNode());

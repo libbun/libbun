@@ -180,7 +180,7 @@ public class HaskellSourceGenerator extends OldSourceGenerator {
 
 		this.Indent(this.Source);
 
-		for (int i = 0; i < Node.GetListSize(); i++) {
+		for (int i = 0; i < Node.getParamSize(); i++) {
 			BunLetVarNode Param = Node.GetParamNode(i);
 			this.Variables.add(Param.GetGivenName());
 
@@ -191,7 +191,7 @@ public class HaskellSourceGenerator extends OldSourceGenerator {
 			this.Source.AppendLineFeed();
 		}
 
-		for (int i = 0; i < Node.GetListSize(); i++) {
+		for (int i = 0; i < Node.getParamSize(); i++) {
 			BunLetVarNode node1 = Node.GetParamNode(i);
 
 			this.Source.AppendNewLine();

@@ -513,13 +513,13 @@ public class ErlangGenerator extends OldSourceGenerator {
 
 	@Override public void VisitFunctionNode(BunFunctionNode Node) {
 		this.VarMgr.Init();
-		this.DefineVariables(Node);
+		this.DefineVariables(Node.ParamNode());
 
 		String FuncName = this.ToErlangFuncName(Node.FuncName());
 		if (FuncName.equals("main")) {
 			this.Header.Append("-export([main/1]).");
 		} else {
-			this.Header.Append("-export([" + FuncName + "/" + Node.GetListSize() + "]).");
+			this.Header.Append("-export([" + FuncName + "/" + Node.getParamSize() + "]).");
 		}
 		this.Header.AppendLineFeed();
 
@@ -662,14 +662,14 @@ public class ErlangGenerator extends OldSourceGenerator {
 		if (FuncName.equals("main")) { //FIX ME!!
 			this.Source.Append("(_)");
 		} else {
-			this.GenerateListNode("(", Node, ")");
+			this.GenerateListNode("(", Node.ParamNode(), ")");
 		}
 
 		this.Source.Append(" ->");
 		this.Source.AppendLineFeed();
 		this.Source.OpenIndent();
 		this.Source.AppendNewLine("try "+ FuncName + "_inner");
-		this.GenerateListNode("(", Node, ")");
+		this.GenerateListNode("(", Node.ParamNode(), ")");
 		this.Source.Append(" of");
 		this.Source.AppendLineFeed();
 		this.Source.OpenIndent();

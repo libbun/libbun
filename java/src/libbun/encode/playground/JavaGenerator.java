@@ -582,7 +582,7 @@ public class JavaGenerator extends LibBunSourceGenerator {
 		}
 		else {
 			this.GenerateFunctionAsClass(Node.FuncName(), Node);
-			if(Node.IsExport) {
+			if(Node.IsExport()) {
 				if(Node.FuncName().equals("main")) {
 					this.MainFuncNode = Node;
 				}
@@ -606,7 +606,7 @@ public class JavaGenerator extends LibBunSourceGenerator {
 		this.Source.AppendNewLine("static ");
 		this.GenerateTypeName(Node.ReturnType());
 		this.Source.Append(" f");
-		this.GenerateListNode("(", Node, ", ", ")");
+		this.GenerateListNode("(", Node.ParamNode(), ", ", ")");
 		this.GenerateExpression(Node.BlockNode());
 
 		this.GenerateClassField("static ", FuncType, "function", "new " + ClassName + "();");
@@ -620,7 +620,7 @@ public class JavaGenerator extends LibBunSourceGenerator {
 		this.Source.AppendNewLine("");
 		this.GenerateTypeName(Node.ReturnType());
 		this.Source.Append(" Invoke");
-		this.GenerateListNode("(", Node, ", ", ")");
+		this.GenerateListNode("(", Node.ParamNode(), ", ", ")");
 		this.Source.OpenIndent(" {");
 		if(!FuncType.GetReturnType().IsVoidType()) {
 			this.Source.AppendNewLine("return ", ClassName, ".f");

@@ -2,7 +2,6 @@ package libbun.lang.lisp;
 
 import libbun.ast.BNode;
 import libbun.ast.GroupNode;
-import libbun.lang.konoha.ContinuePatternFunction;
 import libbun.parser.classic.BTokenContext;
 import libbun.parser.classic.LibBunGamma;
 import libbun.util.BMatchFunction;
@@ -28,7 +27,7 @@ class GroupPatternFunction extends BMatchFunction {
 }
 
 public class LispGrammar {
-	public final static BMatchFunction ContinuePattern = new ContinuePatternFunction();
+	//	public final static BMatchFunction ContinuePattern = new ContinuePatternFunction();
 
 	public static void LoadGrammar(LibBunGamma Gamma) {
 		//Gamma.SetTypeName(BType.VoidType,  null);

@@ -104,10 +104,15 @@ class PythonIfPatternFunction extends BMatchFunction{
 class PythonFunctionPatternFunction extends BMatchFunction {
 	@Override
 	public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode FuncNode = new BunFunctionNode(ParentNode);
+		@Var BNode FuncNode = new BunFunctionNode(ParentNode, 0);
 		FuncNode = TokenContext.MatchToken(FuncNode, "def", BTokenContext._Required);
 		FuncNode = TokenContext.MatchPattern(FuncNode, BunFunctionNode._NameInfo, "$Name$", BTokenContext._Optional);
-		FuncNode = TokenContext.MatchNtimes(FuncNode, "(", "$Param$", ",", ")");
+		BNode ParamNode = new BunBlockNode(FuncNode, null);
+		ParamNode = TokenContext.MatchNtimes(ParamNode, "(", "$Param$", ",", ")");
+		if(ParamNode.IsErrorNode()) {
+			return ParamNode;
+		}
+		FuncNode.SetNode(BunFunctionNode._Params, ParamNode);
 		FuncNode = TokenContext.MatchPattern(FuncNode, BunFunctionNode._Block, "$Block$", BTokenContext._Required);
 		return FuncNode;
 	}

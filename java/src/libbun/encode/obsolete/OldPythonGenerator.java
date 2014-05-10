@@ -221,7 +221,7 @@ public class OldPythonGenerator extends OldSourceGenerator {
 			this.VisitFuncParamNode("(", Node, ")");
 			this.GenerateExpression(Node.BlockNode());
 			this.Source.AppendLineFeed();
-			if(Node.IsExport) {
+			if(Node.IsExport()) {
 				this.Source.Append(Node.FuncName(), " = ", FuncType.StringfySignature(Node.FuncName()));
 				this.Source.AppendLineFeed();
 				if(Node.FuncName().equals("main")) {

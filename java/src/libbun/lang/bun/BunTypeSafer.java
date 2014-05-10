@@ -861,7 +861,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 	}
 
 	@Override public void DefineFunction(BunFunctionNode FunctionNode, boolean Enforced) {
-		if(FunctionNode.FuncName() != null && FunctionNode.ResolvedFuncType == null) {
+		if(FunctionNode.FuncName() != null && FunctionNode.GivenType == null) {
 			@Var BFuncType FuncType = FunctionNode.GetFuncType();
 			if(Enforced || !FuncType.IsVarType()) {
 				@Var LibBunGamma Gamma = FunctionNode.GetGamma();
@@ -884,7 +884,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 		this.CurrentFunctionNode = FunctionNode.Push(this.CurrentFunctionNode);
 		this.VarScope = new BVarScope(this.VarScope, this.Logger, null);
 		@Var int i = 0;
-		while(i < FunctionNode.GetListSize()) {
+		while(i < FunctionNode.getParamSize()) {
 			@Var BunLetVarNode ParamNode = FunctionNode.GetParamNode(i);
 			ParamNode.SetDeclType(this.VarScope.NewVarType(ParamNode.DeclType(), ParamNode.GetGivenName(), ParamNode.GetAstToken(BunLetVarNode._NameInfo)));
 			if(FuncType != null) {

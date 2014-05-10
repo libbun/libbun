@@ -55,6 +55,7 @@ import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.BunRequireNode;
 import libbun.ast.decl.BunVarBlockNode;
+import libbun.ast.decl.DefSymbolNode;
 import libbun.ast.error.ErrorNode;
 import libbun.ast.expression.FuncCallNode;
 import libbun.ast.expression.GetFieldNode;
@@ -975,11 +976,16 @@ class ParamPatternFunction extends BMatchFunction {
 
 class FunctionPatternFunction extends BMatchFunction {
 	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode FuncNode = new BunFunctionNode(ParentNode);
+		@Var BNode FuncNode = new BunFunctionNode(ParentNode, 0);
 		FuncNode = TokenContext.MatchToken(FuncNode, "function", BTokenContext._Required);
 		FuncNode = TokenContext.MatchPattern(FuncNode, BunFunctionNode._NameInfo, "$Name$", BTokenContext._Optional);
-		FuncNode = TokenContext.MatchNtimes(FuncNode, "(", "$Param$", ",", ")");
-		FuncNode = TokenContext.MatchPattern(FuncNode, BunFunctionNode._TypeInfo, "$TypeAnnotation$", BTokenContext._Optional);
+		BNode ParamNode = new BunBlockNode(FuncNode, null);
+		ParamNode = TokenContext.MatchNtimes(ParamNode, "(", "$Param$", ",", ")");
+		if(ParamNode.IsErrorNode()) {
+			return ParamNode;
+		}
+		FuncNode.SetNode(BunFunctionNode._Params, ParamNode);
+		FuncNode = TokenContext.MatchPattern(FuncNode, BunFunctionNode._ReturnTypeInfo, "$TypeAnnotation$", BTokenContext._Optional);
 		FuncNode = TokenContext.MatchPattern(FuncNode, BunFunctionNode._Block, "$Block$", BTokenContext._Required);
 		return FuncNode;
 	}
@@ -1001,13 +1007,13 @@ class ExportPatternFunction extends BMatchFunction {
 	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
 		@Var BToken NameToken = TokenContext.GetToken(BTokenContext._MoveNext);
 		@Var BNode Node = TokenContext.ParsePattern(ParentNode, "function", BTokenContext._Optional);
-		if(Node instanceof BunFunctionNode) {
-			((BunFunctionNode)Node).IsExport = true;
+		if(Node instanceof DefSymbolNode) {
+			((DefSymbolNode)Node).symbolFlag = ((DefSymbolNode)Node).symbolFlag | DefSymbolNode._IsExport;
 			return Node;
 		}
 		Node = TokenContext.ParsePattern(ParentNode, "let", BTokenContext._Optional);
 		if(Node instanceof BunLetVarNode) {
-			((BunLetVarNode)Node).NameFlag = ((BunLetVarNode)Node).NameFlag | BunLetVarNode._IsExport;
+			((BunLetVarNode)Node).symbolFlag = ((BunLetVarNode)Node).symbolFlag | BunLetVarNode._IsExport;
 			return Node;
 		}
 		Node = TokenContext.ParsePattern(ParentNode, "class", BTokenContext._Optional);

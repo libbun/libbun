@@ -434,7 +434,7 @@ public class BashGenerator extends LibBunSourceGenerator {
 
 	private void VisitBashDeclareNode(BashDeclareNode Node) {
 		@Var int i = 0;
-		while(i < Node.FunctionNode.GetListSize()) {
+		while(i < Node.FunctionNode.getParamSize()) {
 			@Var BunLetVarNode ParamNode = Node.FunctionNode.GetParamNode(i);
 			this.Source.AppendNewLine("declare ", ParamNode.GetUniqueName(this), "=$");
 			this.Source.AppendInt(i+1);
@@ -447,7 +447,7 @@ public class BashGenerator extends LibBunSourceGenerator {
 			@Var String FuncName = Node.GetUniqueName(this);
 			this.Source = this.InsertNewSourceBuilder();
 			this.Source.AppendNewLine("def ", FuncName);
-			this.GenerateListNode("(", Node, ", ", ")");
+			this.GenerateListNode("(", Node.ParamNode(), ", ", ")");
 			this.GenerateExpression(Node.BlockNode());
 			this.Source = this.Source.Pop();
 			this.Source.Append(FuncName);
@@ -458,7 +458,7 @@ public class BashGenerator extends LibBunSourceGenerator {
 			@Var BunBlockNode BlockNode = Node.BlockNode();
 			BlockNode.InsertListAt(0, new BashDeclareNode(BlockNode, Node));
 			this.GenerateExpression(Node.BlockNode());
-			if(Node.IsExport) {
+			if(Node.IsExport()) {
 				//				this.Source.AppendNewLine(Node.FuncName(), " = ", FuncType.StringfySignature(Node.FuncName()));
 				//				if(Node.FuncName().equals("main")) {
 				//					this.HasMainFunction = true;

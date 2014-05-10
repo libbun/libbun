@@ -206,7 +206,7 @@ public class RGenerator extends LibBunSourceGenerator {
 			@Var String FuncName = Node.GetUniqueName(this);
 			this.Source.Append(FuncName);
 			this.Source.Append(" <- function");
-			this.GenerateListNode("(", Node, ", ", ")");
+			this.GenerateListNode("(", Node.ParamNode(), ", ", ")");
 			this.GenerateExpression(Node.BlockNode());
 		}
 		else {
@@ -215,7 +215,7 @@ public class RGenerator extends LibBunSourceGenerator {
 			}
 			this.Source.Append(Node.GetSignature());
 			this.Source.Append(" <- function");
-			this.GenerateListNode("(", Node, ", ", ")");
+			this.GenerateListNode("(", Node.ParamNode(), ", ", ")");
 			this.GenerateExpression(Node.BlockNode());
 		}
 	}
@@ -325,7 +325,7 @@ public class RGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitAddNode(BunAddNode Node) {
-//		this.GenerateBinaryOperatorExpression(Node, "+");
+		//		this.GenerateBinaryOperatorExpression(Node, "+");
 		this.GenerateAddOperatorExpression(Node);
 	}
 

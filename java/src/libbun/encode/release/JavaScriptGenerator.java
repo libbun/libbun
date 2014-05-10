@@ -152,7 +152,7 @@ public class JavaScriptGenerator extends LibBunSourceGenerator {
 
 
 	private void VisitAnonymousFunctionNode(BunFunctionNode Node) {
-		this.GenerateListNode("(function(", Node, ", ", ")");
+		this.GenerateListNode("(function(", Node.ParamNode(), ", ", ")");
 		this.GenerateExpression(Node.BlockNode());
 		this.Source.Append(")");
 	}
@@ -164,9 +164,9 @@ public class JavaScriptGenerator extends LibBunSourceGenerator {
 		}
 		@Var BFuncType FuncType = Node.GetFuncType();
 		this.Source.AppendNewLine("function ", Node.GetSignature());
-		this.GenerateListNode("(", Node, ",", ")");
+		this.GenerateListNode("(", Node.ParamNode(), ",", ")");
 		this.GenerateExpression(Node.BlockNode());
-		if(Node.IsExport) {
+		if(Node.IsExport()) {
 			this.Source.AppendNewLine(Node.FuncName(), " = ", FuncType.StringfySignature(Node.FuncName()));
 			if(Node.FuncName().equals("main")) {
 				this.HasMainFunction = true;

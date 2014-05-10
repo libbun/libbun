@@ -1009,7 +1009,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 			assert(Node.FuncName() != null);
 			assert(Node.IsTopLevel());  // otherwise, transformed to var f = function ()..
 			JavaStaticFieldNode FuncNode = this.GenerateFunctionAsSymbolField(Node.FuncName(), Node);
-			if(Node.IsExport) {
+			if(Node.IsExport()) {
 				if(Node.FuncName().equals("main")) {
 					this.MainFuncNode = FuncNode;
 				}
@@ -1061,7 +1061,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 		InitMethod.Finish();
 
 		AsmMethodBuilder StaticFuncMethod = ClassBuilder.NewMethod(ACC_PUBLIC | ACC_STATIC, "f", FuncType);
-		for(int i = 0; i < Node.GetListSize(); i++) {
+		for(int i = 0; i < Node.getParamSize(); i++) {
 			BunLetVarNode ParamNode = Node.GetParamNode(i);
 			Class<?> DeclClass = this.GetJavaClass(ParamNode.DeclType());
 			StaticFuncMethod.AddLocal(DeclClass, ParamNode.GetGivenName());

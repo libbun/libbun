@@ -363,7 +363,7 @@ public class SSAConverter extends ZASTTransformer {
 	public void VisitFunctionNode(BunFunctionNode Node) {
 		this.LocalVariables = new CommonArray<Variable>(new Variable[0]);
 		@Var int i = 0;
-		while(i < Node.GetListSize()) {
+		while(i < Node.getParamSize()) {
 			BunLetVarNode ParamNode = Node.GetParamNode(i);
 			this.AddVariable(new Variable(ParamNode.GetUniqueName(this.Generator), 0, ParamNode));
 			i = i + 1;

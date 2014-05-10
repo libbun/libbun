@@ -844,10 +844,10 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 		this.Source.Append(this.GetTypeExpr(Node.ReturnType()));
 		@Var String FuncName;
 		if(Node.FuncName() == null) {
-			FuncName = this.CreateTempFuncName(Node.ResolvedFuncType);
+			FuncName = this.CreateTempFuncName(Node.GetFuncType());
 		}
 		else {
-			@Var String StringifiedName = Node.ResolvedFuncType.StringfySignature(Node.FuncName());
+			@Var String StringifiedName = Node.GetFuncType().StringfySignature(Node.FuncName());
 			this.DefineGlobalSymbol(StringifiedName);
 			FuncName = this.ToGlobalSymbol(StringifiedName);
 		}
@@ -868,19 +868,19 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 		}
 		this.Source.CloseIndent("}");
 
-		if(Node.IsExport) {
+		if(Node.IsExport()) {
 			if(Node.FuncName().equals("main")) {
 				this.Source.AppendNewLine("define i32 @main (i32 %argc, i8** %argv)");
 				this.Source.OpenIndent(" {");
-				if(Node.ResolvedFuncType.GetFuncParamSize() != 0) {
+				if(Node.GetFuncType().GetFuncParamSize() != 0) {
 					this.Source.AppendNewLine("%_argc = zext i32 %argc to i64");
 				}
 				this.Source.AppendNewLine("call ");
-				this.Source.Append(this.GetTypeExpr(Node.ResolvedFuncType));
+				this.Source.Append(this.GetTypeExpr(Node.GetFuncType()));
 				this.Source.Append(" ");
 				this.Source.Append(FuncName);
 				this.Source.Append(" (");
-				if(Node.ResolvedFuncType.GetFuncParamSize() != 0) {
+				if(Node.GetFuncType().GetFuncParamSize() != 0) {
 					this.Source.Append("i64 %_argc, i8** %argv");
 				}
 				this.Source.Append(")");
@@ -890,7 +890,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 			else {
 				this.Header.AppendNewLine("@" + Node.FuncName());
 				this.Header.Append(" = constant ");
-				this.Header.Append(this.GetTypeExpr(Node.ResolvedFuncType));
+				this.Header.Append(this.GetTypeExpr(Node.GetFuncType()));
 				this.Header.Append(" ");
 				this.Header.Append(FuncName);
 			}
@@ -1489,7 +1489,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 		@Var StringBuilder sb = new StringBuilder();
 		sb.append(OpenToken);
 		@Var int i = 0;
-		while(i < VargNode.GetListSize()) {
+		while(i < VargNode.getParamSize()) {
 			@Var BunLetVarNode ParamNode = VargNode.GetParamNode(i);
 			if (i > 0) {
 				sb.append(this.Camma);

@@ -515,7 +515,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	@Override public void VisitFunctionNode(BunFunctionNode Node) {
 		if(!Node.IsTopLevelDefineFunction()) {
 			this.Source.Append("#'(lambda ");
-			this.GenerateListNode("(", Node, " ", ")");
+			this.GenerateListNode("(", Node.ParamNode(), " ", ")");
 			this.Source.Append("(block nil ");
 			this.GenerateExpression(Node.BlockNode());
 			this.Source.Append("))");
@@ -524,10 +524,10 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 			@Var BFuncType FuncType = Node.GetFuncType();
 			this.Source.Append("(defun ");
 			this.Source.Append(this.ClFunctionName(Node));
-			this.GenerateListNode("(", Node, " ", ")");
+			this.GenerateListNode("(", Node.ParamNode(), " ", ")");
 			this.GenerateExpression(Node.BlockNode());
 			this.Source.Append(")");
-			if(Node.IsExport) {
+			if(Node.IsExport()) {
 				if(Node.FuncName().equals("main")) {
 					this.hasMain = true;
 				}

@@ -617,7 +617,7 @@ public class CGenerator extends LibBunSourceGenerator {
 			this.Source.AppendNewLine("static ");
 			this.GenerateTypeName(Node.ReturnType());
 			this.Source.Append(" ", FuncName);
-			this.GenerateListNode("(", Node, ",", ")");
+			this.GenerateListNode("(", Node.ParamNode(), ",", ")");
 			this.GenerateExpression(Node.BlockNode());
 			//			this.CurrentBuilder.AppendLineFeed();
 			this.Source = this.Source.Pop();
@@ -628,14 +628,14 @@ public class CGenerator extends LibBunSourceGenerator {
 			this.Source.AppendNewLine("static ");
 			this.GenerateTypeName(Node.ReturnType());
 			this.Source.Append(" ", Node.GetSignature());
-			this.GenerateListNode("(", Node, ",", ")");
+			this.GenerateListNode("(", Node.ParamNode(), ",", ")");
 			@Var String Prototype = this.Source.CopyString(StartIndex, this.Source.GetPosition());
 			this.GenerateExpression(Node.BlockNode());
 
 			this.Header.AppendNewLine(Prototype);
 			this.Header.Append(";");
 			@Var BFuncType FuncType = Node.GetFuncType();
-			if(Node.IsExport) {
+			if(Node.IsExport()) {
 				this.GenerateExportFunction(Node);
 			}
 			if(this.IsMethod(Node.FuncName(), FuncType)) {
@@ -647,7 +647,7 @@ public class CGenerator extends LibBunSourceGenerator {
 	private void GenerateWrapperCall(String OpenToken, BunFunctionNode FuncNode, String CloseToken) {
 		this.Source.Append(OpenToken);
 		@Var int i = 0;
-		while(i < FuncNode.GetListSize()) {
+		while(i < FuncNode.getParamSize()) {
 			@Var BunLetVarNode ParamNode = FuncNode.GetParamNode(i);
 			if (i > 0) {
 				this.Source.Append(",");
@@ -667,7 +667,7 @@ public class CGenerator extends LibBunSourceGenerator {
 			this.GenerateTypeName(Node.ReturnType());
 		}
 		this.Source.Append(" ", Node.FuncName());
-		this.GenerateListNode("(", Node, ",", ")");
+		this.GenerateListNode("(", Node.ParamNode(), ",", ")");
 		this.Source.OpenIndent(" {");
 		if(!Node.ReturnType().IsVoidType()) {
 			this.Source.AppendNewLine("return ", Node.GetSignature());

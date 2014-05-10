@@ -340,7 +340,7 @@ public class SSACGenerator extends OldSourceGenerator {
 			this.Header.Append(Prototype);
 			this.Header.Append(this.SemiColon);
 			@Var BFuncType FuncType = Node.GetFuncType();
-			if(Node.IsExport) {
+			if(Node.IsExport()) {
 				this.GenerateExportFunction(Node);
 			}
 			if(this.IsMethod(Node.FuncName(), FuncType)) {
@@ -358,7 +358,7 @@ public class SSACGenerator extends OldSourceGenerator {
 			this.GenerateTypeName(Node.ReturnType());
 		}
 		this.Source.Append(" ", Node.FuncName());
-		this.GenerateListNode("(", Node, ")");
+		this.GenerateListNode("(", Node.ParamNode(), ")");
 		this.Source.OpenIndent(" {");
 		if(!Node.ReturnType().IsVoidType()) {
 			this.Source.AppendNewLine("return ", Node.GetSignature());

@@ -23,7 +23,6 @@ public abstract class TypeChecker extends BunChecker {
 	private BNode      ReturnedNode = null;
 
 	public TypeChecker() {
-
 	}
 
 	@Override public BNode startCheck(BNode bnode) {

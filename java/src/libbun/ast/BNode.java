@@ -133,7 +133,7 @@ public abstract class BNode {
 		return Self;
 	}
 
-	protected final void bunfyAST(CommonStringBuilder builder, String openClause, int startIdx, String closeClause) {
+	public final void bunfyAST(CommonStringBuilder builder, String openClause, int startIdx, String closeClause) {
 		builder.Append(openClause);
 		for(int i = startIdx; i < this.GetAstSize(); i++) {
 			if(this.AST[i] != null) {

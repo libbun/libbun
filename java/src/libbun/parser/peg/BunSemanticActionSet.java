@@ -669,7 +669,7 @@ class ParamFunction extends SemanticFunction {
 
 class FunctionFunction extends SemanticFunction {
 	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
-		return po.copySubTo(source, new BunFunctionNode(parentNode));
+		return po.copySubTo(source, new BunFunctionNode(parentNode, 0));
 	}
 }
 

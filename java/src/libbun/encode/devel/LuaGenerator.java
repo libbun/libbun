@@ -469,7 +469,7 @@ public class LuaGenerator extends LibBunSourceGenerator {
 			@Var String FuncName = Node.GetUniqueName(this);
 			this.Source = this.InsertNewSourceBuilder();
 			this.Source.AppendNewLine("function ", FuncName);
-			this.GenerateListNode("(", Node, ",", ")");
+			this.GenerateListNode("(", Node.ParamNode(), ",", ")");
 			this.GenerateExpression(Node.BlockNode());
 			this.Source.AppendNewLine("end");
 			this.Source = this.Source.Pop();
@@ -478,10 +478,10 @@ public class LuaGenerator extends LibBunSourceGenerator {
 		else {
 			@Var BFuncType FuncType = Node.GetFuncType();
 			this.Source.AppendNewLine("function ", Node.GetSignature());
-			this.GenerateListNode("(", Node, ",", ")");
+			this.GenerateListNode("(", Node.ParamNode(), ",", ")");
 			this.GenerateExpression(Node.BlockNode());
 			this.Source.AppendNewLine("end");
-			if(Node.IsExport) {
+			if(Node.IsExport()) {
 				this.Source.AppendNewLine(Node.FuncName(), " = ", FuncType.StringfySignature(Node.FuncName()));
 				if(Node.FuncName().equals("main")) {
 					this.HasMainFunction = true;

@@ -614,7 +614,7 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 			}
 			this.Source.Append(Node.GetSignature());
 		}
-		this.GenerateArgumentListNode(Node);
+		this.GenerateArgumentListNode(Node.ParamNode());
 		if(IsAnonymousFunction) {
 			this.Source.Append(" => ");
 		}
@@ -641,7 +641,7 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 			this.Source.Append(")");
 		}
 
-		if(!IsAnonymousFunction && Node.IsExport) {
+		if(!IsAnonymousFunction && Node.IsExport()) {
 			this.Export.AppendNewLine("val ", Node.FuncName(), " = ");
 			this.Export.Append(Node.GetSignature());
 			if(Node.FuncName().equals("main")) {

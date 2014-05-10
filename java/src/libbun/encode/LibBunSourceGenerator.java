@@ -251,7 +251,7 @@ public abstract class LibBunSourceGenerator extends LibBunGenerator {
 	protected void GenerateWrapperCall(String OpenToken, BunFunctionNode FuncNode, String CommaToken, String CloseToken) {
 		this.Source.Append(OpenToken);
 		@Var int i = 0;
-		while(i < FuncNode.GetListSize()) {
+		while(i < FuncNode.getParamSize()) {
 			@Var BunLetVarNode ParamNode = FuncNode.GetParamNode(i);
 			if (i > 0) {
 				this.Source.Append(CommaToken);
