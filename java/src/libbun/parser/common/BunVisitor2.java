@@ -20,8 +20,8 @@ import libbun.ast.expression.GetIndexNode;
 import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
-import libbun.ast.literal.BunArrayLiteralNode;
-import libbun.ast.literal.BunMapLiteralNode;
+import libbun.ast.literal.BunArrayNode;
+import libbun.ast.literal.BunMapNode;
 import libbun.ast.literal.LiteralNode;
 import libbun.ast.statement.BunBreakNode;
 import libbun.ast.statement.BunIfNode;
@@ -51,8 +51,8 @@ public abstract class BunVisitor2 {
 
 	//public abstract void visitAsmNode(BunAsmNode node);
 
-	public abstract void visitArrayLiteralNode(BunArrayLiteralNode node);
-	public abstract void visitMapLiteralNode(BunMapLiteralNode node);
+	public abstract void visitArrayLiteralNode(BunArrayNode node);
+	public abstract void visitMapLiteralNode(BunMapNode node);
 
 	public abstract void visitCastNode(BunCastNode node);
 	public abstract void visitInstanceOfNode(BunInstanceOfNode node);

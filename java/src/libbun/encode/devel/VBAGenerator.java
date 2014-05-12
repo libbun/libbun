@@ -37,12 +37,12 @@ import libbun.ast.expression.GetIndexNode;
 import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
-import libbun.ast.literal.BunArrayLiteralNode;
+import libbun.ast.literal.BunArrayNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.literal.BunFloatNode;
 import libbun.ast.literal.BunIntNode;
 import libbun.ast.literal.BunMapEntryNode;
-import libbun.ast.literal.BunMapLiteralNode;
+import libbun.ast.literal.BunMapNode;
 import libbun.ast.literal.BunNullNode;
 import libbun.ast.literal.BunStringNode;
 import libbun.ast.statement.BunBreakNode;
@@ -231,11 +231,11 @@ public class VBAGenerator extends LibBunSourceGenerator {
 		this.GenerateExpression("(", Node.ExprNode(), ")");
 	}
 
-	@Override public void VisitArrayLiteralNode(BunArrayLiteralNode Node) {
+	@Override public void VisitArrayLiteralNode(BunArrayNode Node) {
 		this.GenerateListNode("[", Node, ",", "]");
 	}
 
-	@Override public void VisitMapLiteralNode(BunMapLiteralNode Node) {
+	@Override public void VisitMapLiteralNode(BunMapNode Node) {
 		this.Source.Append("{");
 		@Var int i = 0;
 		while(i < Node.GetListSize()) {

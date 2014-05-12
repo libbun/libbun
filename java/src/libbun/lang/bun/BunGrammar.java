@@ -63,13 +63,13 @@ import libbun.ast.expression.GetIndexNode;
 import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
-import libbun.ast.literal.BunArrayLiteralNode;
+import libbun.ast.literal.BunArrayNode;
 import libbun.ast.literal.BunAsmNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.literal.BunFloatNode;
 import libbun.ast.literal.BunIntNode;
 import libbun.ast.literal.BunMapEntryNode;
-import libbun.ast.literal.BunMapLiteralNode;
+import libbun.ast.literal.BunMapNode;
 import libbun.ast.literal.BunNullNode;
 import libbun.ast.literal.BunStringNode;
 import libbun.ast.literal.BunTypeNode;
@@ -687,7 +687,7 @@ class GetIndexPatternFunction extends BMatchFunction {
 
 class ArrayLiteralPatternFunction extends BMatchFunction {
 	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode LiteralNode = new BunArrayLiteralNode(ParentNode);
+		@Var BNode LiteralNode = new BunArrayNode(ParentNode);
 		LiteralNode = TokenContext.MatchNtimes(LiteralNode, "[", "$Expression$", ",", "]");
 		return LiteralNode;
 	}
@@ -715,7 +715,7 @@ class MapEntryPatternFunction extends BMatchFunction {
 
 class MapLiteralPatternFunction extends BMatchFunction {
 	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode LiteralNode = new BunMapLiteralNode(ParentNode);
+		@Var BNode LiteralNode = new BunMapNode(ParentNode);
 		LiteralNode = TokenContext.MatchNtimes(LiteralNode, "{", "$MapEntry$", ",", "}");
 		return LiteralNode;
 	}

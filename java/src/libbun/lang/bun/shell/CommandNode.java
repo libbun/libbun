@@ -6,7 +6,7 @@ import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.ast.expression.FuncCallNode;
 import libbun.ast.expression.GetNameNode;
-import libbun.ast.literal.BunArrayLiteralNode;
+import libbun.ast.literal.BunArrayNode;
 import libbun.common.CommonArray;
 import libbun.parser.classic.BToken;
 import libbun.parser.classic.LibBunTypeChecker;
@@ -82,10 +82,10 @@ public class CommandNode extends SyntaxSugarNode {
 		else if(this.RetType().IsStringType()) {
 			FuncName = "ExecCommandString";
 		}
-		@Var BunArrayLiteralNode ArrayNode = new BunArrayLiteralNode(this.ParentNode);
+		@Var BunArrayNode ArrayNode = new BunArrayNode(this.ParentNode);
 		@Var CommandNode CurrentNode = this;
 		while(CurrentNode != null) {
-			@Var BunArrayLiteralNode SubArrayNode = new BunArrayLiteralNode(ArrayNode);
+			@Var BunArrayNode SubArrayNode = new BunArrayNode(ArrayNode);
 			@Var int size = CurrentNode.GetArgSize();
 			@Var int i = 0;
 			while(i < size) {

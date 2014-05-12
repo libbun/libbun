@@ -28,18 +28,26 @@ import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.util.Var;
 
-public final class BunArrayLiteralNode extends AbstractListNode {
-	public BunArrayLiteralNode(BNode ParentNode) {
+public final class BunMapNode extends AbstractListNode {
+	public BunMapNode(BNode ParentNode) {
 		super(ParentNode, 0);
 	}
 	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
-		return this.dupField(TypedClone, new BunArrayLiteralNode(ParentNode));
+		return this.dupField(TypedClone, new BunMapNode(ParentNode));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {
-		this.bunfyAST(builder, "(array", this.vargStartIndex, ")");
+		this.bunfyAST(builder, "(map", this.vargStartIndex, ")");
+	}
+	public final BunMapEntryNode GetMapEntryNode(int Index) {
+		@Var BNode Node = this.GetListAt(Index);
+		if(Node instanceof BunMapEntryNode) {
+			return (BunMapEntryNode)Node;
+		}
+		return null;
 	}
 	@Override public void Accept(LibBunVisitor Visitor) {
-		Visitor.VisitArrayLiteralNode(this);
+		Visitor.VisitMapLiteralNode(this);
 	}
 }

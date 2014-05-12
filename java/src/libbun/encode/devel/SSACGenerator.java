@@ -39,8 +39,8 @@ import libbun.ast.expression.GetIndexNode;
 import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
-import libbun.ast.literal.BunArrayLiteralNode;
-import libbun.ast.literal.BunMapLiteralNode;
+import libbun.ast.literal.BunArrayNode;
+import libbun.ast.literal.BunMapNode;
 import libbun.ast.statement.BunThrowNode;
 import libbun.ast.statement.BunTryNode;
 import libbun.common.CommonArray;
@@ -106,7 +106,7 @@ public class SSACGenerator extends OldSourceGenerator {
 		this.GenerateExpression(Node.RightNode());
 	}
 
-	@Override public void VisitArrayLiteralNode(BunArrayLiteralNode Node) {
+	@Override public void VisitArrayLiteralNode(BunArrayNode Node) {
 		@Var BType ParamType = Node.Type.GetParamType(0);
 		if(ParamType.IsIntType() || ParamType.IsBooleanType()) {
 			this.Source.Append("LibZen_NewIntArray(");
@@ -127,7 +127,7 @@ public class SSACGenerator extends OldSourceGenerator {
 		this.GenerateListNode("", Node, ")");
 	}
 
-	@Override public void VisitMapLiteralNode(BunMapLiteralNode Node) {
+	@Override public void VisitMapLiteralNode(BunMapNode Node) {
 		@Var BType ParamType = Node.Type.GetParamType(0);
 		if(ParamType.IsIntType() || ParamType.IsBooleanType()) {
 			this.Source.Append("LibZen_NewIntMap(");

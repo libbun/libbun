@@ -55,7 +55,7 @@ import libbun.ast.expression.GetIndexNode;
 import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
-import libbun.ast.literal.BunArrayLiteralNode;
+import libbun.ast.literal.BunArrayNode;
 import libbun.ast.literal.BunAsmNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.literal.BunFloatNode;
@@ -573,7 +573,7 @@ class GetIndexFunction extends SemanticFunction {
 
 class ArrayLiteralFunction extends SemanticFunction {
 	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
-		return po.copySubTo(source, new BunArrayLiteralNode(parentNode));
+		return po.copySubTo(source, new BunArrayNode(parentNode));
 	}
 }
 

@@ -37,11 +37,11 @@ import libbun.ast.expression.GetIndexNode;
 import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
-import libbun.ast.literal.BunArrayLiteralNode;
+import libbun.ast.literal.BunArrayNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.literal.BunFloatNode;
 import libbun.ast.literal.BunIntNode;
-import libbun.ast.literal.BunMapLiteralNode;
+import libbun.ast.literal.BunMapNode;
 import libbun.ast.literal.BunNullNode;
 import libbun.ast.literal.BunStringNode;
 import libbun.ast.literal.ConstNode;
@@ -360,13 +360,13 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override
-	public void VisitArrayLiteralNode(BunArrayLiteralNode Node) {
+	public void VisitArrayLiteralNode(BunArrayNode Node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void VisitMapLiteralNode(BunMapLiteralNode Node) {
+	public void VisitMapLiteralNode(BunMapNode Node) {
 		// TODO Auto-generated method stub
 
 	}

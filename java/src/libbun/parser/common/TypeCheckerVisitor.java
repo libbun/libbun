@@ -41,12 +41,12 @@ import libbun.ast.expression.GetIndexNode;
 import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
-import libbun.ast.literal.BunArrayLiteralNode;
+import libbun.ast.literal.BunArrayNode;
 import libbun.ast.literal.BunAsmNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.literal.BunFloatNode;
 import libbun.ast.literal.BunIntNode;
-import libbun.ast.literal.BunMapLiteralNode;
+import libbun.ast.literal.BunMapNode;
 import libbun.ast.literal.BunNullNode;
 import libbun.ast.literal.BunStringNode;
 import libbun.ast.literal.DefaultValueNode;
@@ -272,13 +272,13 @@ public class TypeCheckerVisitor extends TypeChecker {
 	}
 
 	@Override
-	public void VisitArrayLiteralNode(BunArrayLiteralNode node) {
+	public void VisitArrayLiteralNode(BunArrayNode node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void VisitMapLiteralNode(BunMapLiteralNode node) {
+	public void VisitMapLiteralNode(BunMapNode node) {
 		// TODO Auto-generated method stub
 
 	}

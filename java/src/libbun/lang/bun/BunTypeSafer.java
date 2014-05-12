@@ -66,13 +66,13 @@ import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.MutableNode;
 import libbun.ast.expression.NewObjectNode;
-import libbun.ast.literal.BunArrayLiteralNode;
+import libbun.ast.literal.BunArrayNode;
 import libbun.ast.literal.BunAsmNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.literal.BunFloatNode;
 import libbun.ast.literal.BunIntNode;
 import libbun.ast.literal.BunMapEntryNode;
-import libbun.ast.literal.BunMapLiteralNode;
+import libbun.ast.literal.BunMapNode;
 import libbun.ast.literal.BunNullNode;
 import libbun.ast.literal.BunStringNode;
 import libbun.ast.literal.DefaultValueNode;
@@ -163,11 +163,11 @@ public class BunTypeSafer extends LibBunTypeChecker {
 		this.ReturnTypeNode(Node, BType.StringType);
 	}
 
-	@Override public void VisitArrayLiteralNode(BunArrayLiteralNode Node) {
+	@Override public void VisitArrayLiteralNode(BunArrayNode Node) {
 		@Var BType ArrayType = this.GetContextType();
 		if(ArrayType.IsMapType() && Node.GetListSize() == 0) {
 			/* this is exceptional treatment for map literal */
-			this.ReturnTypeNode(new BunMapLiteralNode(Node.ParentNode), ArrayType);
+			this.ReturnTypeNode(new BunMapNode(Node.ParentNode), ArrayType);
 			return;
 		}
 		@Var BType ElementType = BType.VarType;
@@ -191,7 +191,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 		this.ReturnTypeNode(Node, BType.VarType);
 	}
 
-	@Override public void VisitMapLiteralNode(BunMapLiteralNode Node) {
+	@Override public void VisitMapLiteralNode(BunMapNode Node) {
 		@Var BType ContextType = this.GetContextType();
 		@Var BType EntryType = BType.VarType;
 		if(ContextType.IsMapType()) {

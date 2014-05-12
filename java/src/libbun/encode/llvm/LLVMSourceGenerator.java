@@ -51,11 +51,11 @@ import libbun.ast.expression.GetIndexNode;
 import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
-import libbun.ast.literal.BunArrayLiteralNode;
+import libbun.ast.literal.BunArrayNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.literal.BunFloatNode;
 import libbun.ast.literal.BunIntNode;
-import libbun.ast.literal.BunMapLiteralNode;
+import libbun.ast.literal.BunMapNode;
 import libbun.ast.literal.BunNullNode;
 import libbun.ast.literal.BunStringNode;
 import libbun.ast.literal.ConstNode;
@@ -551,7 +551,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 		this.CurrentScope.PushValue(AllResult);
 	}
 
-	@Override public void VisitArrayLiteralNode(BunArrayLiteralNode Node) {
+	@Override public void VisitArrayLiteralNode(BunArrayNode Node) {
 		@Var int ArraySize = Node.GetListSize();
 		@Var BType ElementType = ((BGenericType)Node.Type).ParamType;
 		@Var String ExtFuncName;
@@ -1056,7 +1056,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 			@Var BNode InitNode = Node.InitValueNode();
 			if((InitNode instanceof BunFunctionNode)) {
 			}
-			else if((InitNode instanceof BunArrayLiteralNode) || (InitNode instanceof BunMapLiteralNode) || (InitNode instanceof BunStringNode)) {
+			else if((InitNode instanceof BunArrayNode) || (InitNode instanceof BunMapNode) || (InitNode instanceof BunStringNode)) {
 				/*FIXME*/
 				return;
 			}
@@ -1149,7 +1149,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 		}
 	}
 
-	@Override public void VisitMapLiteralNode(BunMapLiteralNode Node) {
+	@Override public void VisitMapLiteralNode(BunMapNode Node) {
 		// TODO
 	}
 
