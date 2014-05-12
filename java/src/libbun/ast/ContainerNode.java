@@ -2,7 +2,7 @@ package libbun.ast;
 
 import libbun.parser.classic.LibBunVisitor;
 
-public class ContainerNode extends AbstractListNode {
+public class ContainerNode extends AstNode {
 
 	public ContainerNode(AstNode Node1, AstNode Node2) {
 		super(null, 0);
