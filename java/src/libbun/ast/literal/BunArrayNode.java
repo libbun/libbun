@@ -28,6 +28,7 @@ import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.BunVisitor2;
 
 public final class BunArrayNode extends AbstractListNode {
 	public BunArrayNode(BNode ParentNode) {
@@ -42,4 +43,8 @@ public final class BunArrayNode extends AbstractListNode {
 	@Override public void Accept(LibBunVisitor Visitor) {
 		Visitor.VisitArrayLiteralNode(this);
 	}
+	public void accept2(BunVisitor2 visitor) {
+		visitor.visitArrayNode(this);
+	}
+
 }

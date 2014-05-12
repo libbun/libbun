@@ -276,7 +276,8 @@ class StringLiteralTokenFunction extends BTokenFunction {
 
 class NullPatternFunction extends BMatchFunction {
 	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		return new BunNullNode(ParentNode, TokenContext.GetToken(BTokenContext._MoveNext));
+		TokenContext.GetToken(BTokenContext._MoveNext);
+		return new BunNullNode(ParentNode);
 	}
 }
 
@@ -533,14 +534,18 @@ class StringInterpolationPatternFunction extends BMatchFunction {
 class IntLiteralPatternFunction extends BMatchFunction {
 	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
 		@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
-		return new BunIntNode(ParentNode, Token, LibBunSystem._ParseInt(Token.GetText()));
+		BNode node = new BunIntNode(ParentNode, LibBunSystem._ParseInt(Token.GetText()));
+		node.SourceToken = Token;
+		return node;
 	}
 }
 
 class FloatLiteralPatternFunction extends BMatchFunction {
 	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
 		@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
-		return new BunFloatNode(ParentNode, Token, LibBunSystem._ParseFloat(Token.GetText()));
+		BNode node = new BunFloatNode(ParentNode, LibBunSystem._ParseFloat(Token.GetText()));
+		node.SourceToken = Token;
+		return node;
 	}
 }
 

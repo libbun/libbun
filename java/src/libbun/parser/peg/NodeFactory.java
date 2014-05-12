@@ -20,7 +20,7 @@ public class NodeFactory {
 	}
 
 	static {
-		NodeFactory._SetNode("Null", new BunNullNode(null, null));
+		NodeFactory._SetNode("Null", new BunNullNode(null));
 	}
 
 }

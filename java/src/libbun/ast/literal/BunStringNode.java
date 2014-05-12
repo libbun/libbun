@@ -29,19 +29,27 @@ import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.parser.common.BunToken;
+import libbun.parser.common.BunVisitor2;
 import libbun.type.BType;
 import libbun.util.BField;
 import libbun.util.LibBunSystem;
 
-public final class BunStringNode extends LiteralNode {
+public final class BunStringNode extends BunValueNode {
 	@BField public String	StringValue;
-	public BunStringNode(BNode ParentNode, BunToken Token, String Value) {
-		super(ParentNode, Token);
+	public BunStringNode(BNode ParentNode, String Value) {
+		super(ParentNode);
 		this.Type = BType.StringType;
 		this.StringValue = Value;
 	}
+	public BunStringNode(BNode ParentNode, BunToken Source, String Value) {
+		super(ParentNode);
+		this.Type = BType.StringType;
+		this.StringValue = Value;
+		this.SourceToken = Source;
+	}
+
 	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
-		return this.dupField(TypedClone, new BunStringNode(ParentNode, this.SourceToken, this.StringValue));
+		return this.dupField(TypedClone, new BunStringNode(ParentNode, this.StringValue));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {
 		builder.Append(LibBunSystem._QuoteString("\"", this.StringValue, "\""));
@@ -50,8 +58,11 @@ public final class BunStringNode extends LiteralNode {
 		if(Visitor instanceof BunVisitor) {
 			((BunVisitor)Visitor).VisitStringNode(this);
 		}
-		else {
-			Visitor.VisitLiteralNode(this);
-		}
 	}
+
+	@Override
+	public void accept2(BunVisitor2 visitor) {
+		visitor.visitStringNode(this);
+	}
+
 }

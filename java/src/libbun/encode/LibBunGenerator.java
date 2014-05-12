@@ -310,7 +310,7 @@ public abstract class LibBunGenerator extends BunVisitor {
 	}
 
 	@Override public final void VisitDefaultValueNode(DefaultValueNode Node) {
-		this.VisitNullNode(new BunNullNode(Node.ParentNode, null));
+		this.VisitNullNode(new BunNullNode(Node.ParentNode));
 	}
 
 	protected boolean LocallyGenerated(BNode Node) {

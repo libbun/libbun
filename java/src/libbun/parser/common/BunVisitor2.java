@@ -21,8 +21,15 @@ import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
 import libbun.ast.literal.BunArrayNode;
+import libbun.ast.literal.BunFalseNode;
+import libbun.ast.literal.BunFloatNode;
+import libbun.ast.literal.BunIntNode;
 import libbun.ast.literal.BunMapNode;
-import libbun.ast.literal.LiteralNode;
+import libbun.ast.literal.BunNullNode;
+import libbun.ast.literal.BunStringNode;
+import libbun.ast.literal.BunTrueNode;
+import libbun.ast.literal.BunTupleNode;
+import libbun.ast.literal.DefaultValueNode;
 import libbun.ast.statement.BunBreakNode;
 import libbun.ast.statement.BunIfNode;
 import libbun.ast.statement.BunReturnNode;
@@ -34,7 +41,15 @@ import libbun.ast.unary.UnaryOperatorNode;
 
 public abstract class BunVisitor2 {
 
-	public abstract void visitLiteralNode(LiteralNode node);
+
+	public abstract void visitDefaultValueNode(DefaultValueNode node);
+	public abstract void visitNullNode(BunNullNode node);
+	public abstract void visitTrueNode(BunTrueNode node);
+	public abstract void visitFalseNode(BunFalseNode node);
+	public abstract void visitIntNode(BunIntNode node);
+	public abstract void visitFloatNode(BunFloatNode node);
+	public abstract void visitStringNode(BunStringNode node);
+
 	public abstract void visitUnaryNode(UnaryOperatorNode node);
 	public abstract void visitBinaryNode(BinaryOperatorNode node);
 
@@ -51,8 +66,9 @@ public abstract class BunVisitor2 {
 
 	//public abstract void visitAsmNode(BunAsmNode node);
 
-	public abstract void visitArrayLiteralNode(BunArrayNode node);
-	public abstract void visitMapLiteralNode(BunMapNode node);
+	public abstract void visitArrayNode(BunArrayNode node);
+	public abstract void visitMapNode(BunMapNode node);
+	public abstract void visitTupleNode(BunTupleNode node);
 
 	public abstract void visitCastNode(BunCastNode node);
 	public abstract void visitInstanceOfNode(BunInstanceOfNode node);

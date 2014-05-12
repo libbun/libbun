@@ -44,6 +44,7 @@ import libbun.ast.expression.NewObjectNode;
 import libbun.ast.literal.BunArrayNode;
 import libbun.ast.literal.BunAsmNode;
 import libbun.ast.literal.BunBooleanNode;
+import libbun.ast.literal.BunFalseNode;
 import libbun.ast.literal.BunFloatNode;
 import libbun.ast.literal.BunIntNode;
 import libbun.ast.literal.BunMapNode;
@@ -76,19 +77,19 @@ public class TypeCheckerVisitor extends TypeChecker {
 	public void VisitDefaultValueNode(DefaultValueNode node) {
 		@Var BType Type = this.GetContextType();
 		if(Type.IsIntType()) {
-			this.ReturnTypeNode(new BunIntNode(node.ParentNode, null, 0), Type);
+			this.ReturnTypeNode(new BunIntNode(node.ParentNode, 0), Type);
 			return;
 		}
 		if(Type.IsBooleanType()) {
-			this.ReturnTypeNode(new BunBooleanNode(node.ParentNode, null, false), Type);
+			this.ReturnTypeNode(new BunFalseNode(node.ParentNode), Type);
 			return;
 		}
 		if(Type.IsFloatType()) {
-			this.ReturnTypeNode(new BunFloatNode(node.ParentNode, null, 0.0), Type);
+			this.ReturnTypeNode(new BunFloatNode(node.ParentNode, 0.0), Type);
 			return;
 		}
 		if(!Type.IsVarType()) {
-			this.ReturnTypeNode(new BunNullNode(node.ParentNode, null), Type);
+			this.ReturnTypeNode(new BunNullNode(node.ParentNode), Type);
 			return;
 		}
 		this.ReturnTypeNode(node, Type);

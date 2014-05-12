@@ -124,7 +124,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 	@Override public void VisitDefaultValueNode(DefaultValueNode Node) {
 		@Var BType Type = this.GetContextType();
 		if(Type.IsIntType()) {
-			this.ReturnTypeNode(new BunIntNode(Node.ParentNode, null, 0), Type);
+			this.ReturnTypeNode(new BunIntNode(Node.ParentNode, 0), Type);
 			return;
 		}
 		if(Type.IsBooleanType()) {
@@ -132,11 +132,11 @@ public class BunTypeSafer extends LibBunTypeChecker {
 			return;
 		}
 		if(Type.IsFloatType()) {
-			this.ReturnTypeNode(new BunFloatNode(Node.ParentNode, null, 0.0), Type);
+			this.ReturnTypeNode(new BunFloatNode(Node.ParentNode, 0.0), Type);
 			return;
 		}
 		if(!Type.IsVarType()) {
-			this.ReturnTypeNode(new BunNullNode(Node.ParentNode, null), Type);
+			this.ReturnTypeNode(new BunNullNode(Node.ParentNode), Type);
 			return;
 		}
 		this.ReturnTypeNode(Node, Type);

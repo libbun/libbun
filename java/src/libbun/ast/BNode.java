@@ -345,6 +345,7 @@ public abstract class BNode {
 	}
 
 	public abstract void Accept(LibBunVisitor Visitor);
+	//public abstract void accept2(BunVisitor2 visitor);
 
 	public final boolean IsUntyped() {
 		return !(this.Type instanceof BFuncType) && this.Type.IsVarType();

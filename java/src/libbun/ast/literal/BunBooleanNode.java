@@ -61,4 +61,5 @@ public final class BunBooleanNode extends LiteralNode {
 			Visitor.VisitLiteralNode(this);
 		}
 	}
+
 }

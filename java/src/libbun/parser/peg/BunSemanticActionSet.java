@@ -57,11 +57,12 @@ import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
 import libbun.ast.literal.BunArrayNode;
 import libbun.ast.literal.BunAsmNode;
-import libbun.ast.literal.BunBooleanNode;
+import libbun.ast.literal.BunFalseNode;
 import libbun.ast.literal.BunFloatNode;
 import libbun.ast.literal.BunIntNode;
 import libbun.ast.literal.BunNullNode;
 import libbun.ast.literal.BunStringNode;
+import libbun.ast.literal.BunTrueNode;
 import libbun.ast.statement.BunBreakNode;
 import libbun.ast.statement.BunIfNode;
 import libbun.ast.statement.BunReturnNode;
@@ -84,26 +85,35 @@ import libbun.util.Var;
 
 class NullFunction extends SemanticFunction {
 	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
-		return new BunNullNode(parentNode, po.getToken());
+		BNode node = new BunNullNode(parentNode);
+		node.SourceToken = po.getToken();
+		return node;
+
 	}
 }
 
 class TrueFunction extends SemanticFunction {
 	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
-		return new BunBooleanNode(parentNode, po.getToken(), true);
+		BNode node = new BunTrueNode(parentNode);
+		node.SourceToken = po.getToken();
+		return node;
 	}
 }
 
 class FalseFunction extends SemanticFunction {
 	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
-		return new BunBooleanNode(parentNode, po.getToken(), false);
+		BNode node = new BunFalseNode(parentNode);
+		node.SourceToken = po.getToken();
+		return node;
 	}
 }
 
 class StringFunction extends SemanticFunction {
 	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 		@Var BunToken token = po.getToken();
-		return new BunStringNode(parentNode, token, LibBunSystem._UnquoteString(token.GetText()));
+		BNode node = new BunStringNode(parentNode, LibBunSystem._UnquoteString(token.GetText()));
+		node.SourceToken = token;
+		return node;
 	}
 }
 
@@ -111,14 +121,19 @@ class StringFunction extends SemanticFunction {
 class IntFunction extends SemanticFunction {
 	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 		@Var BunToken token = po.getToken();
-		return new BunIntNode(parentNode, token, LibBunSystem._ParseInt(token.GetText()));
+		BNode node = new BunIntNode(parentNode, LibBunSystem._ParseInt(token.GetText()));
+		node.SourceToken = token;
+		return node;
 	}
 }
 
 class FloatFunction extends SemanticFunction {
 	@Override public BNode Invoke(BunSource source, BNode parentNode, PegObject po) {
 		@Var BunToken token = po.getToken();
-		return new BunFloatNode(parentNode, token, LibBunSystem._ParseFloat(token.GetText()));
+		BNode node = new BunFloatNode(parentNode, LibBunSystem._ParseFloat(token.GetText()));
+		node.SourceToken = token;
+		return node;
+
 	}
 }
 

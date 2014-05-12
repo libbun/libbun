@@ -28,14 +28,14 @@ import libbun.ast.BNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.parser.common.BunToken;
+import libbun.parser.common.BunVisitor2;
 
-public final class BunNullNode extends LiteralNode {
-	public BunNullNode(BNode ParentNode, BunToken SourceToken) {
-		super(ParentNode, SourceToken);
+public final class BunNullNode extends BunValueNode {
+	public BunNullNode(BNode ParentNode) {
+		super(ParentNode);
 	}
 	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
-		return this.dupField(TypedClone, new BunNullNode(ParentNode, this.SourceToken));
+		return this.dupField(TypedClone, new BunNullNode(ParentNode));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {
 		builder.Append("null");
@@ -44,8 +44,12 @@ public final class BunNullNode extends LiteralNode {
 		if(Visitor instanceof BunVisitor) {
 			((BunVisitor)Visitor).VisitNullNode(this);
 		}
-		else {
-			Visitor.VisitLiteralNode(this);
-		}
 	}
+
+	@Override
+	public void accept2(BunVisitor2 visitor) {
+		visitor.visitNullNode(this);
+
+	}
+
 }

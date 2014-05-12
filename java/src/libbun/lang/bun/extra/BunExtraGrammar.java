@@ -156,7 +156,7 @@ class IncPrefixPatternFunction extends BMatchFunction {
 		if(!AssignNode.IsErrorNode()) {
 			@Var BinaryOperatorNode BinaryNode = new BunAddNode(AssignNode);
 			BinaryNode.SetLeftNode(AssignNode.AST[BinaryOperatorNode._Left]);
-			BinaryNode.SetRightNode(new BunIntNode(null, null, 1));
+			BinaryNode.SetRightNode(new BunIntNode(null, 1));
 			AssignNode.SetNode(BinaryOperatorNode._Right, BinaryNode);
 		}
 		return AssignNode;
@@ -174,7 +174,7 @@ class IncSuffixPatternFunction extends BMatchFunction {
 			@Var BinaryOperatorNode BinaryNode = new BunAddNode(AssignNode);
 			BinaryNode.SourceToken = AssignNode.SourceToken;
 			BinaryNode.SetLeftNode(LeftNode);
-			BinaryNode.SetRightNode(new BunIntNode(null, null, 1));
+			BinaryNode.SetRightNode(new BunIntNode(null, 1));
 			AssignNode.SetNode(BinaryOperatorNode._Right, BinaryNode);
 		}
 		return AssignNode;
@@ -190,7 +190,7 @@ class DecPrefixPatternFunction extends BMatchFunction {
 		if(!AssignNode.IsErrorNode()) {
 			@Var BinaryOperatorNode BinaryNode = new BunSubNode(AssignNode);
 			BinaryNode.SetLeftNode(AssignNode.AST[BinaryOperatorNode._Left]);
-			BinaryNode.SetRightNode(new BunIntNode(null, null, 1));
+			BinaryNode.SetRightNode(new BunIntNode(null, 1));
 			AssignNode.SetNode(BinaryOperatorNode._Right, BinaryNode);
 		}
 		return AssignNode;
@@ -208,7 +208,7 @@ class DecSuffixPatternFunction extends BMatchFunction {
 			@Var BinaryOperatorNode BinaryNode = new BunSubNode(AssignNode);
 			BinaryNode.SourceToken = AssignNode.SourceToken;
 			BinaryNode.SetLeftNode(LeftNode);
-			BinaryNode.SetRightNode(new BunIntNode(null, null, 1));
+			BinaryNode.SetRightNode(new BunIntNode(null, 1));
 			AssignNode.SetNode(BinaryOperatorNode._Right, BinaryNode);
 		}
 		return AssignNode;
