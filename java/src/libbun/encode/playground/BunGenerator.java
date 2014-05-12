@@ -150,7 +150,7 @@ public class BunGenerator extends LibBunSourceGenerator {
 	@Override public void VisitMethodCallNode(MethodCallNode Node) {
 		this.GenerateExpression(Node.RecvNode());
 		this.Source.Append(".", Node.MethodName());
-		this.GenerateListNode("(", Node, ",", ")");
+		this.GenerateListNode("(", Node, 2, ",", ")");
 	}
 
 	@Override public void VisitFuncCallNode(FuncCallNode Node) {

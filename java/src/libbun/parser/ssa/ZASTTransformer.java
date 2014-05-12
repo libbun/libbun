@@ -123,7 +123,7 @@ public class ZASTTransformer extends LibBunVisitor {
 	@Override
 	public void VisitMethodCallNode(MethodCallNode Node) {
 		this.Transform(Node, MethodCallNode._Recv);
-		this.GenerateListNode(Node);
+		//this.GenerateListNode(Node);
 	}
 
 	@Override

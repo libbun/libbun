@@ -26,18 +26,20 @@ package libbun.ast.expression;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
+import libbun.ast.BunNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunTypeChecker;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.BunModelVisitor;
 import libbun.type.BFunc;
 import libbun.type.BFuncType;
 import libbun.util.BField;
 import libbun.util.Nullable;
 import libbun.util.Var;
 
-public final class MethodCallNode extends AbstractListNode {
-	public final static int _Recv = 0;
-	public static final int _NameInfo = 1;
+public final class MethodCallNode extends BunNode {
+	public static final int _NameInfo = 0;
+	public final static int _Recv = 1;
 
 	@BField public String  GivenName = null;
 
@@ -66,6 +68,15 @@ public final class MethodCallNode extends AbstractListNode {
 		return this.GivenName;
 	}
 
+	public final int getFuncParamSize() {
+		return this.size() - 1;
+	}
+
+	public final int getMethodParamSize() {
+		return this.size() - 2;
+	}
+
+
 	@Override public void Accept(LibBunVisitor Visitor) {
 		Visitor.VisitMethodCallNode(this);
 	}
@@ -80,12 +91,12 @@ public final class MethodCallNode extends AbstractListNode {
 
 		@Var FuncCallNode FuncNode = new FuncCallNode(this.ParentNode, Getter);
 		FuncNode.SourceToken = this.SourceToken;
-		if(FuncType.GetFuncParamSize() == this.GetListSize() + 1) {
+		if(FuncType.GetFuncParamSize() == this.getFuncParamSize()) {
 			FuncNode.appendNode(this.RecvNode());
 		}
-		@Var int i = 0;
-		while(i < this.GetListSize()) {
-			FuncNode.appendNode(this.GetListAt(i));
+		@Var int i = 2;
+		while(i < this.size()) {
+			FuncNode.appendNode(this.get(i));
 			i = i + 1;
 		}
 		return FuncNode;
@@ -97,12 +108,17 @@ public final class MethodCallNode extends AbstractListNode {
 		if(RecvNode != null) {
 			FuncNode.appendNode(RecvNode);
 		}
-		@Var int i = 0;
-		while(i < this.GetListSize()) {
-			FuncNode.appendNode(this.GetListAt(i));
+		@Var int i = 2;
+		while(i < this.size()) {
+			FuncNode.appendNode(this.get(i));
 			i = i + 1;
 		}
 		return FuncNode;
+	}
+
+	@Override
+	public void acceptBunModel(BunModelVisitor visitor) {
+		visitor.visitMethodCallNode(this);
 	}
 
 }

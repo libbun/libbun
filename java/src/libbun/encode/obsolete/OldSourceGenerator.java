@@ -300,7 +300,7 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 	@Override public void VisitMethodCallNode(MethodCallNode Node) {
 		this.GenerateExpression(Node.RecvNode());
 		this.Source.Append(".", Node.MethodName());
-		this.GenerateListNode("(", Node, ")");
+		this.GenerateListNode("(", Node, 2, ", ", ")");
 	}
 
 	protected final void GenerateFuncName(BunFuncNameNode Node) {

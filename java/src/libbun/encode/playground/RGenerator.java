@@ -121,7 +121,7 @@ public class RGenerator extends LibBunSourceGenerator {
 		if(MethodName.equals("add")) {
 			this.GenerateExpression(Reciever);
 			this.Source.Append(" <- c(");
-			this.GenerateListNode(RecieverName + ", ", Node, ",", ")");
+			this.GenerateListNode(RecieverName + ", ", Node, 2, ",", ")");
 		}
 		else if(MethodName.equals("size")) {
 			this.Source.Append("length(");
@@ -131,13 +131,14 @@ public class RGenerator extends LibBunSourceGenerator {
 		else if(MethodName.equals("insert")) {
 			this.GenerateExpression(Reciever);
 			this.Source.Append(" <- append(" + RecieverName);
-			@Var int i = Node.GetListSize();
-			while(i-- != 0) {
+			// this is really unreadable!! ask tetsurom to improve.
+			@Var int i = Node.size();
+			while(i-- != 2) {
 				this.Source.Append(", ");
 				if(i == 0) {
 					this.Source.Append("after=");
 				}
-				@Var AstNode ParamNode = Node.GetListAt(i);
+				@Var AstNode ParamNode = Node.get(i);
 				this.GenerateExpression(ParamNode);
 			}
 			this.Source.Append(")");

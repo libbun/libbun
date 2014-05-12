@@ -625,8 +625,8 @@ public class AsmJavaGenerator extends LibBunGenerator {
 				this.AsmBuilder.PushNode(null, Node.RecvNode());
 			}
 			Class<?>[] P = jMethod.getParameterTypes();
-			for(int i = 0; i < P.length; i++) {
-				this.AsmBuilder.PushNode(P[i], Node.GetListAt(i));
+			for(int i = 2; i < P.length; i++) {
+				this.AsmBuilder.PushNode(P[i], Node.get(i));
 			}
 			int inst = this.GetInvokeType(jMethod);
 			String owner = Type.getInternalName(jMethod.getDeclaringClass());

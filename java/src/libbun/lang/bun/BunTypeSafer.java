@@ -407,7 +407,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 				this.ReturnNode(this.TypeListNodeAsFuncCall(FuncCall, FieldFuncType));
 				return;
 			}
-			@Var int FuncParamSize = Node.GetListSize() + 1;
+			@Var int FuncParamSize = Node.getFuncParamSize();
 			@Var BFunc Func = this.LookupFunc(Gamma, Node.MethodName(), Node.getTypeAt(MethodCallNode._Recv), FuncParamSize);
 			if(Func != null) {
 				@Var AbstractListNode FuncCallNode = Node.ToFuncCallNode(this, Func, RecvNode);
@@ -417,7 +417,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 			this.VisitListAsNativeMethod(Node, Node.getTypeAt(MethodCallNode._Recv), Node.MethodName(), Node, 2);
 			return;
 		}
-		this.TypeCheckNodeList(Node);
+		this.TypeCheckNodeList(2, Node);
 		//		if(RecvNode instanceof BGetNameNode) {
 		//			@Var String Symbol = ((BGetNameNode)RecvNode).GetName();
 		//			@Var String FuncName = Symbol + "." + Node.MethodName();
