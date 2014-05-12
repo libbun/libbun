@@ -1,6 +1,5 @@
 package libbun.encode.devel;
 
-import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
@@ -387,7 +386,7 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 		else {
 			this.GenerateExpression(Node.FunctorNode());
 		}
-		this.GenerateArgumentListNode(Node);
+		this.GenerateArgumentListNode(Node, 1);
 		this.Source.Append(")");
 	}
 
@@ -583,12 +582,12 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 		}
 	}
 
-	private void GenerateArgumentListNode(AbstractListNode VargNode) {
-		if(VargNode.GetListSize() == 0) {
+	private void GenerateArgumentListNode(AstNode VargNode, int startIndex) {
+		if(VargNode.size() == 0) {
 			this.Source.Append(" ()");
 		}
 		else {
-			this.GenerateListNode(" ", VargNode, " ", "");
+			this.GenerateListNode(" ", VargNode, startIndex, " ", "");
 		}
 	}
 
@@ -614,7 +613,7 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 			}
 			this.Source.Append(Node.GetSignature());
 		}
-		this.GenerateArgumentListNode(Node.ParamNode());
+		this.GenerateArgumentListNode(Node.ParamNode(), 0);
 		if(IsAnonymousFunction) {
 			this.Source.Append(" => ");
 		}

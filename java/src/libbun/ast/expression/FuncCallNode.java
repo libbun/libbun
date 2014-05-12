@@ -24,17 +24,18 @@
 
 package libbun.ast.expression;
 
-import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
+import libbun.ast.BunNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.BunModelVisitor;
 import libbun.type.BFormFunc;
 import libbun.type.BFuncType;
 import libbun.type.BType;
 import libbun.util.Nullable;
 import libbun.util.Var;
 
-public final class FuncCallNode extends AbstractListNode {
+public final class FuncCallNode extends BunNode {
 	public final static int _Functor = 0;
 
 	public FuncCallNode(AstNode ParentNode, AstNode FuncNode) {
@@ -62,8 +63,6 @@ public final class FuncCallNode extends AbstractListNode {
 		return null;
 	}
 
-
-
 	@Nullable public final BunFuncNameNode FuncNameNode() {
 		@Var AstNode NameNode = this.FunctorNode();
 		if(NameNode instanceof BunFuncNameNode) {
@@ -72,13 +71,17 @@ public final class FuncCallNode extends AbstractListNode {
 		return null;
 	}
 
+	public final int getFuncParamSize() {
+		return this.size() - 1;
+	}
+
 	@Override public void Accept(LibBunVisitor Visitor) {
 		Visitor.VisitFuncCallNode(this);
 	}
 
 	public final BType GetRecvType() {
-		if(this.GetListSize() > 0) {
-			return this.GetListAt(0).Type.GetRealType();
+		if(this.getFuncParamSize() > 0) {
+			return this.get(1).Type.GetRealType();
 		}
 		return BType.VoidType;
 	}
@@ -93,12 +96,18 @@ public final class FuncCallNode extends AbstractListNode {
 
 	public ApplyMacroNode ToFormNode(BFormFunc FormFunc) {
 		@Var ApplyMacroNode MacroNode = new ApplyMacroNode(this.ParentNode, this.FunctorNode().SourceToken, FormFunc);
-		@Var int i = 0;
-		while(i < this.GetListSize()) {
-			MacroNode.appendNode(this.GetListAt(i));
+		@Var int i = 1;
+		while(i < this.size()) {
+			MacroNode.appendNode(this.get(i));
 			i = i + 1;
 		}
 		return MacroNode;
+	}
+
+	@Override
+	public void acceptBunModel(BunModelVisitor visitor) {
+		visitor.visitFuncCallNode(this);
+
 	}
 
 

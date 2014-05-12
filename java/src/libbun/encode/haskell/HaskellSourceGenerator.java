@@ -333,12 +333,12 @@ public class HaskellSourceGenerator extends OldSourceGenerator {
 	@Override public void VisitFuncCallNode(FuncCallNode Node) {
 		if(Node.ParentNode instanceof BlockNode){
 			this.GenerateExpression(Node.FunctorNode());
-			this.GenerateListNode(" ", Node, " ", " ");
+			this.GenerateListNode(" ", Node, 1, " ", " ");
 		}else{
 			this.ImportLibrary("System.IO.Unsafe");
 			this.Source.Append("(unsafePerformIO (");
 			this.GenerateExpression(Node.FunctorNode());
-			this.GenerateListNode(" ", Node, " ", " ");
+			this.GenerateListNode(" ", Node, 1, " ", " ");
 			this.Source.Append("))");
 		}
 	}

@@ -246,7 +246,7 @@ public class JavaGenerator extends LibBunSourceGenerator {
 			this.GenerateExpression(Node.FunctorNode());
 			this.Source.Append(".Invoke");
 		}
-		this.GenerateListNode("(", Node, ", ", ")");
+		this.GenerateListNode("(", Node, 1, ", ", ")");
 	}
 
 	@Override public void VisitUnaryNode(UnaryOperatorNode Node) {

@@ -238,7 +238,7 @@ public abstract class LibBunSourceGenerator extends LibBunGenerator {
 		this.Source.Append(openToken);
 		for(int i = startIndex; i < vargNode.size(); i++) {
 			@Var AstNode ParamNode = vargNode.get(i);
-			if (i > 0) {
+			if (i > startIndex) {
 				this.Source.Append(commaToken);
 			}
 			this.GenerateExpression(ParamNode);

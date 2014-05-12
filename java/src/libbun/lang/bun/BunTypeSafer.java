@@ -285,7 +285,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 
 	@Override public void VisitFuncCallNode(FuncCallNode Node) {
 		@Var LibBunGamma Gamma = Node.GetGamma();
-		this.TypeCheckNodeList(Node);
+		this.TypeCheckNodeList(1, Node);
 		this.CheckTypeAt(Node, FuncCallNode._Functor, BType.VarType);
 		@Var AstNode FuncNode = Node.FunctorNode();
 		@Var BType FuncNodeType = Node.getTypeAt(FuncCallNode._Functor);
@@ -300,7 +300,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 		//		}
 		if(FuncNode instanceof GetNameNode) {
 			@Var String FuncName = ((GetNameNode)FuncNode).GivenName;
-			FuncNode = new BunFuncNameNode(Node, FuncNode.SourceToken, FuncName, Node.GetRecvType(), Node.GetListSize());
+			FuncNode = new BunFuncNameNode(Node, FuncNode.SourceToken, FuncName, Node.GetRecvType(), Node.getFuncParamSize());
 			Node.SetNode(FuncCallNode._Functor, FuncNode);
 		}
 		if(FuncNode instanceof BunFuncNameNode) {

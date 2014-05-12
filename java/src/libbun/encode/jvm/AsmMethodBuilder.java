@@ -259,10 +259,10 @@ class AsmMethodBuilder extends MethodNode {
 		this.ApplyStaticMethod(Node, sMethod);
 	}
 
-	void ApplyFuncName(AstNode Node, String FuncName, BFuncType FuncType, AbstractListNode ListNode) {
+	void ApplyFuncName(AstNode Node, String FuncName, BFuncType FuncType, AstNode ListNode, int startIndex) {
 		if(ListNode != null) {
-			for(int i = 0; i < ListNode.GetListSize(); i++) {
-				this.PushNode(null, ListNode.GetListAt(i));
+			for(int i = startIndex; i < ListNode.size(); i++) {
+				this.PushNode(null, ListNode.get(i));
 			}
 		}
 		this.SetLineNumber(Node);
@@ -277,10 +277,10 @@ class AsmMethodBuilder extends MethodNode {
 		}
 	}
 
-	void ApplyFuncObject(AstNode Node, Class<?> FuncClass, AstNode FuncNode, BFuncType FuncType, AbstractListNode ListNode) {
+	void ApplyFuncObject(AstNode Node, Class<?> FuncClass, AstNode FuncNode, BFuncType FuncType, AstNode ListNode, int startIndex) {
 		this.PushNode(FuncClass, FuncNode);
-		for(int i = 0; i < ListNode.GetListSize(); i++) {
-			this.PushNode(null, ListNode.GetListAt(i));
+		for(int i = 0; i < ListNode.size(); i++) {
+			this.PushNode(null, ListNode.get(i));
 		}
 		this.SetLineNumber(Node);
 		this.visitMethodInsn(INVOKEVIRTUAL, FuncClass, "Invoke", FuncType);

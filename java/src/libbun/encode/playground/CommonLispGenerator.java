@@ -232,7 +232,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 			this.Source.Append("funcall ");
 			this.GenerateExpression(Node.FunctorNode());
 		}
-		this.GenerateListNode(" ", Node, " ", ")");
+		this.GenerateListNode(" ", Node, 1, " ", ")");
 	}
 
 	@Override public void VisitUnaryNode(UnaryOperatorNode Node) {

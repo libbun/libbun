@@ -190,7 +190,7 @@ public class SSACGenerator extends OldSourceGenerator {
 		else {
 			this.GenerateExpression(Node.FunctorNode());
 		}
-		this.GenerateListNode("(", Node, ")");
+		this.GenerateListNode("(", Node, 1, ", ", ")");
 	}
 
 	//	@Override public void VisitCastNode(ZCastNode Node) {

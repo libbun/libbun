@@ -203,7 +203,7 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 		else {
 			this.GenerateExpression(Node.FunctorNode());
 		}
-		this.GenerateListNode("(", Node, ", ", ")");
+		this.GenerateListNode("(", Node, 1, ", ", ")");
 	}
 
 	@Override public void VisitMethodCallNode(MethodCallNode Node) {

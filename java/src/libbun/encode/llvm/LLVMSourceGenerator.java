@@ -813,7 +813,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 			this.GenerateExpression(Node.FunctorNode());
 		}
 		@Var String CallFunc = this.CurrentScope.PopValue();
-		this.GenerateListNode(" (", Node, ", ", ")");
+		this.GenerateListNode(" (", Node, 1, ", ", ")");
 		@Var String Args = this.CurrentScope.PopValue();
 
 		@Var String TempVar = "";

@@ -669,11 +669,11 @@ public class AsmJavaGenerator extends LibBunGenerator {
 		}
 		if(FuncType instanceof BFuncType) {
 			if(FuncNameNode != null) {
-				this.AsmBuilder.ApplyFuncName(FuncNameNode, FuncNameNode.FuncName, (BFuncType)FuncType, Node);
+				this.AsmBuilder.ApplyFuncName(FuncNameNode, FuncNameNode.FuncName, (BFuncType)FuncType, Node, 1);
 			}
 			else {
 				Class<?> FuncClass = this.LoadFuncClass((BFuncType)FuncType);
-				this.AsmBuilder.ApplyFuncObject(Node, FuncClass, Node.FunctorNode(), (BFuncType)FuncType, Node);
+				this.AsmBuilder.ApplyFuncObject(Node, FuncClass, Node.FunctorNode(), (BFuncType)FuncType, Node, 1);
 			}
 		}
 		else {
