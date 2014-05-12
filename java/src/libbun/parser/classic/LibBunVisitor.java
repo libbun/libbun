@@ -24,7 +24,7 @@
 
 package libbun.parser.classic;
 
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.GroupNode;
 import libbun.ast.LocalDefinedNode;
@@ -87,8 +87,8 @@ public abstract class LibBunVisitor {
 	public abstract void VisitInstanceOfNode(BunInstanceOfNode Node);
 	public abstract void VisitBinaryNode(BinaryOperatorNode Node);
 
-	public abstract void VisitBlockNode(BunBlockNode Node);
-	public abstract void VisitVarBlockNode(BunVarBlockNode Node);
+	public abstract void VisitblockNode(BlockNode Node);
+	public abstract void VisitVarblockNode(BunVarBlockNode Node);
 	public abstract void VisitIfNode(BunIfNode Node);
 	public abstract void VisitReturnNode(BunReturnNode Node);
 	public abstract void VisitWhileNode(BunWhileNode Node);

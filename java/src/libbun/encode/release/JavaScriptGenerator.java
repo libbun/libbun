@@ -26,7 +26,7 @@
 package libbun.encode.release;
 
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
@@ -134,26 +134,26 @@ public class JavaScriptGenerator extends LibBunSourceGenerator {
 
 	@Override public void VisitTryNode(BunTryNode Node) {
 		this.Source.Append("try");
-		this.GenerateExpression(Node.TryBlockNode());
-		if(Node.HasCatchBlockNode()){
+		this.GenerateExpression(Node.TryblockNode());
+		if(Node.HasCatchblockNode()){
 			@Var String VarName = Node.ExceptionName();
 			this.ImportLibrary("@catch");
 			this.Source.Append("catch(", VarName, "){ ");
 			this.Source.Append(VarName, " = libbun_catch(", VarName);
 			this.Source.Append("); ");
-			this.GenerateExpression(Node.CatchBlockNode());
+			this.GenerateExpression(Node.CatchblockNode());
 			this.Source.Append("}");
 		}
-		if (Node.HasFinallyBlockNode()) {
+		if (Node.HasFinallyblockNode()) {
 			this.Source.Append("finally");
-			this.GenerateExpression(Node.FinallyBlockNode());
+			this.GenerateExpression(Node.FinallyblockNode());
 		}
 	}
 
 
 	private void VisitAnonymousFunctionNode(BunFunctionNode Node) {
 		this.GenerateListNode("(function(", Node.ParamNode(), ", ", ")");
-		this.GenerateExpression(Node.BlockNode());
+		this.GenerateExpression(Node.blockNode());
 		this.Source.Append(")");
 	}
 
@@ -165,7 +165,7 @@ public class JavaScriptGenerator extends LibBunSourceGenerator {
 		@Var BFuncType FuncType = Node.GetFuncType();
 		this.Source.AppendNewLine("function ", Node.GetSignature());
 		this.GenerateListNode("(", Node.ParamNode(), ",", ")");
-		this.GenerateExpression(Node.BlockNode());
+		this.GenerateExpression(Node.blockNode());
 		if(Node.IsExport()) {
 			this.Source.AppendNewLine(Node.FuncName(), " = ", FuncType.StringfySignature(Node.FuncName()));
 			if(Node.FuncName().equals("main")) {
@@ -502,23 +502,23 @@ public class JavaScriptGenerator extends LibBunSourceGenerator {
 
 	}
 
-	private void VisitStmtList(BunBlockNode BlockNode) {
+	private void VisitStmtList(BlockNode blockNode) {
 		@Var int i = 0;
-		while (i < BlockNode.GetListSize()) {
-			@Var BNode SubNode = BlockNode.GetListAt(i);
+		while (i < blockNode.GetListSize()) {
+			@Var BNode SubNode = blockNode.GetListAt(i);
 			this.GenerateStatement(SubNode);
 			i = i + 1;
 		}
 	}
 
-	@Override public void VisitBlockNode(BunBlockNode Node) {
+	@Override public void VisitblockNode(BlockNode Node) {
 		this.Source.OpenIndent("{");
 		this.VisitStmtList(Node);
 		this.Source.CloseIndent("}");
 	}
 
 	@Override
-	public void VisitVarBlockNode(BunVarBlockNode Node) {
+	public void VisitVarblockNode(BunVarBlockNode Node) {
 		@Var BunLetVarNode VarNode = Node.VarDeclNode();
 		this.Source.AppendNewLine("var ", VarNode.GetUniqueName(this), " = ");
 		this.GenerateExpression(VarNode.InitValueNode());
@@ -549,9 +549,9 @@ public class JavaScriptGenerator extends LibBunSourceGenerator {
 	public void VisitWhileNode(BunWhileNode Node) {
 		this.GenerateExpression("while (", Node.CondNode(), ")");
 		if(Node.HasNextNode()) {
-			Node.BlockNode().Append(Node.NextNode());
+			Node.blockNode().Append(Node.NextNode());
 		}
-		this.GenerateExpression(Node.BlockNode());
+		this.GenerateExpression(Node.blockNode());
 	}
 
 	@Override

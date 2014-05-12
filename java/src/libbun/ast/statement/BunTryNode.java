@@ -25,7 +25,7 @@
 package libbun.ast.statement;
 
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.util.Var;
@@ -48,12 +48,12 @@ public final class BunTryNode extends BNode {
 		this.bunfyAST(builder, "(while", 0, ")");
 	}
 
-	public final BunBlockNode TryBlockNode() {
-		@Var BNode BlockNode = this.AST[BunTryNode._Try ];
-		if(BlockNode instanceof BunBlockNode) {
-			return (BunBlockNode)BlockNode;
+	public final BlockNode TryblockNode() {
+		@Var BNode blockNode = this.AST[BunTryNode._Try ];
+		if(blockNode instanceof BlockNode) {
+			return (BlockNode)blockNode;
 		}
-		assert(BlockNode == null); // this must not happen
+		assert(blockNode == null); // this must not happen
 		return null;
 	}
 
@@ -61,29 +61,29 @@ public final class BunTryNode extends BNode {
 		return this.AST[BunTryNode._NameInfo].SourceToken.GetText();
 	}
 
-	public final boolean HasCatchBlockNode() {
+	public final boolean HasCatchblockNode() {
 		return (this.AST[BunTryNode._NameInfo] != null && this.AST[BunTryNode._Catch ] != null);
 	}
 
-	public final BunBlockNode CatchBlockNode() {
-		@Var BNode BlockNode = this.AST[BunTryNode._Catch ];
-		if(BlockNode instanceof BunBlockNode) {
-			return (BunBlockNode)BlockNode;
+	public final BlockNode CatchblockNode() {
+		@Var BNode blockNode = this.AST[BunTryNode._Catch ];
+		if(blockNode instanceof BlockNode) {
+			return (BlockNode)blockNode;
 		}
-		assert(BlockNode == null); // this must not happen
+		assert(blockNode == null); // this must not happen
 		return null;
 	}
 
-	public final boolean HasFinallyBlockNode() {
+	public final boolean HasFinallyblockNode() {
 		return (this.AST[BunTryNode._Finally ] != null);
 	}
 
-	public final BunBlockNode FinallyBlockNode() {
-		@Var BNode BlockNode = this.AST[BunTryNode._Finally ];
-		if(BlockNode instanceof BunBlockNode) {
-			return (BunBlockNode)BlockNode;
+	public final BlockNode FinallyblockNode() {
+		@Var BNode blockNode = this.AST[BunTryNode._Finally ];
+		if(blockNode instanceof BlockNode) {
+			return (BlockNode)blockNode;
 		}
-		assert(BlockNode == null); // this must not happen
+		assert(blockNode == null); // this must not happen
 		return null;
 	}
 

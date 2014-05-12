@@ -30,7 +30,7 @@ import java.util.HashMap;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
@@ -637,7 +637,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 		this.CurrentScope.TerminateBlock();
 	}
 
-	@Override public void VisitBlockNode(BunBlockNode Node) {
+	@Override public void VisitblockNode(BlockNode Node) {
 		this.GenerateStmtListNode(Node);
 	}
 
@@ -862,7 +862,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 
 		//this.Source = this.AppendNewSourceBuilder();
 		//this.Source.Indent();
-		this.GenerateExpression(Node.BlockNode());
+		this.GenerateExpression(Node.blockNode());
 		if(!this.CurrentScope.IsBlockTerminated()) {
 			this.AppendDefaultReturn(Node.ReturnType());
 		}
@@ -1419,7 +1419,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 		//		}
 	}
 
-	@Override public void VisitVarBlockNode(BunVarBlockNode Node) {
+	@Override public void VisitVarblockNode(BunVarBlockNode Node) {
 		this.VisitVarDeclNode(Node.VarDeclNode());
 		this.GenerateStmtListNode(Node);
 	}
@@ -1448,7 +1448,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 		this.Source.Append(BodyLabel + ":");
 		this.CurrentScope.SetLabel(BodyLabel);
 		this.CurrentScope.PushBreakLabel(EndLabel);
-		this.GenerateExpression(Node.BlockNode());
+		this.GenerateExpression(Node.blockNode());
 		if(!this.CurrentScope.IsBlockTerminated()) {
 			this.Source.AppendNewLine("br label %" + CondLabel);
 		}
@@ -1470,10 +1470,10 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 		} */
 	}
 
-	@Override public void GenerateStmtListNode(BunBlockNode BlockNode) {
+	@Override public void GenerateStmtListNode(BlockNode blockNode) {
 		@Var int i = 0;
-		while (i < BlockNode.GetListSize()) {
-			@Var BNode SubNode = BlockNode.GetListAt(i);
+		while (i < blockNode.GetListSize()) {
+			@Var BNode SubNode = blockNode.GetListAt(i);
 			this.GenerateExpression(SubNode);
 			i = i + 1;
 		}

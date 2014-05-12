@@ -1,7 +1,7 @@
 package libbun.lang.python;
 
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.binary.BinaryOperatorNode;
 import libbun.ast.binary.BunEqualsNode;
 import libbun.ast.decl.BunFunctionNode;
@@ -107,7 +107,7 @@ class PythonFunctionPatternFunction extends BMatchFunction {
 		@Var BNode FuncNode = new BunFunctionNode(ParentNode, 0);
 		FuncNode = TokenContext.MatchToken(FuncNode, "def", BTokenContext._Required);
 		FuncNode = TokenContext.MatchPattern(FuncNode, BunFunctionNode._NameInfo, "$Name$", BTokenContext._Optional);
-		BNode ParamNode = new BunBlockNode(FuncNode, null);
+		BNode ParamNode = new BlockNode(FuncNode, null);
 		ParamNode = TokenContext.MatchNtimes(ParamNode, "(", "$Param$", ",", ")");
 		if(ParamNode.IsErrorNode()) {
 			return ParamNode;
@@ -137,10 +137,10 @@ class PythonCommentFunction extends BTokenFunction {
 class PythonBlockPatternFunction extends BMatchFunction {
 
 	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode BlockNode = new BunBlockNode(ParentNode, ParentNode.GetGamma());
+		@Var BNode blockNode = new BlockNode(ParentNode, ParentNode.GetGamma());
 		@Var BToken SkipToken = TokenContext.GetToken();
-		BlockNode = TokenContext.MatchToken(BlockNode, ":", BTokenContext._Required);
-		if(!BlockNode.IsErrorNode()) {
+		blockNode = TokenContext.MatchToken(blockNode, ":", BTokenContext._Required);
+		if(!blockNode.IsErrorNode()) {
 			@Var boolean Remembered = TokenContext.SetParseFlag(BTokenContext._AllowSkipIndent); // init
 			@Var int IndentSize = 0;
 			while(TokenContext.HasNext()) {
@@ -149,8 +149,8 @@ class PythonBlockPatternFunction extends BMatchFunction {
 					break;
 				}
 				IndentSize = Token.GetIndentSize();
-				BlockNode = TokenContext.MatchPattern(BlockNode, BNode._AppendIndex, "$Statement$", BTokenContext._Required);
-				if(BlockNode.IsErrorNode()) {
+				blockNode = TokenContext.MatchPattern(blockNode, BNode._AppendIndex, "$Statement$", BTokenContext._Required);
+				if(blockNode.IsErrorNode()) {
 					//FIXME: SkipError was deprecated
 					//TokenContext.SkipError(SkipToken);
 					break;
@@ -158,7 +158,7 @@ class PythonBlockPatternFunction extends BMatchFunction {
 			}
 			TokenContext.SetParseFlag(Remembered);
 		}
-		return BlockNode;
+		return blockNode;
 	}
 
 }

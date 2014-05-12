@@ -94,11 +94,11 @@ public final class BVarScope {
 			this.TypedNodeCount = 0;
 			TypeSafer.DefineFunction(FunctionNode, false/*Enforced*/);
 			TypeSafer.CheckTypeAt(FunctionNode, BunFunctionNode._Block, BType.VoidType);
-			if(!FunctionNode.BlockNode().IsUntyped() || this.TypedNodeCount == 0) {
+			if(!FunctionNode.blockNode().IsUntyped() || this.TypedNodeCount == 0) {
 				break;
 			}
-			//System.out.println("@@ VarNodeCount="+ this.VarNodeCount + " Block.IsUntyped()=" + FunctionNode.BlockNode().IsUntyped());
-			//System.out.println("@@ TypedNodeCount=" + this.TypedNodeCount + " Block.IsUntyped()=" + FunctionNode.BlockNode().IsUntyped());
+			//System.out.println("@@ VarNodeCount="+ this.VarNodeCount + " Block.IsUntyped()=" + FunctionNode.blockNode().IsUntyped());
+			//System.out.println("@@ TypedNodeCount=" + this.TypedNodeCount + " Block.IsUntyped()=" + FunctionNode.blockNode().IsUntyped());
 			if(this.VarNodeCount == 0 || PrevCount == this.VarNodeCount) {
 				break;
 			}

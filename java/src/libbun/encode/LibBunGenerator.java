@@ -26,7 +26,7 @@ package libbun.encode;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.ast.decl.BunClassNode;
@@ -380,12 +380,12 @@ public abstract class LibBunGenerator extends BunVisitor {
 
 	public final boolean LoadScript(String ScriptText, String FileName, int LineNumber) {
 		@Var boolean AllPassed = true;
-		@Var BunBlockNode TopBlockNode = new BunBlockNode(null, this.RootGamma);
+		@Var BlockNode TopblockNode = new BlockNode(null, this.RootGamma);
 		@Var BTokenContext TokenContext = new BTokenContext(this.RootParser, this, FileName, LineNumber, ScriptText);
 		TokenContext.SkipEmptyStatement();
 		TokenContext.SetParseFlag(BTokenContext._AllowSkipIndent);
 		while(TokenContext.HasNext()) {
-			@Var BNode StmtNode = TokenContext.ParsePattern(TopBlockNode, "$Statement$", BTokenContext._Required);
+			@Var BNode StmtNode = TokenContext.ParsePattern(TopblockNode, "$Statement$", BTokenContext._Required);
 			if(StmtNode.IsErrorNode()) {
 				@Var boolean SkipLine = false;
 				while(TokenContext.HasNext()) {
@@ -401,15 +401,15 @@ public abstract class LibBunGenerator extends BunVisitor {
 			}
 			this.PreProcess(StmtNode);
 			if(!(StmtNode instanceof TopLevelNode)) {
-				TopBlockNode.Append(StmtNode);
+				TopblockNode.Append(StmtNode);
 			}
 			TokenContext.SkipEmptyStatement();
 			TokenContext.Vacume();
 		}
 		this.Logger.OutputErrorsToStdErr();
 		@Var int i = 0;
-		while(i < TopBlockNode.GetListSize()) {
-			@Var BNode StmtNode = TopBlockNode.GetListAt(i);
+		while(i < TopblockNode.GetListSize()) {
+			@Var BNode StmtNode = TopblockNode.GetListAt(i);
 			if(!this.GenerateTopLevelStatement(StmtNode)) {
 				AllPassed = false;
 			}
@@ -460,15 +460,15 @@ public abstract class LibBunGenerator extends BunVisitor {
 	}
 
 	//	public final String Translate(String ScriptText, String FileName, int LineNumber) {
-	//		@Var ZBlockNode TopBlockNode = new ZBlockNode(this.Generator.RootGamma);
+	//		@Var ZblockNode TopblockNode = new ZblockNode(this.Generator.RootGamma);
 	//		@Var ZTokenContext TokenContext = new ZTokenContext(this.Generator, this.Generator.RootGamma, FileName, LineNumber, ScriptText);
 	//		TokenContext.SkipEmptyStatement();
 	//		@Var ZToken SkipToken = TokenContext.GetToken();
 	//		while(TokenContext.HasNext()) {
 	//			TokenContext.SetParseFlag(ZTokenContext._NotAllowSkipIndent);
-	//			TopBlockNode.ClearListAfter(0);
+	//			TopblockNode.ClearListAfter(0);
 	//			SkipToken = TokenContext.GetToken();
-	//			@Var ZNode ParsedNode = TokenContext.ParsePattern(TopBlockNode, "$Statement$", ZTokenContext._Required);
+	//			@Var ZNode ParsedNode = TokenContext.ParsePattern(TopblockNode, "$Statement$", ZTokenContext._Required);
 	//			if(ParsedNode.IsErrorNode()) {
 	//				TokenContext.SkipError(SkipToken);
 	//			}

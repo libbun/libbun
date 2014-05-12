@@ -47,15 +47,15 @@ public class JavaScriptGenerator extends libbun.encode.release.JavaScriptGenerat
 
 	@Override public void VisitTryNode(BunTryNode Node) {
 		this.Source.Append("try");
-		this.GenerateExpression(Node.TryBlockNode());
-		if(Node.HasCatchBlockNode()){
+		this.GenerateExpression(Node.TryblockNode());
+		if(Node.HasCatchblockNode()){
 			@Var String VarName = Node.ExceptionName();
 			this.Source.Append("catch(", VarName, ") ");
-			this.GenerateExpression(Node.CatchBlockNode());
+			this.GenerateExpression(Node.CatchblockNode());
 		}
-		if (Node.HasFinallyBlockNode()) {
+		if (Node.HasFinallyblockNode()) {
 			this.Source.Append("finally");
-			this.GenerateExpression(Node.FinallyBlockNode());
+			this.GenerateExpression(Node.FinallyblockNode());
 		}
 	}
 

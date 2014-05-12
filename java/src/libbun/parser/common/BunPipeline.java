@@ -1,7 +1,7 @@
 package libbun.parser.common;
 
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.common.CommonMap;
 import libbun.parser.peg.PegParser;
 import libbun.util.LibBunSystem;
@@ -20,18 +20,18 @@ public class BunPipeline {
 
 	public final boolean perform(Namespace ns, String ScriptText, String FileName, int LineNumber) {
 		boolean AllPassed = true;
-		BunBlockNode TopBlockNode = new BunBlockNode(null, ns);
+		BlockNode TopblockNode = new BlockNode(null, ns);
 		BunSource source = new BunSource(FileName, LineNumber, ScriptText, this.logger);
 		BunParserContext parserContext = this.parser.newContext(source, 0, ScriptText.length());
 		while(parserContext.hasNode()) {
-			BNode parsedNode = parserContext.parseNode(TopBlockNode, "TopLevel");
-			TopBlockNode.Append(parsedNode);
+			BNode parsedNode = parserContext.parseNode(TopblockNode, "TopLevel");
+			TopblockNode.Append(parsedNode);
 			if(parsedNode.IsErrorNode()) {
 				break;
 			}
 			BNode checkedNode = this.checker.startCheck(parsedNode);
 			if(checkedNode != parsedNode) {
-				TopBlockNode.ReplaceWith(parsedNode, checkedNode);
+				TopblockNode.ReplaceWith(parsedNode, checkedNode);
 			}
 			if(checkedNode.IsErrorNode()) {
 				break;
@@ -39,8 +39,8 @@ public class BunPipeline {
 		}
 		this.logger.OutputErrorsToStdErr();
 		@Var int i = 0;
-		while(i < TopBlockNode.GetListSize()) {
-			@Var BNode bnode = TopBlockNode.GetListAt(i);
+		while(i < TopblockNode.GetListSize()) {
+			@Var BNode bnode = TopblockNode.GetListAt(i);
 			this.driver.perform(bnode);
 			i = i + 1;
 		}

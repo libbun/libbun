@@ -2,7 +2,7 @@ package libbun.parser.ssa;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.GroupNode;
 import libbun.ast.LocalDefinedNode;
@@ -154,12 +154,12 @@ public class ZASTTransformer extends LibBunVisitor {
 	}
 
 	@Override
-	public void VisitBlockNode(BunBlockNode Node) {
+	public void VisitblockNode(BlockNode Node) {
 		this.GenerateListNode(Node);
 	}
 
 	@Override
-	public void VisitVarBlockNode(BunVarBlockNode Node) {
+	public void VisitVarblockNode(BunVarBlockNode Node) {
 		this.Transform(Node, BunLetVarNode._InitValue);
 		this.GenerateListNode(Node);
 	}

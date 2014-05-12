@@ -1,7 +1,7 @@
 package libbun.encode.devel;
 
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
@@ -346,16 +346,16 @@ public class LuaGenerator extends LibBunSourceGenerator {
 		this.GenerateExpression(Node.ExprNode());
 	}
 
-	private void VisitStmtList(BunBlockNode BlockNode) {
+	private void VisitStmtList(BlockNode blockNode) {
 		@Var int i = 0;
-		while (i < BlockNode.GetListSize()) {
-			@Var BNode SubNode = BlockNode.GetListAt(i);
+		while (i < blockNode.GetListSize()) {
+			@Var BNode SubNode = blockNode.GetListAt(i);
 			this.GenerateStatement(SubNode);
 			i = i + 1;
 		}
 	}
 
-	@Override public void VisitBlockNode(BunBlockNode Node) {
+	@Override public void VisitblockNode(BlockNode Node) {
 		this.Source.OpenIndent(); //FIXME
 		this.VisitStmtList(Node);
 		this.Source.CloseIndent();
@@ -373,7 +373,7 @@ public class LuaGenerator extends LibBunSourceGenerator {
 
 	}
 
-	@Override public void VisitVarBlockNode(BunVarBlockNode Node) {
+	@Override public void VisitVarblockNode(BunVarBlockNode Node) {
 		@Var BunLetVarNode VarNode = Node.VarDeclNode();
 		this.Source.Append("local ", VarNode.GetUniqueName(this), " = ");
 		this.GenerateExpression(VarNode.InitValueNode());
@@ -401,7 +401,7 @@ public class LuaGenerator extends LibBunSourceGenerator {
 	@Override public void VisitWhileNode(BunWhileNode Node) {
 		if(Node.HasNextNode()) {
 			this.GenerateExpression("while ", Node.CondNode(), " do");
-			this.GenerateExpression(Node.BlockNode());
+			this.GenerateExpression(Node.blockNode());
 			this.Source.OpenIndent();
 			this.Source.AppendNewLine();
 			this.GenerateExpression(Node.NextNode());
@@ -409,7 +409,7 @@ public class LuaGenerator extends LibBunSourceGenerator {
 			this.Source.AppendNewLine("end");
 		} else {
 			this.GenerateExpression("while ", Node.CondNode(), " do");
-			this.GenerateExpression(Node.BlockNode());
+			this.GenerateExpression(Node.blockNode());
 			this.Source.AppendNewLine("end");
 		}
 	}
@@ -432,18 +432,18 @@ public class LuaGenerator extends LibBunSourceGenerator {
 		this.ImportLibrary("@try");
 		this.Source.OpenIndent("libbun_try({");
 		this.Source.AppendNewLine("try = function()");
-		this.GenerateExpression(Node.TryBlockNode());
+		this.GenerateExpression(Node.TryblockNode());
 		this.Source.AppendNewLine("end");
-		if(Node.HasCatchBlockNode()) {
+		if(Node.HasCatchblockNode()) {
 			this.Source.Append(",");
 			this.Source.AppendNewLine("catch = function(e)"); //FIXME e
-			this.GenerateExpression(Node.CatchBlockNode());
+			this.GenerateExpression(Node.CatchblockNode());
 			this.Source.AppendNewLine("end");
 		}
-		if(Node.HasFinallyBlockNode()) {
+		if(Node.HasFinallyblockNode()) {
 			this.Source.Append(",");
 			this.Source.AppendNewLine("finally = function()");
-			this.GenerateExpression(Node.FinallyBlockNode());
+			this.GenerateExpression(Node.FinallyblockNode());
 			this.Source.AppendNewLine("end");
 		}
 		this.Source.CloseIndent("})");
@@ -470,7 +470,7 @@ public class LuaGenerator extends LibBunSourceGenerator {
 			this.Source = this.InsertNewSourceBuilder();
 			this.Source.AppendNewLine("function ", FuncName);
 			this.GenerateListNode("(", Node.ParamNode(), ",", ")");
-			this.GenerateExpression(Node.BlockNode());
+			this.GenerateExpression(Node.blockNode());
 			this.Source.AppendNewLine("end");
 			this.Source = this.Source.Pop();
 			this.Source.Append(FuncName);
@@ -479,7 +479,7 @@ public class LuaGenerator extends LibBunSourceGenerator {
 			@Var BFuncType FuncType = Node.GetFuncType();
 			this.Source.AppendNewLine("function ", Node.GetSignature());
 			this.GenerateListNode("(", Node.ParamNode(), ",", ")");
-			this.GenerateExpression(Node.BlockNode());
+			this.GenerateExpression(Node.blockNode());
 			this.Source.AppendNewLine("end");
 			if(Node.IsExport()) {
 				this.Source.AppendNewLine(Node.FuncName(), " = ", FuncType.StringfySignature(Node.FuncName()));

@@ -25,7 +25,7 @@
 package libbun.ast.decl;
 
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.common.CommonArray;
 import libbun.common.CommonStringBuilder;
 import libbun.encode.LibBunGenerator;
@@ -61,7 +61,7 @@ public class BunFunctionNode extends DefSymbolNode {
 		builder.Append("(function ", this.FuncName(), " ");
 		this.ReturnType().bunfy(builder);
 		this.ParamNode().bunfyAST(builder, " (", 0, ") ");
-		this.BlockNode().bunfy(builder);
+		this.blockNode().bunfy(builder);
 		builder.Append(")");
 	}
 
@@ -98,12 +98,12 @@ public class BunFunctionNode extends DefSymbolNode {
 		return FuncName;
 	}
 
-	public final BunBlockNode BlockNode() {
-		@Var BNode BlockNode = this.AST[BunFunctionNode._Block];
-		if(BlockNode instanceof BunBlockNode) {
-			return (BunBlockNode)BlockNode;
+	public final BlockNode blockNode() {
+		@Var BNode blockNode = this.AST[BunFunctionNode._Block];
+		if(blockNode instanceof BlockNode) {
+			return (BlockNode)blockNode;
 		}
-		assert(BlockNode == null); // this must not happen
+		assert(blockNode == null); // this must not happen
 		return null;
 	}
 
@@ -126,12 +126,12 @@ public class BunFunctionNode extends DefSymbolNode {
 		return null;
 	}
 
-	public final BunBlockNode ParamNode() {
-		@Var BNode BlockNode = this.AST[BunFunctionNode._Params];
-		if(BlockNode instanceof BunBlockNode) {
-			return (BunBlockNode)BlockNode;
+	public final BlockNode ParamNode() {
+		@Var BNode blockNode = this.AST[BunFunctionNode._Params];
+		if(blockNode instanceof BlockNode) {
+			return (BlockNode)blockNode;
 		}
-		assert(BlockNode == null); // this must not happen
+		assert(blockNode == null); // this must not happen
 		return null;
 	}
 

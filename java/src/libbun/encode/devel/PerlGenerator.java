@@ -1,7 +1,7 @@
 package libbun.encode.devel;
 
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
@@ -319,13 +319,13 @@ public class PerlGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override
-	public void VisitBlockNode(BunBlockNode Node) {
+	public void VisitblockNode(BlockNode Node) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void VisitVarBlockNode(BunVarBlockNode Node) {
+	public void VisitVarblockNode(BunVarBlockNode Node) {
 		// TODO Auto-generated method stub
 
 	}

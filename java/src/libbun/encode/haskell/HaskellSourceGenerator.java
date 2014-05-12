@@ -28,7 +28,7 @@ package libbun.encode.haskell;
 import java.util.ArrayList;
 
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
 import libbun.ast.binary.ComparatorNode;
@@ -95,7 +95,7 @@ public class HaskellSourceGenerator extends OldSourceGenerator {
 	}
 
 	@Override
-	public void VisitBlockNode(BunBlockNode Node) {
+	public void VisitblockNode(BlockNode Node) {
 		@Var int count = 0;
 
 		this.Indent(this.Source);
@@ -143,13 +143,13 @@ public class HaskellSourceGenerator extends OldSourceGenerator {
 	@Override
 	public void VisitTryNode(BunTryNode Node) {
 		// See: http://d.hatena.ne.jp/kazu-yamamoto/20090819/1250660658
-		this.GenerateExpression(Node.TryBlockNode());
+		this.GenerateExpression(Node.TryblockNode());
 		this.Source.Append(" `catch` ");
-		if (Node.CatchBlockNode() != null) {
-			this.GenerateExpression(Node.CatchBlockNode());
+		if (Node.CatchblockNode() != null) {
+			this.GenerateExpression(Node.CatchblockNode());
 		}
-		if (Node.FinallyBlockNode() != null) {
-			this.GenerateExpression(Node.FinallyBlockNode());
+		if (Node.FinallyblockNode() != null) {
+			this.GenerateExpression(Node.FinallyblockNode());
 		}
 	}
 
@@ -212,7 +212,7 @@ public class HaskellSourceGenerator extends OldSourceGenerator {
 			this.GenerateExpression(ReturnNode.ExprNode());
 			this.UnIndent(this.Source);
 		} else {
-			this.GenerateExpression(Node.BlockNode());
+			this.GenerateExpression(Node.blockNode());
 		}
 	}
 
@@ -303,8 +303,8 @@ public class HaskellSourceGenerator extends OldSourceGenerator {
 
 		// XXX Is this correct node type ?
 		BNode LoopNode = new GetNameNode(Node, null, "__loop");
-		Node.BlockNode().SetNode(BNode._AppendIndex, LoopNode);
-		Node.BlockNode().Accept(this);
+		Node.blockNode().SetNode(BNode._AppendIndex, LoopNode);
+		Node.blockNode().Accept(this);
 
 		this.Source.AppendNewLine();
 		this.Source.Append("else");
@@ -331,7 +331,7 @@ public class HaskellSourceGenerator extends OldSourceGenerator {
 	}
 
 	@Override public void VisitFuncCallNode(FuncCallNode Node) {
-		if(Node.ParentNode instanceof BunBlockNode){
+		if(Node.ParentNode instanceof BlockNode){
 			this.GenerateExpression(Node.FunctorNode());
 			this.GenerateListNode(" ", Node, " ", " ");
 		}else{

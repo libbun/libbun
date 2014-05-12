@@ -25,7 +25,7 @@
 
 package libbun.lang.bun;
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.EmptyNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
@@ -752,24 +752,24 @@ class StatementEndPatternFunction extends BMatchFunction {
 
 class BlockPatternFunction extends BMatchFunction {
 	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode BlockNode = null;
-		if(LeftNode instanceof BunBlockNode) {
-			BlockNode = LeftNode;  // @see var
+		@Var BNode blockNode = null;
+		if(LeftNode instanceof BlockNode) {
+			blockNode = LeftNode;  // @see var
 		}
 		else {
-			BlockNode = new BunBlockNode(ParentNode, null);
+			blockNode = new BlockNode(ParentNode, null);
 		}
 		@Var int SkipStopIndent = TokenContext.GetToken().GetIndentSize();
-		BlockNode = TokenContext.MatchToken(BlockNode, "{", BTokenContext._Required);
-		if(!BlockNode.IsErrorNode()) {
+		blockNode = TokenContext.MatchToken(blockNode, "{", BTokenContext._Required);
+		if(!blockNode.IsErrorNode()) {
 			@Var boolean Remembered = TokenContext.SetParseFlag(BTokenContext._AllowSkipIndent); // init
 			while(TokenContext.HasNext()) {
 				if(TokenContext.MatchToken("}")) {
 					break;
 				}
-				@Var BNode BlockNode2 = TokenContext.MatchPattern(BlockNode, BNode._AppendIndex, "$Statement$", BTokenContext._Required);
-				if(BlockNode2.IsErrorNode()) {
-					BlockNode.SetNode(BNode._AppendIndex, BlockNode2);
+				@Var BNode blockNode2 = TokenContext.MatchPattern(blockNode, BNode._AppendIndex, "$Statement$", BTokenContext._Required);
+				if(blockNode2.IsErrorNode()) {
+					blockNode.SetNode(BNode._AppendIndex, blockNode2);
 					while(TokenContext.HasNext()) {
 						@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
 						if(Token.EqualsText('}')) {
@@ -781,11 +781,11 @@ class BlockPatternFunction extends BMatchFunction {
 					}
 					break;
 				}
-				BlockNode = BlockNode2;
+				blockNode = blockNode2;
 			}
 			TokenContext.SetParseFlag(Remembered);
 		}
-		return BlockNode;
+		return blockNode;
 	}
 }
 
@@ -984,7 +984,7 @@ class FunctionPatternFunction extends BMatchFunction {
 		@Var BNode FuncNode = new BunFunctionNode(ParentNode, 0);
 		FuncNode = TokenContext.MatchToken(FuncNode, "function", BTokenContext._Required);
 		FuncNode = TokenContext.MatchPattern(FuncNode, BunFunctionNode._NameInfo, "$Name$", BTokenContext._Optional);
-		BNode ParamNode = new BunBlockNode(FuncNode, null);
+		BNode ParamNode = new BlockNode(FuncNode, null);
 		ParamNode = TokenContext.MatchNtimes(ParamNode, "(", "$Param$", ",", ")");
 		if(ParamNode.IsErrorNode()) {
 			return ParamNode;

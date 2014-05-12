@@ -1,7 +1,7 @@
 package libbun.ast.sugar;
 
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.ast.statement.BunWhileNode;
@@ -22,10 +22,10 @@ public final class BunDoWhileNode extends SyntaxSugarNode {
 		return this.dupField(TypedClone, new BunDoWhileNode(ParentNode));
 	}
 
-	public BunDoWhileNode(BNode CondNode, BunBlockNode BlockNode) {
+	public BunDoWhileNode(BNode CondNode, BlockNode blockNode) {
 		super(null, 3);
 		this.SetNode(BunDoWhileNode._Cond, CondNode);
-		this.SetNode(BunDoWhileNode._Block, BlockNode);
+		this.SetNode(BunDoWhileNode._Block, blockNode);
 		this.Type = BType.VoidType;
 	}
 
@@ -33,12 +33,12 @@ public final class BunDoWhileNode extends SyntaxSugarNode {
 		return this.AST[BunDoWhileNode._Cond];
 	}
 
-	public final BunBlockNode BlockNode() {
-		@Var BNode BlockNode = this.AST[BunDoWhileNode._Block];
-		if(BlockNode instanceof BunBlockNode) {
-			return (BunBlockNode)BlockNode;
+	public final BlockNode blockNode() {
+		@Var BNode blockNode = this.AST[BunDoWhileNode._Block];
+		if(blockNode instanceof BlockNode) {
+			return (BlockNode)blockNode;
 		}
-		assert(BlockNode == null); // this must not happen
+		assert(blockNode == null); // this must not happen
 		return null;
 	}
 
@@ -55,7 +55,7 @@ public final class BunDoWhileNode extends SyntaxSugarNode {
 		TypeChecker.CheckTypeAt(this, BunWhileNode._Block, BType.VoidType);
 		if(this.HasNextNode()) {
 			TypeChecker.CheckTypeAt(this, BunWhileNode._Next, BType.VoidType);
-			this.BlockNode().Append(this.NextNode());
+			this.blockNode().Append(this.NextNode());
 		}
 		TypeChecker.ReturnTypeNode(this, BType.VoidType);
 	}
@@ -84,7 +84,7 @@ public final class BunDoWhileNode extends SyntaxSugarNode {
 				"}";
 		@Var BNode ParentNode = this.ParentNode;
 		@Var BNode WhileNode = ParentNode.ParseExpression(SugarCode);
-		WhileNode.ReplaceNode("Block::X", this.BlockNode());
+		WhileNode.ReplaceNode("Block::X", this.blockNode());
 		WhileNode.ReplaceNode("Expr::Y", this.CondNode());
 		System.out.println("WhileNode: " + WhileNode);
 		return new DesugarNode(this, WhileNode);

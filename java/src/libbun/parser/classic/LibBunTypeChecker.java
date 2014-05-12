@@ -268,23 +268,23 @@ public abstract class LibBunTypeChecker extends TypeChecker {
 	//		@Var BunFunctionNode FuncNode = new BunFunctionNode(ParentNode);
 	//		FuncNode.GivenName = FuncName;
 	//		FuncNode.GivenType = Node.Type;
-	//		@Var BunBlockNode BlockNode = this.CreateBlockNode(FuncNode);
-	//		FuncNode.SetNode(BunFunctionNode._Block, BlockNode);
+	//		@Var BlockNode blockNode = this.CreateblockNode(FuncNode);
+	//		FuncNode.SetNode(BunFunctionNode._Block, blockNode);
 	//		if(Node.Type.IsVoidType()) {
-	//			BlockNode.Append(Node);
-	//			BlockNode.Append(this.CreateReturnNode(BlockNode));
+	//			blockNode.Append(Node);
+	//			blockNode.Append(this.CreateReturnNode(blockNode));
 	//		}
 	//		else {
-	//			BlockNode.Append(this.CreateReturnNode(BlockNode, Node));
+	//			blockNode.Append(this.CreateReturnNode(blockNode, Node));
 	//		}
 	//		FuncNode.Type = BType.VoidType;
 	//		return FuncNode;
 	//	}
 	//
-	//	public BunBlockNode CreateBlockNode(BNode ParentNode) {
-	//		@Var BunBlockNode BlockNode = new BunBlockNode(ParentNode, null);
-	//		BlockNode.Type = BType.VoidType;
-	//		return BlockNode;
+	//	public BlockNode CreateblockNode(BNode ParentNode) {
+	//		@Var BlockNode blockNode = new BlockNode(ParentNode, null);
+	//		blockNode.Type = BType.VoidType;
+	//		return blockNode;
 	//	}
 	//
 	//	public BunReturnNode CreateReturnNode(BNode ParentNode) {

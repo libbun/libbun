@@ -302,7 +302,7 @@ public class BashGenerator extends OldSourceGenerator {
 	//			Code += "=" + this.ResolveValueType(Node.InitNode, true);
 	//		}
 	//		Code +=  this.LineFeed;
-	//		this.PushSourceCode(Code + this.VisitBlockWithoutIndent(Node.BlockNode, false));
+	//		this.PushSourceCode(Code + this.VisitBlockWithoutIndent(Node.blockNode, false));
 	//	}
 	//
 	//	@Override public void VisitTrinaryNode(ZenTrinaryNode Node) {

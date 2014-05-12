@@ -293,12 +293,12 @@ public abstract class BNode {
 		return null;
 	}
 
-	@Nullable public final BunBlockNode GetScopeBlockNode() {
+	@Nullable public final BlockNode GetScopeblockNode() {
 		@Var int SafeCount = 0;
 		@Var BNode Node = this;
 		while(Node != null) {
-			if(Node instanceof BunBlockNode) {
-				return (BunBlockNode)Node;
+			if(Node instanceof BlockNode) {
+				return (BlockNode)Node;
 			}
 			assert(!(Node == Node.ParentNode));
 			//System.out.println("node: " + Node.getClass() + ", " + Node.hashCode() + ", " + SafeCount);
@@ -313,30 +313,30 @@ public abstract class BNode {
 
 	public final SymbolTable getSymbolTable() {
 		@Var int SafeCount = 0;
-		@Var BunBlockNode BlockNode = this.GetScopeBlockNode();
-		while(BlockNode.NullableGamma == null) {
-			@Var BunBlockNode ParentBlockNode = BlockNode.ParentNode.GetScopeBlockNode();
-			BlockNode = ParentBlockNode;
+		@Var BlockNode blockNode = this.GetScopeblockNode();
+		while(blockNode.NullableGamma == null) {
+			@Var BlockNode ParentblockNode = blockNode.ParentNode.GetScopeblockNode();
+			blockNode = ParentblockNode;
 			if(LibBunSystem.DebugMode) {
 				SafeCount = SafeCount + 1;
 				assert(SafeCount < 100);
 			}
 		}
-		return BlockNode.NullableGamma;
+		return blockNode.NullableGamma;
 	}
 
 	public final LibBunGamma GetGamma() {
 		@Var int SafeCount = 0;
-		@Var BunBlockNode BlockNode = this.GetScopeBlockNode();
-		while(BlockNode.NullableGamma == null) {
-			@Var BunBlockNode ParentBlockNode = BlockNode.ParentNode.GetScopeBlockNode();
-			BlockNode = ParentBlockNode;
+		@Var BlockNode blockNode = this.GetScopeblockNode();
+		while(blockNode.NullableGamma == null) {
+			@Var BlockNode ParentblockNode = blockNode.ParentNode.GetScopeblockNode();
+			blockNode = ParentblockNode;
 			if(LibBunSystem.DebugMode) {
 				SafeCount = SafeCount + 1;
 				assert(SafeCount < 100);
 			}
 		}
-		return (LibBunGamma)BlockNode.NullableGamma;
+		return (LibBunGamma)blockNode.NullableGamma;
 	}
 
 
@@ -376,7 +376,7 @@ public abstract class BNode {
 	}
 
 	public final void ReplaceNode(String Name, BNode Node) {
-		if(Node instanceof BunBlockNode) {
+		if(Node instanceof BlockNode) {
 			BunIfNode IfNode = new BunIfNode(null);  // {block} => if(true) {block}
 			IfNode.SetNode(BunIfNode._Cond, new BunBooleanNode(null, null, true));
 			IfNode.AST[BunIfNode._Then] = Node;

@@ -24,12 +24,12 @@
 
 package libbun.ast.decl;
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.parser.classic.BNodeUtils;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.util.Var;
 
-public class BunVarBlockNode extends BunBlockNode {
+public class BunVarBlockNode extends BlockNode {
 	public static final int _VarDecl = 0;
 
 	public BunVarBlockNode(BNode ParentNode, BunLetVarNode VarNode) {
@@ -37,15 +37,15 @@ public class BunVarBlockNode extends BunBlockNode {
 		this.SetNullableNode(BunVarBlockNode._VarDecl, VarNode);
 	}
 
-	public BunVarBlockNode(BNode ParentNode, BunLetVarNode VarNode, BunBlockNode ParentBlockNode) {
+	public BunVarBlockNode(BNode ParentNode, BunLetVarNode VarNode, BlockNode ParentblockNode) {
 		super(ParentNode, null, 1);
 		this.SetNode(BunVarBlockNode._VarDecl, VarNode);
-		@Var int Index = BNodeUtils._AstListIndexOf(ParentBlockNode, VarNode);
+		@Var int Index = BNodeUtils._AstListIndexOf(ParentblockNode, VarNode);
 		assert(Index >= 0);
-		// before: ParentBlockNode = [NodeA, NodeB, ..., VarNode, NodeC, ..., NodeZ], this = []
-		// after : ParentBlockNode = [NodeA, NodeB, ..., this],  this = [NodeC, ..., NodeZ]
-		BNodeUtils._MoveAstList(ParentBlockNode, Index + 1, this);
-		ParentBlockNode.SetListAt(Index, this);
+		// before: ParentblockNode = [NodeA, NodeB, ..., VarNode, NodeC, ..., NodeZ], this = []
+		// after : ParentblockNode = [NodeA, NodeB, ..., this],  this = [NodeC, ..., NodeZ]
+		BNodeUtils._MoveAstList(ParentblockNode, Index + 1, this);
+		ParentblockNode.SetListAt(Index, this);
 	}
 
 	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
@@ -61,7 +61,7 @@ public class BunVarBlockNode extends BunBlockNode {
 	}
 
 	@Override public final void Accept(LibBunVisitor Visitor) {
-		Visitor.VisitVarBlockNode(this);
+		Visitor.VisitVarblockNode(this);
 	}
 
 

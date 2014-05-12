@@ -322,7 +322,7 @@ public class SSACGenerator extends OldSourceGenerator {
 			this.GenerateTypeName(Node.ReturnType());
 			this.Source.Append(" ", FuncName);
 			this.VisitFuncParamNode("(", Node, ")");
-			this.GenerateExpression(Node.BlockNode());
+			this.GenerateExpression(Node.blockNode());
 			this.Source.AppendLineFeed();
 			this.Source = this.Source.Pop();
 			this.Source.Append(FuncName);
@@ -334,7 +334,7 @@ public class SSACGenerator extends OldSourceGenerator {
 			this.Source.Append(" ", Node.GetSignature());
 			this.VisitFuncParamNode("(", Node, ")");
 			@Var String Prototype = this.Source.CopyString(StartIndex, this.Source.GetPosition());
-			this.GenerateExpression(Node.BlockNode());
+			this.GenerateExpression(Node.blockNode());
 			this.Source.AppendLineFeed();
 
 			this.Header.Append(Prototype);
@@ -488,7 +488,7 @@ public class SSACGenerator extends OldSourceGenerator {
 		@Var int i = 0;
 		while(i < phi.Args.size()) {
 			BNode Arg = CommonArray.GetIndex(phi.Args, i);
-			// Arg is instanceof ZLetVarNode or ZVarBlockNode or ZSetNameNode or PHINode
+			// Arg is instanceof ZLetVarNode or ZVarblockNode or ZSetNameNode or PHINode
 			if(i != 0) {
 				this.Source.Append(", ");
 			}

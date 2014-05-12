@@ -60,7 +60,7 @@ import java.util.Stack;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.LocalDefinedNode;
 import libbun.ast.binary.AssignNode;
@@ -485,9 +485,9 @@ public class AsmJavaGenerator extends LibBunGenerator {
 		this.AsmBuilder.RemoveLocal(DeclClass, Node.GetGivenName());
 	}
 
-	@Override public void VisitVarBlockNode(BunVarBlockNode Node) {
+	@Override public void VisitVarblockNode(BunVarBlockNode Node) {
 		this.VisitVarDeclNode(Node.VarDeclNode());
-		this.VisitBlockNode(Node);
+		this.VisitblockNode(Node);
 		this.VisitVarDeclNode2(Node.VarDeclNode());
 	}
 
@@ -856,7 +856,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 		this.AsmBuilder.visitLabel(mergeLabel);
 	}
 
-	@Override public void VisitBlockNode(BunBlockNode Node) {
+	@Override public void VisitblockNode(BlockNode Node) {
 		for (int i = 0; i < Node.GetListSize(); i++) {
 			Node.GetListAt(i).Accept(this);
 		}
@@ -893,7 +893,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 
 	@Override public void VisitWhileNode(BunWhileNode Node) {
 		if(Node.HasNextNode()) {
-			Node.BlockNode().Append(Node.NextNode());
+			Node.blockNode().Append(Node.NextNode());
 		}
 		Label continueLabel = new Label();
 		Label breakLabel = new Label();
@@ -903,7 +903,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 		this.AsmBuilder.visitLabel(continueLabel);
 		this.AsmBuilder.PushNode(boolean.class, Node.CondNode());
 		this.AsmBuilder.visitJumpInsn(IFEQ, breakLabel); // condition
-		Node.BlockNode().Accept(this);
+		Node.blockNode().Accept(this);
 		this.AsmBuilder.visitJumpInsn(GOTO, continueLabel);
 		this.AsmBuilder.visitLabel(breakLabel);
 
@@ -933,11 +933,11 @@ public class AsmJavaGenerator extends LibBunGenerator {
 
 		// try block
 		this.AsmBuilder.visitLabel(TryCatchLabel.BeginTryLabel);
-		Node.TryBlockNode().Accept(this);
+		Node.TryblockNode().Accept(this);
 		this.AsmBuilder.visitLabel(TryCatchLabel.EndTryLabel);
 		this.AsmBuilder.visitJumpInsn(GOTO, TryCatchLabel.FinallyLabel);
 		// catch block
-		if(Node.HasCatchBlockNode()) {
+		if(Node.HasCatchblockNode()) {
 			Label CatchLabel = new Label();
 			AsmTryCatchLabel Label = this.TryCatchLabel.peek();
 			Class<?> ExceptionClass = SoftwareFault.class;
@@ -948,15 +948,15 @@ public class AsmJavaGenerator extends LibBunGenerator {
 			String Desc = Type.getMethodDescriptor(Type.getType(ExceptionClass), new Type[] {Type.getType(Throwable.class)});
 			this.AsmBuilder.visitMethodInsn(INVOKESTATIC, Type.getInternalName(JavaCommonApi.class), "ToFault", Desc);
 			this.AsmBuilder.StoreLocal(Node.ExceptionName());
-			Node.CatchBlockNode().Accept(this);
+			Node.CatchblockNode().Accept(this);
 			this.AsmBuilder.visitJumpInsn(GOTO, Label.FinallyLabel);
 			this.AsmBuilder.RemoveLocal(ExceptionClass, Node.ExceptionName());
 		}
 
 		// finally block
 		this.AsmBuilder.visitLabel(TryCatchLabel.FinallyLabel);
-		if(Node.HasFinallyBlockNode()) {
-			Node.FinallyBlockNode().Accept(this);
+		if(Node.HasFinallyblockNode()) {
+			Node.FinallyblockNode().Accept(this);
 		}
 		this.TryCatchLabel.pop();
 	}
@@ -1066,7 +1066,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 			Class<?> DeclClass = this.GetJavaClass(ParamNode.DeclType());
 			StaticFuncMethod.AddLocal(DeclClass, ParamNode.GetGivenName());
 		}
-		Node.BlockNode().Accept(this);
+		Node.blockNode().Accept(this);
 		StaticFuncMethod.Finish();
 
 		FuncClass = this.AsmLoader.LoadGeneratedClass(ClassName);

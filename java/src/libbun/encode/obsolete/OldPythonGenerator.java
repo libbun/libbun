@@ -26,7 +26,7 @@
 package libbun.encode.obsolete;
 
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.binary.BunInstanceOfNode;
 import libbun.ast.decl.BunClassNode;
 import libbun.ast.decl.BunFunctionNode;
@@ -100,10 +100,10 @@ public class OldPythonGenerator extends OldSourceGenerator {
 
 
 	@Override
-	public void GenerateStmtListNode(BunBlockNode BlockNode) {
+	public void GenerateStmtListNode(BlockNode blockNode) {
 		@Var int i = 0;
-		while (i < BlockNode.GetListSize()) {
-			BNode SubNode = BlockNode.GetListAt(i);
+		while (i < blockNode.GetListSize()) {
+			BNode SubNode = blockNode.GetListAt(i);
 			this.GenerateStatement(SubNode);
 			i = i + 1;
 		}
@@ -112,7 +112,7 @@ public class OldPythonGenerator extends OldSourceGenerator {
 		}
 	}
 
-	@Override public void VisitBlockNode(BunBlockNode Node) {
+	@Override public void VisitblockNode(BlockNode Node) {
 		this.Source.OpenIndent(":");
 		this.GenerateStmtListNode(Node);
 		this.Source.CloseIndent("");
@@ -123,7 +123,7 @@ public class OldPythonGenerator extends OldSourceGenerator {
 		this.GenerateExpression(Node.InitValueNode());
 	}
 
-	@Override public void VisitVarBlockNode(BunVarBlockNode Node) {
+	@Override public void VisitVarblockNode(BunVarBlockNode Node) {
 		this.VisitVarDeclNode(Node.VarDeclNode());
 		this.GenerateStmtListNode(Node);
 	}
@@ -208,7 +208,7 @@ public class OldPythonGenerator extends OldSourceGenerator {
 			this.Source.Append("def ");
 			this.Source.Append(FuncName);
 			this.VisitFuncParamNode("(", Node, ")");
-			this.GenerateExpression(Node.BlockNode());
+			this.GenerateExpression(Node.blockNode());
 			this.Source.AppendLineFeed();
 			this.Source.AppendLineFeed();
 			this.Source = this.Source.Pop();
@@ -219,7 +219,7 @@ public class OldPythonGenerator extends OldSourceGenerator {
 			this.Source.Append("def ");
 			this.Source.Append(Node.GetSignature());
 			this.VisitFuncParamNode("(", Node, ")");
-			this.GenerateExpression(Node.BlockNode());
+			this.GenerateExpression(Node.blockNode());
 			this.Source.AppendLineFeed();
 			if(Node.IsExport()) {
 				this.Source.Append(Node.FuncName(), " = ", FuncType.StringfySignature(Node.FuncName()));
@@ -316,18 +316,18 @@ public class OldPythonGenerator extends OldSourceGenerator {
 
 	@Override public void VisitTryNode(BunTryNode Node) {
 		this.Source.Append("try");
-		this.GenerateExpression(Node.TryBlockNode());
-		if(Node.HasCatchBlockNode()) {
+		this.GenerateExpression(Node.TryblockNode());
+		if(Node.HasCatchblockNode()) {
 			@Var String VarName = this.NameUniqueSymbol("e");
 			this.Source.AppendNewLine("except Exception as ", VarName);
 			this.Source.OpenIndent(":");
 			this.Source.AppendNewLine(Node.ExceptionName(), " = ", VarName);
-			this.GenerateStmtListNode(Node.CatchBlockNode());
+			this.GenerateStmtListNode(Node.CatchblockNode());
 			this.Source.CloseIndent("");
 		}
-		if(Node.HasFinallyBlockNode()) {
+		if(Node.HasFinallyblockNode()) {
 			this.Source.AppendNewLine("finally");
-			this.GenerateExpression(Node.FinallyBlockNode());
+			this.GenerateExpression(Node.FinallyblockNode());
 		}
 	}
 

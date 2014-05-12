@@ -3,7 +3,7 @@ package libbun.parser.ssa;
 import java.util.HashMap;
 
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BunAndNode;
 import libbun.ast.decl.BunFunctionNode;
@@ -242,7 +242,7 @@ public class SSAConverter extends ZASTTransformer {
 	 * }              | }
 	 */
 	private void RemoveJoinNode(BNode TargetNode, JoinNode JNode) {
-		@Var BunBlockNode Parent = TargetNode.GetScopeBlockNode();
+		@Var BlockNode Parent = TargetNode.GetScopeblockNode();
 		@Var int Index = 0;
 		assert(Parent != null);
 		while(Index < Parent.GetListSize()) {
@@ -303,7 +303,7 @@ public class SSAConverter extends ZASTTransformer {
 	}
 
 	@Override
-	public void VisitVarBlockNode(BunVarBlockNode Node) {
+	public void VisitVarblockNode(BunVarBlockNode Node) {
 		@Var Variable V = new Variable(Node.VarDeclNode().GetUniqueName(this.Generator), 0, Node);
 		this.AddVariable(V);
 		@Var int i = 0;
@@ -349,10 +349,10 @@ public class SSAConverter extends ZASTTransformer {
 		this.PushState(new SSAConverterState(new JoinNode(Node), 0));
 		this.RecordListOfVariablesBeforeVisit(Node);
 		Node.CondNode().Accept(this);
-		this.RecordListOfVariablesBeforeVisit(Node.BlockNode());
+		this.RecordListOfVariablesBeforeVisit(Node.blockNode());
 		this.SetCurrentBranchIndex(WhileBodyBranchIndex);
-		Node.BlockNode().Accept(this);
-		this.RecordListOfVariablesAfterVisit(Node.BlockNode());
+		Node.blockNode().Accept(this);
+		this.RecordListOfVariablesAfterVisit(Node.blockNode());
 		this.RecordListOfVariablesAfterVisit(Node);
 		this.RemoveJoinNode(Node, this.GetCurrentJoinNode());
 		this.CommitPHINode(this.GetCurrentJoinNode());
@@ -368,6 +368,6 @@ public class SSAConverter extends ZASTTransformer {
 			this.AddVariable(new Variable(ParamNode.GetUniqueName(this.Generator), 0, ParamNode));
 			i = i + 1;
 		}
-		Node.BlockNode().Accept(this);
+		Node.blockNode().Accept(this);
 	}
 }

@@ -1,7 +1,7 @@
 package libbun.encode.playground;
 
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
@@ -383,7 +383,7 @@ public class JavaGenerator extends LibBunSourceGenerator {
 		}
 	}
 
-	protected void GenerateStmtListNode(BunBlockNode Node) {
+	protected void GenerateStmtListNode(BlockNode Node) {
 		@Var int i = 0;
 		while (i < Node.GetListSize()) {
 			@Var BNode SubNode = Node.GetListAt(i);
@@ -392,14 +392,14 @@ public class JavaGenerator extends LibBunSourceGenerator {
 		}
 	}
 
-	@Override public void VisitBlockNode(BunBlockNode Node) {
+	@Override public void VisitblockNode(BlockNode Node) {
 		this.Source.AppendWhiteSpace();
 		this.Source.OpenIndent("{");
 		this.GenerateStmtListNode(Node);
 		this.Source.CloseIndent("}");
 	}
 
-	@Override public void VisitVarBlockNode(BunVarBlockNode Node) {
+	@Override public void VisitVarblockNode(BunVarBlockNode Node) {
 		this.VisitVarDeclNode(Node.VarDeclNode());
 		this.GenerateStmtListNode(Node);
 	}
@@ -424,9 +424,9 @@ public class JavaGenerator extends LibBunSourceGenerator {
 	@Override public void VisitWhileNode(BunWhileNode Node) {
 		this.GenerateExpression("while (", Node.CondNode(), ")");
 		if(Node.HasNextNode()) {
-			Node.BlockNode().Append(Node.NextNode());
+			Node.blockNode().Append(Node.NextNode());
 		}
-		this.GenerateExpression(Node.BlockNode());
+		this.GenerateExpression(Node.blockNode());
 	}
 
 	@Override public void VisitBreakNode(BunBreakNode Node) {
@@ -440,20 +440,20 @@ public class JavaGenerator extends LibBunSourceGenerator {
 
 	@Override public void VisitTryNode(BunTryNode Node) {
 		this.Source.Append("try ");
-		this.GenerateExpression(Node.TryBlockNode());
-		if(Node.HasCatchBlockNode()) {
+		this.GenerateExpression(Node.TryblockNode());
+		if(Node.HasCatchblockNode()) {
 			@Var String VarName = this.NameUniqueSymbol("e");
 			this.Source.AppendNewLine("catch (Exception ", VarName, ")");
 			this.Source.OpenIndent(" {");
 			this.Source.AppendNewLine("Fault ", Node.ExceptionName(), " = LibCatch.");
 			this.Source.Append("f(", VarName, ");");
-			this.GenerateStmtListNode(Node.CatchBlockNode());
+			this.GenerateStmtListNode(Node.CatchblockNode());
 			this.Source.CloseIndent("}");
 			this.ImportLibrary("@catch");
 		}
-		if(Node.HasFinallyBlockNode()) {
+		if(Node.HasFinallyblockNode()) {
 			this.Source.AppendNewLine("finally ");
-			this.GenerateExpression(Node.FinallyBlockNode());
+			this.GenerateExpression(Node.FinallyblockNode());
 		}
 	}
 
@@ -607,7 +607,7 @@ public class JavaGenerator extends LibBunSourceGenerator {
 		this.GenerateTypeName(Node.ReturnType());
 		this.Source.Append(" f");
 		this.GenerateListNode("(", Node.ParamNode(), ", ", ")");
-		this.GenerateExpression(Node.BlockNode());
+		this.GenerateExpression(Node.blockNode());
 
 		this.GenerateClassField("static ", FuncType, "function", "new " + ClassName + "();");
 		this.Source.AppendNewLine(ClassName, "()");

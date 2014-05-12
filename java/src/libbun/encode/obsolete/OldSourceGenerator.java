@@ -26,7 +26,7 @@ package libbun.encode.obsolete;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.GroupNode;
 import libbun.ast.SyntaxSugarNode;
@@ -196,7 +196,7 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 		this.GenerateStatementEnd();
 	}
 
-	protected void GenerateStmtListNode(BunBlockNode Node) {
+	protected void GenerateStmtListNode(BlockNode Node) {
 		@Var int i = 0;
 		while (i < Node.GetListSize()) {
 			@Var BNode SubNode = Node.GetListAt(i);
@@ -205,7 +205,7 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 		}
 	}
 
-	@Override public void VisitBlockNode(BunBlockNode Node) {
+	@Override public void VisitblockNode(BlockNode Node) {
 		this.Source.AppendWhiteSpace();
 		this.Source.OpenIndent("{");
 		this.GenerateStmtListNode(Node);
@@ -218,7 +218,7 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 		this.GenerateExpression(" = ", Node.InitValueNode(), this.SemiColon);
 	}
 
-	@Override public void VisitVarBlockNode(BunVarBlockNode Node) {
+	@Override public void VisitVarblockNode(BunVarBlockNode Node) {
 		this.Source.AppendWhiteSpace();
 		this.VisitVarDeclNode(Node.VarDeclNode());
 		this.GenerateStmtListNode(Node);
@@ -477,7 +477,7 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 
 	@Override public void VisitWhileNode(BunWhileNode Node) {
 		this.GenerateExpression("while (", Node.CondNode(), ")");
-		this.GenerateExpression(Node.BlockNode());
+		this.GenerateExpression(Node.blockNode());
 	}
 
 	@Override public void VisitBreakNode(BunBreakNode Node) {
@@ -491,15 +491,15 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 
 	@Override public void VisitTryNode(BunTryNode Node) {
 		this.Source.Append("try");
-		this.GenerateExpression(Node.TryBlockNode());
-		if(Node.HasCatchBlockNode()) {
+		this.GenerateExpression(Node.TryblockNode());
+		if(Node.HasCatchblockNode()) {
 			this.Source.AppendNewLine("catch (", Node.ExceptionName());
 			this.Source.Append(") ");
-			this.GenerateExpression(Node.CatchBlockNode());
+			this.GenerateExpression(Node.CatchblockNode());
 		}
-		if (Node.HasFinallyBlockNode()) {
+		if (Node.HasFinallyblockNode()) {
 			this.Source.AppendNewLine("finally ");
-			this.GenerateExpression(Node.FinallyBlockNode());
+			this.GenerateExpression(Node.FinallyblockNode());
 		}
 	}
 
@@ -541,7 +541,7 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 		}
 		this.GenerateListNode("(", Node.ParamNode(), ",", ")");
 		this.GenerateTypeAnnotation(Node.ReturnType());
-		this.GenerateExpression(Node.BlockNode());
+		this.GenerateExpression(Node.blockNode());
 	}
 
 	@Override public void VisitClassNode(BunClassNode Node) {

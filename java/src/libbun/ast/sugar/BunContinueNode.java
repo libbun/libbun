@@ -1,7 +1,7 @@
 package libbun.ast.sugar;
 
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.ast.binary.AssignNode;
@@ -50,7 +50,7 @@ public class BunContinueNode extends SyntaxSugarNode {
 		if(WhileNode == null) {
 			return new DesugarNode(this, new ErrorNode(this.ParentNode, this.SourceToken, "continue must be inside the while statement"));
 		}
-		@Var BunBlockNode ParentBlockNode = WhileNode.GetScopeBlockNode();
+		@Var BlockNode ParentblockNode = WhileNode.GetScopeblockNode();
 		//@Var String VarName = Typer.Generator.NameUniqueSymbol("continue");
 		@Var String SugarCode = ""     +
 				"var _continue_ = true in {\n" +
@@ -74,7 +74,7 @@ public class BunContinueNode extends SyntaxSugarNode {
 			Nodes[0] = new AssignNode("_continue_", new BunBooleanNode(true));
 			Nodes[1] = new BunBreakNode(null);
 		}
-		ParentBlockNode.ReplaceWith(WhileNode, NewNode);
+		ParentblockNode.ReplaceWith(WhileNode, NewNode);
 		return this.ReplaceContinue(WhileNode, this, Nodes, null);
 	}
 
@@ -117,14 +117,14 @@ public class BunContinueNode extends SyntaxSugarNode {
 	//		if(WhileNode == null) {
 	//			return new DesugarNode(this, new ErrorNode(this.ParentNode, this.SourceToken, "continue must be inside the while statement"));
 	//		}
-	//		@Var BunBlockNode ParentBlockNode = WhileNode.GetScopeBlockNode();
+	//		@Var BlockNode ParentblockNode = WhileNode.GetScopeblockNode();
 	//		@Var String VarName = Typer.Generator.NameUniqueSymbol("continue");
 	//		@Var BunVarBlockNode VarNode = Typer.CreateVarNode(null, VarName, BType.BooleanType, new BunBooleanNode(true));
 	//		@Var BunWhileNode ContinueWhile = VarNode.SetNewWhileNode(BNode._AppendIndex, Typer);
 	//		ContinueWhile.SetNewGetNameNode(BunWhileNode._Cond, Typer, VarName, BType.BooleanType);
-	//		@Var BunBlockNode WhileBlockNode = ContinueWhile.SetNewBlockNode(BunWhileNode._Block, Typer);
-	//		WhileBlockNode.Append(new AssignNode(VarName, new BunBooleanNode(false)));
-	//		WhileBlockNode.Append(WhileNode);
+	//		@Var BlockNode WhileblockNode = ContinueWhile.SetNewblockNode(BunWhileNode._Block, Typer);
+	//		WhileblockNode.Append(new AssignNode(VarName, new BunBooleanNode(false)));
+	//		WhileblockNode.Append(WhileNode);
 	//
 	//		@Var BNode[] Nodes = null;
 	//		if(WhileNode.HasNextNode()) {
@@ -138,7 +138,7 @@ public class BunContinueNode extends SyntaxSugarNode {
 	//			Nodes[0] = new AssignNode(VarName, new BunBooleanNode(true));
 	//			Nodes[1] = new BunBreakNode(null);
 	//		}
-	//		ParentBlockNode.ReplaceWith(WhileNode, VarNode);
+	//		ParentblockNode.ReplaceWith(WhileNode, VarNode);
 	//		return this.ReplaceContinue(WhileNode, this, Nodes, null);
 	//	}
 

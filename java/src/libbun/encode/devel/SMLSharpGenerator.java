@@ -2,7 +2,7 @@ package libbun.encode.devel;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
@@ -458,7 +458,7 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 
 	}
 
-	private void GenerateStmtListNode(BunBlockNode Node) {
+	private void GenerateStmtListNode(BlockNode Node) {
 		@Var int i = 0;
 		while (i < Node.GetListSize()) {
 			if(i > 0) {
@@ -471,7 +471,7 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override
-	public void VisitBlockNode(BunBlockNode Node) {
+	public void VisitblockNode(BlockNode Node) {
 		this.Source.AppendWhiteSpace();
 		if(Node.GetListSize() == 0) {
 			this.Source.Append("()");
@@ -484,11 +484,11 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override
-	public void VisitVarBlockNode(BunVarBlockNode Node) {
+	public void VisitVarblockNode(BunVarBlockNode Node) {
 		this.Source.Append("let ");
 		this.GenerateExpression(Node.VarDeclNode());
 		this.Source.Append(" in");
-		this.VisitBlockNode(Node);
+		this.VisitblockNode(Node);
 		this.Source.Append(" end");
 	}
 
@@ -528,16 +528,16 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 
 		/* whatever */
 		if(Node.HasNextNode()) {
-			Node.BlockNode().Append(Node.NextNode());
+			Node.blockNode().Append(Node.NextNode());
 		}
 
 		/* loop body */
-		if(Node.BlockNode().GetListSize() == 0) {
+		if(Node.blockNode().GetListSize() == 0) {
 			this.Source.Append("WhileLoop ()) else ())");
 		}
 		else {
 			this.Source.OpenIndent("(");
-			this.GenerateStmtListNode(Node.BlockNode());
+			this.GenerateStmtListNode(Node.blockNode());
 			this.Source.Append(";");
 			this.Source.AppendNewLine("WhileLoop ()");
 			this.Source.CloseIndent(") else ())");
@@ -627,7 +627,7 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 			this.GenerateTypeName(Node.ReturnType());
 		}
 		this.Source.Append(" in");
-		this.GenerateExpression(Node.BlockNode());
+		this.GenerateExpression(Node.blockNode());
 		this.Source.Append(" handle Return");
 		if(DoesReturnValue) {
 			this.Source.Append(" v => v");

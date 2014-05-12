@@ -2,7 +2,7 @@ package libbun.parser.classic;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.statement.BunBreakNode;
 import libbun.ast.statement.BunIfNode;
@@ -31,11 +31,11 @@ public class BNodeUtils {
 			}
 			return false;
 		}
-		if(Node instanceof BunBlockNode) {
-			@Var BunBlockNode BlockNode = (BunBlockNode)Node;
+		if(Node instanceof BlockNode) {
+			@Var BlockNode blockNode = (BlockNode)Node;
 			@Var int i = 0;
-			while(i < BlockNode.GetListSize()) {
-				@Var BNode StmtNode = BlockNode.GetListAt(i);
+			while(i < blockNode.GetListSize()) {
+				@Var BNode StmtNode = blockNode.GetListAt(i);
 				//System.out.println("i="+i +", "+ StmtNode.getClass().getSimpleName());
 				if(BNodeUtils._HasFunctionBreak(StmtNode)) {
 					return true;
@@ -50,9 +50,9 @@ public class BNodeUtils {
 
 
 	public final static BunReturnNode _CheckIfSingleReturnNode(BunFunctionNode Node) {
-		@Var BunBlockNode BlockNode = Node.BlockNode();
-		if(BlockNode.GetListSize() == 1) {
-			@Var BNode ReturnNode= BlockNode.AST[0];
+		@Var BlockNode blockNode = Node.blockNode();
+		if(blockNode.GetListSize() == 1) {
+			@Var BNode ReturnNode= blockNode.AST[0];
 			if(ReturnNode instanceof BunReturnNode) {
 				return (BunReturnNode)ReturnNode;
 			}

@@ -26,7 +26,7 @@
 package libbun.encode.playground;
 
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
@@ -442,7 +442,7 @@ public class CGenerator extends LibBunSourceGenerator {
 		}
 	}
 
-	protected void GenerateStmtListNode(BunBlockNode Node) {
+	protected void GenerateStmtListNode(BlockNode Node) {
 		@Var int i = 0;
 		while (i < Node.GetListSize()) {
 			@Var BNode SubNode = Node.GetListAt(i);
@@ -452,14 +452,14 @@ public class CGenerator extends LibBunSourceGenerator {
 		this.GenerateStatementEnd(Node);
 	}
 
-	@Override public void VisitBlockNode(BunBlockNode Node) {
+	@Override public void VisitblockNode(BlockNode Node) {
 		this.Source.AppendWhiteSpace();
 		this.Source.OpenIndent("{");
 		this.GenerateStmtListNode(Node);
 		this.Source.CloseIndent("}");
 	}
 
-	@Override public void VisitVarBlockNode(BunVarBlockNode Node) {
+	@Override public void VisitVarblockNode(BunVarBlockNode Node) {
 		@Var BunLetVarNode VarNode = Node.VarDeclNode();
 		this.GenerateTypeName(VarNode.GivenType);
 		this.Source.Append(" ");
@@ -489,9 +489,9 @@ public class CGenerator extends LibBunSourceGenerator {
 	@Override public void VisitWhileNode(BunWhileNode Node) {
 		this.GenerateExpression("while (", Node.CondNode(), ")");
 		if(Node.HasNextNode()) {
-			Node.BlockNode().Append(Node.NextNode());
+			Node.blockNode().Append(Node.NextNode());
 		}
-		this.GenerateExpression(Node.BlockNode());
+		this.GenerateExpression(Node.blockNode());
 	}
 
 	@Override public void VisitBreakNode(BunBreakNode Node) {
@@ -618,7 +618,7 @@ public class CGenerator extends LibBunSourceGenerator {
 			this.GenerateTypeName(Node.ReturnType());
 			this.Source.Append(" ", FuncName);
 			this.GenerateListNode("(", Node.ParamNode(), ",", ")");
-			this.GenerateExpression(Node.BlockNode());
+			this.GenerateExpression(Node.blockNode());
 			//			this.CurrentBuilder.AppendLineFeed();
 			this.Source = this.Source.Pop();
 			this.Source.Append(FuncName);
@@ -630,7 +630,7 @@ public class CGenerator extends LibBunSourceGenerator {
 			this.Source.Append(" ", Node.GetSignature());
 			this.GenerateListNode("(", Node.ParamNode(), ",", ")");
 			@Var String Prototype = this.Source.CopyString(StartIndex, this.Source.GetPosition());
-			this.GenerateExpression(Node.BlockNode());
+			this.GenerateExpression(Node.blockNode());
 
 			this.Header.AppendNewLine(Prototype);
 			this.Header.Append(";");

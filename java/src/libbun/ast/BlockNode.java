@@ -33,27 +33,27 @@ import libbun.util.BField;
 import libbun.util.Nullable;
 import libbun.util.Var;
 
-public class BunBlockNode extends AbstractListNode {
+public class BlockNode extends AbstractListNode {
 	@BField public SymbolTable NullableGamma;
 
-	public BunBlockNode(BNode ParentNode, @Nullable SymbolTable Gamma) {
+	public BlockNode(BNode ParentNode, @Nullable SymbolTable Gamma) {
 		super(ParentNode, 0);
 		this.NullableGamma = Gamma;
 	}
 
-	protected BunBlockNode(BNode ParentNode, @Nullable SymbolTable Gamma, int Init) {  // call by ZVarNode
+	protected BlockNode(BNode ParentNode, @Nullable SymbolTable Gamma, int Init) {  // call by ZVarNode
 		super(ParentNode, Init);
 		this.NullableGamma = Gamma;
 	}
 
-	public BunBlockNode(BNode ParentNode, @Nullable SymbolTable Gamma, BunLetVarNode VarNode) {
+	public BlockNode(BNode ParentNode, @Nullable SymbolTable Gamma, BunLetVarNode VarNode) {
 		super(ParentNode, 1);
 		this.NullableGamma = Gamma;
 		this.SetNode(0, VarNode);
 	}
 
 	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
-		return this.dupField(TypedClone, new BunBlockNode(ParentNode, this.NullableGamma));
+		return this.dupField(TypedClone, new BlockNode(ParentNode, this.NullableGamma));
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {
@@ -77,7 +77,7 @@ public class BunBlockNode extends AbstractListNode {
 	}
 
 	@Override public void Accept(LibBunVisitor Visitor) {
-		Visitor.VisitBlockNode(this);
+		Visitor.VisitblockNode(this);
 	}
 
 	public final void ReplaceWith(BNode OldNode, BNode NewNode) {

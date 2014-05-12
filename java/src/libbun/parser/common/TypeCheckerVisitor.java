@@ -1,7 +1,7 @@
 package libbun.parser.common;
 
 import libbun.ast.BNode;
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.GroupNode;
 import libbun.ast.LocalDefinedNode;
@@ -355,7 +355,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 
 
 	@Override
-	public void VisitBlockNode(BunBlockNode node) {
+	public void VisitblockNode(BlockNode node) {
 		for(int i = 0; i < node.GetAstSize(); i++) {
 			@Var BNode subNode = node.AST[i];
 			@Var BNode typedNode = this.CheckType(subNode, BType.VoidType);
@@ -375,7 +375,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 	}
 
 	@Override
-	public void VisitVarBlockNode(BunVarBlockNode node) {
+	public void VisitVarblockNode(BunVarBlockNode node) {
 
 	}
 
@@ -395,7 +395,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 		this.CheckTypeAt(node, BunWhileNode._Block, BType.VoidType);
 		if(node.HasNextNode()) {
 			this.CheckTypeAt(node, BunWhileNode._Next, BType.VoidType);
-			//Node.BlockNode().Append(Node.NextNode());
+			//Node.blockNode().Append(Node.NextNode());
 		}
 		this.ReturnTypeNode(node, BType.VoidType);
 	}
@@ -417,7 +417,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 	//		if(Node == null) {
 	//			return null;
 	//		}
-	//		if(Node instanceof BunBlockNode && !(Node instanceof BunVarBlockNode)) {
+	//		if(Node instanceof BlockNode && !(Node instanceof BunVarBlockNode)) {
 	//			if(Node.ParentNode != null && Node.ParentNode instanceof BunFunctionNode) {
 	//				return (BunFunctionNode) Node.ParentNode;
 	//			}
@@ -431,15 +431,15 @@ public class TypeCheckerVisitor extends TypeChecker {
 	@Override
 	public void VisitTryNode(BunTryNode node) {
 		this.CheckTypeAt(node, BunTryNode._Try, BType.VoidType);
-		if(node.HasCatchBlockNode()) {
-			@Var LibBunGamma Gamma = node.CatchBlockNode().GetBlockGamma();
+		if(node.HasCatchblockNode()) {
+			@Var LibBunGamma Gamma = node.CatchblockNode().GetBlockGamma();
 			@Var BunLetVarNode VarNode = new BunLetVarNode(node, BunLetVarNode._IsReadOnly, null, null);
 			VarNode.GivenName = node.ExceptionName();
 			VarNode.GivenType = BClassType._ObjectType;
 			Gamma.SetSymbol(VarNode.GetGivenName(), VarNode);
 			this.CheckTypeAt(node, BunTryNode._Catch, BType.VoidType);
 		}
-		if(node.HasFinallyBlockNode()) {
+		if(node.HasFinallyblockNode()) {
 			this.CheckTypeAt(node, BunTryNode._Finally, BType.VoidType);
 		}
 		this.ReturnTypeNode(node, BType.VoidType);
@@ -486,17 +486,17 @@ public class TypeCheckerVisitor extends TypeChecker {
 		}
 		else {
 			@Var BType ContextType = this.GetContextType();
-			@Var BNode BlockNode = new BunVarBlockNode(node.ParentNode, node, node.GetScopeBlockNode());
-			BlockNode = this.CheckType(BlockNode, ContextType);
-			this.ReturnNode(BlockNode);
+			@Var BNode blockNode = new BunVarBlockNode(node.ParentNode, node, node.GetScopeblockNode());
+			blockNode = this.CheckType(blockNode, ContextType);
+			this.ReturnNode(blockNode);
 		}
 	}
 
 	@Override public void VisitFunctionNode(BunFunctionNode node) {
-		if(!BNodeUtils._HasFunctionBreak(node.BlockNode())) {
-			node.BlockNode().SetNode(BNode._AppendIndex, new BunReturnNode(node));
+		if(!BNodeUtils._HasFunctionBreak(node.blockNode())) {
+			node.blockNode().SetNode(BNode._AppendIndex, new BunReturnNode(node));
 		}
-		@Var SymbolTable blockTable = node.BlockNode().getBlockSymbolTable();
+		@Var SymbolTable blockTable = node.blockNode().getBlockSymbolTable();
 		this.pushFunctionStack(node);
 		for(int i = 0; i < node.getParamSize(); i++) {
 			@Var BunLetVarNode paramNode = node.GetParamNode(i);
@@ -509,7 +509,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 				this.ReturnErrorNode(node, "redefinition of function: " + node.FuncName() + ": " + node.GetFuncType());
 			}
 			this.CheckTypeAt(node, BunFunctionNode._Block, BType.VoidType);
-			if(!node.BlockNode().IsUntyped()) {
+			if(!node.blockNode().IsUntyped()) {
 				break;
 			}
 		}

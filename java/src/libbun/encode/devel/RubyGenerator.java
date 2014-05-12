@@ -3,7 +3,7 @@ package libbun.encode.devel;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.binary.BunInstanceOfNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
@@ -57,7 +57,7 @@ public class RubyGenerator extends OldSourceGenerator {
 	//	}
 
 	@Override
-	public void VisitBlockNode(BunBlockNode Node) {
+	public void VisitblockNode(BlockNode Node) {
 		this.Source.Append("do");
 		throw new RuntimeException("FIXME: don't use for statement");
 		//		for(ZNode SubNode : Node.StmtList) {
@@ -89,13 +89,13 @@ public class RubyGenerator extends OldSourceGenerator {
 	@Override
 	public void VisitTryNode(BunTryNode Node) {
 		this.Source.Append("begin");
-		this.GenerateExpression(Node.TryBlockNode());
-		if (Node.CatchBlockNode() != null) {
-			this.GenerateExpression(Node.CatchBlockNode());
+		this.GenerateExpression(Node.TryblockNode());
+		if (Node.CatchblockNode() != null) {
+			this.GenerateExpression(Node.CatchblockNode());
 		}
-		if (Node.FinallyBlockNode() != null) {
+		if (Node.FinallyblockNode() != null) {
 			this.Source.Append("ensure");
-			this.GenerateExpression(Node.FinallyBlockNode());
+			this.GenerateExpression(Node.FinallyblockNode());
 		}
 	}
 
@@ -108,7 +108,7 @@ public class RubyGenerator extends OldSourceGenerator {
 	//	}
 
 	//	@Override
-	//	public void VisitVarNode(ZVarBlockNode Node) {
+	//	public void VisitVarNode(ZVarblockNode Node) {
 	//		this.CurrentBuilder.Append(Node.GetName());
 	//		this.CurrentBuilder.AppendToken("=");
 	//		this.GenerateCode(null, Node.InitValueNode());
@@ -122,15 +122,15 @@ public class RubyGenerator extends OldSourceGenerator {
 	@Override public void VisitFunctionNode(BunFunctionNode Node) {
 		this.Source.Append("->");
 		this.VisitFuncParamNode("(", Node, ")");
-		this.GenerateExpression(Node.BlockNode());
+		this.GenerateExpression(Node.blockNode());
 	}
 
 	//	public void VisitFuncDeclNode(ZFunctionNode/ Node) {
 	//		this.CurrentBuilder.Append("def ");
 	//		this.CurrentBuilder.Append(Node.FuncName);
 	//		this.GenerateListNode("(", Node, ")");
-	//		if (Node.BlockNode() != null) {
-	//			this.GenerateCode(Node.BlockNode());
+	//		if (Node.blockNode() != null) {
+	//			this.GenerateCode(Node.blockNode());
 	//		}
 	//	}
 }

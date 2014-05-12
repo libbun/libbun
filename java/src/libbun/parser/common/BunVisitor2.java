@@ -1,6 +1,6 @@
 package libbun.parser.common;
 
-import libbun.ast.BunBlockNode;
+import libbun.ast.BlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.GroupNode;
 import libbun.ast.SyntaxSugarNode;
@@ -81,8 +81,8 @@ public abstract class BunVisitor2 {
 	//	public abstract void visitAssignNode(AssignNode node);
 	//	public abstract void visitSetFieldNode(SetFieldNode node);
 
-	public abstract void visitBlockNode(BunBlockNode node);
-	//	public abstract void visitVarBlockNode(BunVarBlockNode node);
+	public abstract void visitblockNode(BlockNode node);
+	//	public abstract void visitVarblockNode(BunVarBlockNode node);
 	public abstract void visitIfNode(BunIfNode node);
 	public abstract void visitWhileNode(BunWhileNode node);
 	public abstract void visitBreakNode(BunBreakNode node);
