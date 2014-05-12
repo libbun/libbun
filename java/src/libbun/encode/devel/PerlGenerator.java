@@ -1,7 +1,7 @@
 package libbun.encode.devel;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
@@ -28,7 +28,7 @@ import libbun.ast.decl.BunClassNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.BunVarBlockNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.expression.FuncCallNode;
 import libbun.ast.expression.GetFieldNode;
 import libbun.ast.expression.GetIndexNode;
@@ -319,7 +319,7 @@ public class PerlGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override
-	public void VisitBlockNode(BlockNode Node) {
+	public void VisitBlockNode(LegacyBlockNode Node) {
 		// TODO Auto-generated method stub
 
 	}
@@ -385,7 +385,7 @@ public class PerlGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override
-	public void VisitErrorNode(ErrorNode Node) {
+	public void VisitErrorNode(LegacyErrorNode Node) {
 		// TODO Auto-generated method stub
 
 	}

@@ -1,7 +1,7 @@
 package libbun.lang.bun.shell;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.ast.expression.FuncCallNode;
@@ -65,7 +65,7 @@ public class CommandNode extends SyntaxSugarNode {
 			if(ContextType.IsBooleanType() || ContextType.IsIntType() || ContextType.IsStringType()) {
 				this.SetType(ContextType);
 			}
-			else if(ContextType.IsVarType() && !(this.ParentNode instanceof BlockNode)) {
+			else if(ContextType.IsVarType() && !(this.ParentNode instanceof LegacyBlockNode)) {
 				this.SetType(BType.StringType);
 			}
 			else {

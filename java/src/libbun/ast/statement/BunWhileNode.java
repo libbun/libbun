@@ -25,7 +25,7 @@
 package libbun.ast.statement;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BType;
@@ -48,7 +48,7 @@ public final class BunWhileNode extends AstNode {
 		this.bunfyAST(builder, "(while", 0, ")");
 	}
 
-	public BunWhileNode(AstNode CondNode, BlockNode blockNode) {
+	public BunWhileNode(AstNode CondNode, LegacyBlockNode blockNode) {
 		super(null, 3);
 		this.SetNode(BunWhileNode._Cond, CondNode);
 		this.SetNode(BunWhileNode._Block, blockNode);
@@ -63,10 +63,10 @@ public final class BunWhileNode extends AstNode {
 		return this.AST[BunWhileNode._Cond];
 	}
 
-	public final BlockNode blockNode() {
+	public final LegacyBlockNode blockNode() {
 		@Var AstNode blockNode = this.AST[BunWhileNode._Block];
-		if(blockNode instanceof BlockNode) {
-			return (BlockNode)blockNode;
+		if(blockNode instanceof LegacyBlockNode) {
+			return (LegacyBlockNode)blockNode;
 		}
 		assert(blockNode == null); // this must not happen
 		return null;

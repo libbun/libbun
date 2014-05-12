@@ -59,7 +59,7 @@ import java.lang.reflect.Modifier;
 import java.util.Stack;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.LocalDefinedNode;
 import libbun.ast.binary.AssignNode;
@@ -88,7 +88,7 @@ import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.BunVarBlockNode;
 import libbun.ast.decl.TopLevelNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.expression.ApplyMacroNode;
 import libbun.ast.expression.BunFuncNameNode;
 import libbun.ast.expression.FuncCallNode;
@@ -403,7 +403,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 
 	@Override public void VisitArrayLiteralNode(BunArrayNode Node) {
 		if(Node.IsUntyped()) {
-			this.VisitErrorNode(new ErrorNode(Node, "ambigious array"));
+			this.VisitErrorNode(new LegacyErrorNode(Node, "ambigious array"));
 		}
 		else {
 			Class<?> ArrayClass = LibAsm.AsArrayClass(Node.Type);
@@ -419,7 +419,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 
 	@Override public void VisitMapLiteralNode(BunMapNode Node) {
 		if(Node.IsUntyped()) {
-			this.VisitErrorNode(new ErrorNode(Node, "ambigious map"));
+			this.VisitErrorNode(new LegacyErrorNode(Node, "ambigious map"));
 		}
 		else {
 			String Owner = Type.getInternalName(CommonMap.class);
@@ -447,12 +447,12 @@ public class AsmJavaGenerator extends LibBunGenerator {
 
 	@Override public void VisitNewObjectNode(NewObjectNode Node) {
 		if(Node.IsUntyped()) {
-			this.VisitErrorNode(new ErrorNode(Node, "no class for new operator"));
+			this.VisitErrorNode(new LegacyErrorNode(Node, "no class for new operator"));
 			return;
 		}
 		// check class existence
 		if(!Node.Type.Equals(JavaTypeTable.GetBunType(this.GetJavaClass(Node.Type)))) {
-			this.VisitErrorNode(new ErrorNode(Node, "undefined class: " + Node.Type));
+			this.VisitErrorNode(new LegacyErrorNode(Node, "undefined class: " + Node.Type));
 			return;
 		}
 		String ClassName = Type.getInternalName(this.GetJavaClass(Node.Type));
@@ -468,7 +468,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 			this.AsmBuilder.visitMethodInsn(INVOKESPECIAL, ClassName, "<init>", Type.getConstructorDescriptor(jMethod));
 		}
 		else {
-			this.VisitErrorNode(new ErrorNode(Node, "no constructor: " + Node.Type));
+			this.VisitErrorNode(new LegacyErrorNode(Node, "no constructor: " + Node.Type));
 		}
 	}
 
@@ -501,13 +501,13 @@ public class AsmJavaGenerator extends LibBunGenerator {
 			this.AsmBuilder.visitFieldInsn(GETSTATIC, this.NameGlobalNameClass(LetNode.GetUniqueName(this)), "_", JavaClass);
 		}
 		else {
-			this.VisitErrorNode(new ErrorNode(Node, "unimplemented ResolvedNode: " + Node.ResolvedNode.getClass().getName()));
+			this.VisitErrorNode(new LegacyErrorNode(Node, "unimplemented ResolvedNode: " + Node.ResolvedNode.getClass().getName()));
 		}
 	}
 
 	@Override public void VisitGetNameNode(GetNameNode Node) {
 		if(Node.ResolvedNode == null) {
-			this.VisitErrorNode(new ErrorNode(Node, "undefined symbol: " + Node.GivenName));
+			this.VisitErrorNode(new LegacyErrorNode(Node, "undefined symbol: " + Node.GivenName));
 			return;
 		}
 		if(Node.ResolvedNode.GetDefiningFunctionNode() == null) {
@@ -677,7 +677,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 			}
 		}
 		else {
-			this.VisitErrorNode(new ErrorNode(Node, "not function"));
+			this.VisitErrorNode(new LegacyErrorNode(Node, "not function"));
 		}
 	}
 
@@ -724,7 +724,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 
 	@Override public void VisitInstanceOfNode(BunInstanceOfNode Node) {
 		if(!(Node.TargetType() instanceof BClassType) || !(Node.LeftNode().Type instanceof BClassType)) {
-			this.VisitErrorNode(new ErrorNode(Node, "require Class Type"));
+			this.VisitErrorNode(new LegacyErrorNode(Node, "require Class Type"));
 			return;
 		}
 		Class<?> JavaClass = this.GetJavaClass(Node.TargetType());
@@ -855,7 +855,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 		this.AsmBuilder.visitLabel(mergeLabel);
 	}
 
-	@Override public void VisitBlockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(LegacyBlockNode Node) {
 		for (int i = 0; i < Node.GetListSize(); i++) {
 			Node.GetListAt(i).Accept(this);
 		}
@@ -1276,7 +1276,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 		JavaTypeTable.SetTypeTable(Node.ClassType, this.AsmLoader.LoadGeneratedClass(Node.ClassName()));
 	}
 
-	@Override public void VisitErrorNode(ErrorNode Node) {
+	@Override public void VisitErrorNode(LegacyErrorNode Node) {
 		@Var String Message = BunLogger._LogError(Node.SourceToken, Node.ErrorMessage);
 		this.AsmBuilder.PushConst(Message);
 		@Var Method sMethod = JavaMethodTable.GetStaticMethod("ThrowError");

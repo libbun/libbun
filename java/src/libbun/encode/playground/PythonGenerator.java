@@ -1,7 +1,7 @@
 package libbun.encode.playground;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
@@ -28,7 +28,7 @@ import libbun.ast.decl.BunClassNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.BunVarBlockNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.error.TypeErrorNode;
 import libbun.ast.expression.BunFuncNameNode;
 import libbun.ast.expression.FuncCallNode;
@@ -322,7 +322,7 @@ public class PythonGenerator extends LibBunSourceGenerator {
 	@Override protected void GenerateStatementEnd(AstNode Node) {
 	}
 
-	private void GenerateStmtList(BlockNode blockNode) {
+	private void GenerateStmtList(LegacyBlockNode blockNode) {
 		@Var int i = 0;
 		while (i < blockNode.GetListSize()) {
 			@Var AstNode SubNode = blockNode.GetListAt(i);
@@ -334,7 +334,7 @@ public class PythonGenerator extends LibBunSourceGenerator {
 		}
 	}
 
-	@Override public void VisitBlockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(LegacyBlockNode Node) {
 		this.Source.OpenIndent(":");
 		this.GenerateStmtList(Node);
 		this.Source.CloseIndent("");
@@ -507,7 +507,7 @@ public class PythonGenerator extends LibBunSourceGenerator {
 		this.Source.CloseIndent(null);
 	}
 
-	@Override public void VisitErrorNode(ErrorNode Node) {
+	@Override public void VisitErrorNode(LegacyErrorNode Node) {
 		if(Node instanceof TypeErrorNode) {
 			@Var TypeErrorNode ErrorNode = (TypeErrorNode)Node;
 			this.GenerateExpression(ErrorNode.ErrorNode);

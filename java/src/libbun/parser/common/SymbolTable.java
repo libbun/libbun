@@ -25,7 +25,7 @@
 
 package libbun.parser.common;
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.decl.DefSymbolNode;
 import libbun.common.CommonMap;
 import libbun.type.BFuncType;
@@ -34,7 +34,7 @@ import libbun.util.Var;
 
 public class SymbolTable {
 	@BField public Namespace          namespace = null;
-	@BField public BlockNode       blockNode = null;
+	@BField public LegacyBlockNode       blockNode = null;
 	@BField public CommonMap<DefSymbolNode>  symbolTable = null;
 
 	public SymbolTable(Namespace namespace) {
@@ -53,8 +53,8 @@ public class SymbolTable {
 		if(this.blockNode != null) {
 			@Var AstNode Node = this.blockNode.ParentNode;
 			while(Node != null) {
-				if(Node instanceof BlockNode) {
-					@Var BlockNode blockNode = (BlockNode)Node;
+				if(Node instanceof LegacyBlockNode) {
+					@Var LegacyBlockNode blockNode = (LegacyBlockNode)Node;
 					if(blockNode.NullableGamma != null) {
 						return blockNode.NullableGamma;
 					}

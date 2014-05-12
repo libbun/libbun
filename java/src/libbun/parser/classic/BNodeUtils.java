@@ -2,7 +2,7 @@ package libbun.parser.classic;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.statement.BunBreakNode;
 import libbun.ast.statement.BunIfNode;
@@ -31,8 +31,8 @@ public class BNodeUtils {
 			}
 			return false;
 		}
-		if(Node instanceof BlockNode) {
-			@Var BlockNode blockNode = (BlockNode)Node;
+		if(Node instanceof LegacyBlockNode) {
+			@Var LegacyBlockNode blockNode = (LegacyBlockNode)Node;
 			@Var int i = 0;
 			while(i < blockNode.GetListSize()) {
 				@Var AstNode StmtNode = blockNode.GetListAt(i);
@@ -50,7 +50,7 @@ public class BNodeUtils {
 
 
 	public final static BunReturnNode _CheckIfSingleReturnNode(BunFunctionNode Node) {
-		@Var BlockNode blockNode = Node.blockNode();
+		@Var LegacyBlockNode blockNode = Node.blockNode();
 		if(blockNode.GetListSize() == 1) {
 			@Var AstNode ReturnNode= blockNode.AST[0];
 			if(ReturnNode instanceof BunReturnNode) {

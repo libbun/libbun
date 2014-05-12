@@ -26,13 +26,13 @@
 package libbun.encode.obsolete;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.binary.BunInstanceOfNode;
 import libbun.ast.decl.BunClassNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.BunVarBlockNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.error.TypeErrorNode;
 import libbun.ast.expression.GetIndexNode;
 import libbun.ast.expression.NewObjectNode;
@@ -100,7 +100,7 @@ public class OldPythonGenerator extends OldSourceGenerator {
 
 
 	@Override
-	public void GenerateStmtListNode(BlockNode blockNode) {
+	public void GenerateStmtListNode(LegacyBlockNode blockNode) {
 		@Var int i = 0;
 		while (i < blockNode.GetListSize()) {
 			AstNode SubNode = blockNode.GetListAt(i);
@@ -112,7 +112,7 @@ public class OldPythonGenerator extends OldSourceGenerator {
 		}
 	}
 
-	@Override public void VisitBlockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(LegacyBlockNode Node) {
 		this.Source.OpenIndent(":");
 		this.GenerateStmtListNode(Node);
 		this.Source.CloseIndent("");
@@ -295,7 +295,7 @@ public class OldPythonGenerator extends OldSourceGenerator {
 		this.Source.AppendLineFeed();
 	}
 
-	@Override public void VisitErrorNode(ErrorNode Node) {
+	@Override public void VisitErrorNode(LegacyErrorNode Node) {
 		if(Node instanceof TypeErrorNode) {
 			@Var TypeErrorNode ErrorNode = (TypeErrorNode)Node;
 			this.GenerateExpression(ErrorNode.ErrorNode);

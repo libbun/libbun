@@ -1,7 +1,7 @@
 package libbun.parser.common;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.common.CommonMap;
 import libbun.parser.peg.PegParser;
 import libbun.util.LibBunSystem;
@@ -20,7 +20,7 @@ public class BunPipeline {
 
 	public final boolean perform(Namespace ns, String ScriptText, String FileName, int LineNumber) {
 		boolean AllPassed = true;
-		BlockNode TopblockNode = new BlockNode(null, ns);
+		LegacyBlockNode TopblockNode = new LegacyBlockNode(null, ns);
 		BunSource source = new BunSource(FileName, LineNumber, ScriptText, this.logger);
 		BunParserContext parserContext = this.parser.newContext(source, 0, ScriptText.length());
 		while(parserContext.hasNode()) {

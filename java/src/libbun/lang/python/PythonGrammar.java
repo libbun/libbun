@@ -1,7 +1,7 @@
 package libbun.lang.python;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.binary.BinaryOperatorNode;
 import libbun.ast.binary.BunEqualsNode;
 import libbun.ast.decl.BunFunctionNode;
@@ -107,7 +107,7 @@ class PythonFunctionPatternFunction extends BMatchFunction {
 		@Var AstNode FuncNode = new BunFunctionNode(ParentNode, 0);
 		FuncNode = TokenContext.MatchToken(FuncNode, "def", BTokenContext._Required);
 		FuncNode = TokenContext.MatchPattern(FuncNode, BunFunctionNode._NameInfo, "$Name$", BTokenContext._Optional);
-		AstNode ParamNode = new BlockNode(FuncNode, null);
+		AstNode ParamNode = new LegacyBlockNode(FuncNode, null);
 		ParamNode = TokenContext.MatchNtimes(ParamNode, "(", "$Param$", ",", ")");
 		if(ParamNode.IsErrorNode()) {
 			return ParamNode;
@@ -137,7 +137,7 @@ class PythonCommentFunction extends BTokenFunction {
 class PythonBlockPatternFunction extends BMatchFunction {
 
 	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
-		@Var AstNode blockNode = new BlockNode(ParentNode, ParentNode.GetGamma());
+		@Var AstNode blockNode = new LegacyBlockNode(ParentNode, ParentNode.GetGamma());
 		@Var BToken SkipToken = TokenContext.GetToken();
 		blockNode = TokenContext.MatchToken(blockNode, ":", BTokenContext._Required);
 		if(!blockNode.IsErrorNode()) {

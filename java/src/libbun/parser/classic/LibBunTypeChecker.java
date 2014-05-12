@@ -30,7 +30,7 @@ import libbun.ast.SyntaxSugarNode;
 import libbun.ast.binary.BinaryOperatorNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.TopLevelNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.expression.ApplyMacroNode;
 import libbun.ast.expression.BunFuncNameNode;
 import libbun.ast.expression.FuncCallNode;
@@ -233,7 +233,7 @@ public abstract class LibBunTypeChecker extends TypeChecker {
 		this.ReturnTypeNode(Node, BType.VoidType);
 	}
 
-	@Override public final void VisitErrorNode(ErrorNode Node) {
+	@Override public final void VisitErrorNode(LegacyErrorNode Node) {
 		@Var BType ContextType = this.GetContextType();
 		if(!ContextType.IsVarType()) {
 			this.ReturnTypeNode(Node, ContextType);

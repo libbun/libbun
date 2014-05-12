@@ -25,7 +25,7 @@
 
 package libbun.parser.classic;
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.common.BunToken;
@@ -42,7 +42,7 @@ import libbun.util.Var;
 public final class LibBunGamma extends SymbolTable {
 	@BField public final LibBunGenerator   Generator;
 
-	public LibBunGamma(LibBunGenerator Generator, BlockNode blockNode) {
+	public LibBunGamma(LibBunGenerator Generator, LegacyBlockNode blockNode) {
 		super(null);
 		this.blockNode = blockNode;   // rootname is null
 		this.Generator = Generator;

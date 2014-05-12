@@ -25,7 +25,7 @@
 package libbun.ast.statement;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.util.Var;
@@ -48,10 +48,10 @@ public final class BunTryNode extends AstNode {
 		this.bunfyAST(builder, "(while", 0, ")");
 	}
 
-	public final BlockNode TryblockNode() {
+	public final LegacyBlockNode TryblockNode() {
 		@Var AstNode blockNode = this.AST[BunTryNode._Try ];
-		if(blockNode instanceof BlockNode) {
-			return (BlockNode)blockNode;
+		if(blockNode instanceof LegacyBlockNode) {
+			return (LegacyBlockNode)blockNode;
 		}
 		assert(blockNode == null); // this must not happen
 		return null;
@@ -65,10 +65,10 @@ public final class BunTryNode extends AstNode {
 		return (this.AST[BunTryNode._NameInfo] != null && this.AST[BunTryNode._Catch ] != null);
 	}
 
-	public final BlockNode CatchblockNode() {
+	public final LegacyBlockNode CatchblockNode() {
 		@Var AstNode blockNode = this.AST[BunTryNode._Catch ];
-		if(blockNode instanceof BlockNode) {
-			return (BlockNode)blockNode;
+		if(blockNode instanceof LegacyBlockNode) {
+			return (LegacyBlockNode)blockNode;
 		}
 		assert(blockNode == null); // this must not happen
 		return null;
@@ -78,10 +78,10 @@ public final class BunTryNode extends AstNode {
 		return (this.AST[BunTryNode._Finally ] != null);
 	}
 
-	public final BlockNode FinallyblockNode() {
+	public final LegacyBlockNode FinallyblockNode() {
 		@Var AstNode blockNode = this.AST[BunTryNode._Finally ];
-		if(blockNode instanceof BlockNode) {
-			return (BlockNode)blockNode;
+		if(blockNode instanceof LegacyBlockNode) {
+			return (LegacyBlockNode)blockNode;
 		}
 		assert(blockNode == null); // this must not happen
 		return null;

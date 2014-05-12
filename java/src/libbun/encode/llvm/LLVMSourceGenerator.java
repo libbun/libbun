@@ -30,7 +30,7 @@ import java.util.HashMap;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
@@ -42,7 +42,7 @@ import libbun.ast.decl.BunClassNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.BunVarBlockNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.expression.ApplyMacroNode;
 import libbun.ast.expression.BunFuncNameNode;
 import libbun.ast.expression.FuncCallNode;
@@ -637,7 +637,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 		this.CurrentScope.TerminateBlock();
 	}
 
-	@Override public void VisitBlockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(LegacyBlockNode Node) {
 		this.GenerateStmtListNode(Node);
 	}
 
@@ -789,7 +789,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 		}
 	}
 
-	@Override public void VisitErrorNode(ErrorNode Node) {
+	@Override public void VisitErrorNode(LegacyErrorNode Node) {
 	}
 
 	@Override public void VisitFloatNode(BunFloatNode Node) {
@@ -1470,7 +1470,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 		} */
 	}
 
-	@Override public void GenerateStmtListNode(BlockNode blockNode) {
+	@Override public void GenerateStmtListNode(LegacyBlockNode blockNode) {
 		@Var int i = 0;
 		while (i < blockNode.GetListSize()) {
 			@Var AstNode SubNode = blockNode.GetListAt(i);

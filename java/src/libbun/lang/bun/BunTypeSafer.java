@@ -25,7 +25,7 @@
 package libbun.lang.bun;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.LocalDefinedNode;
 import libbun.ast.binary.AssignNode;
@@ -55,7 +55,7 @@ import libbun.ast.decl.BunClassNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.BunVarBlockNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.expression.ApplyMacroNode;
 import libbun.ast.expression.BunFuncNameNode;
 import libbun.ast.expression.FuncCallNode;
@@ -321,7 +321,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 			this.ReturnTypeNode(Node, BType.VarType);
 		}
 		else {
-			this.ReturnNode(new ErrorNode(Node, "not function: " + FuncNodeType + " of node " + Node.FunctorNode()));
+			this.ReturnNode(new LegacyErrorNode(Node, "not function: " + FuncNodeType + " of node " + Node.FunctorNode()));
 		}
 	}
 
@@ -342,7 +342,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 	}
 
 	private AstNode UndefinedFieldNode(AstNode Node, String Name) {
-		return new ErrorNode(Node, "undefined field: " + Name + " of " + Node.getTypeAt(GetFieldNode._Recv));
+		return new LegacyErrorNode(Node, "undefined field: " + Name + " of " + Node.getTypeAt(GetFieldNode._Recv));
 	}
 
 	@Override public void VisitGetFieldNode(GetFieldNode Node) {
@@ -715,7 +715,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 		Gamma.SetSymbol(CurNode.GetGivenName(), CurNode);
 	}
 
-	@Override public void VisitBlockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(LegacyBlockNode Node) {
 		@Var int i = 0;
 		while(i < Node.GetListSize()) {
 			@Var AstNode SubNode = Node.GetListAt(i);
@@ -808,7 +808,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 		if(Node == null) {
 			return null;
 		}
-		if(Node instanceof BlockNode && !(Node instanceof BunVarBlockNode)) {
+		if(Node instanceof LegacyBlockNode && !(Node instanceof BunVarBlockNode)) {
 			if(Node.ParentNode != null && Node.ParentNode instanceof BunFunctionNode) {
 				return (BunFunctionNode) Node.ParentNode;
 			}
@@ -942,13 +942,13 @@ public class BunTypeSafer extends LibBunTypeChecker {
 		@Var BType ClassType = Gamma.GetType(Node.ClassName(), Node.SourceToken, true/*IsCreation*/);
 		if(ClassType instanceof BClassType) {
 			if(!ClassType.IsOpenType()) {
-				this.ReturnNode(new ErrorNode(Node, Node.ClassName() + " has been defined."));
+				this.ReturnNode(new LegacyErrorNode(Node, Node.ClassName() + " has been defined."));
 				return;
 			}
 			Node.ClassType = (BClassType)ClassType;
 		}
 		else {
-			this.ReturnNode(new ErrorNode(Node, Node.ClassName() + " is not a bun class."));
+			this.ReturnNode(new LegacyErrorNode(Node, Node.ClassName() + " is not a bun class."));
 			return;
 		}
 		//System.out.println(" B NodeClass.ToOpen="+Node.ClassType+", IsOpenType="+Node.ClassType.IsOpenType());
@@ -957,7 +957,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 				Node.ClassType.EnforceSuperClass((BClassType)Node.SuperType());
 			}
 			else {
-				this.ReturnNode(new ErrorNode(Node.ParentNode, Node.getTokenAt(BunClassNode._TypeInfo), "" + Node.SuperType() + " cannot be extended."));
+				this.ReturnNode(new LegacyErrorNode(Node.ParentNode, Node.getTokenAt(BunClassNode._TypeInfo), "" + Node.SuperType() + " cannot be extended."));
 				return;
 			}
 		}

@@ -3,7 +3,7 @@ package libbun.encode.devel;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.binary.BunInstanceOfNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
@@ -57,7 +57,7 @@ public class RubyGenerator extends OldSourceGenerator {
 	//	}
 
 	@Override
-	public void VisitBlockNode(BlockNode Node) {
+	public void VisitBlockNode(LegacyBlockNode Node) {
 		this.Source.Append("do");
 		throw new RuntimeException("FIXME: don't use for statement");
 		//		for(ZNode SubNode : Node.StmtList) {

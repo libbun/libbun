@@ -28,7 +28,7 @@ package libbun.encode.haskell;
 import java.util.ArrayList;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
 import libbun.ast.binary.ComparatorNode;
@@ -95,7 +95,7 @@ public class HaskellSourceGenerator extends OldSourceGenerator {
 	}
 
 	@Override
-	public void VisitBlockNode(BlockNode Node) {
+	public void VisitBlockNode(LegacyBlockNode Node) {
 		@Var int count = 0;
 
 		this.Indent(this.Source);
@@ -331,7 +331,7 @@ public class HaskellSourceGenerator extends OldSourceGenerator {
 	}
 
 	@Override public void VisitFuncCallNode(FuncCallNode Node) {
-		if(Node.ParentNode instanceof BlockNode){
+		if(Node.ParentNode instanceof LegacyBlockNode){
 			this.GenerateExpression(Node.FunctorNode());
 			this.GenerateListNode(" ", Node, 1, " ", " ");
 		}else{

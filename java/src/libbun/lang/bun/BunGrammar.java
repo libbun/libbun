@@ -25,7 +25,7 @@
 
 package libbun.lang.bun;
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.EmptyNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
@@ -56,7 +56,7 @@ import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.BunRequireNode;
 import libbun.ast.decl.BunVarBlockNode;
 import libbun.ast.decl.DefSymbolNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.expression.FuncCallNode;
 import libbun.ast.expression.GetFieldNode;
 import libbun.ast.expression.GetIndexNode;
@@ -517,7 +517,7 @@ class StringInterpolationPatternFunction extends BMatchFunction {
 				//System.out.println("#node: " + SubNode);
 				//System.out.println("#after: ###" + SubToken.GetText()+"###");
 				if(!SubToken.EqualsText('}')) {
-					return new ErrorNode(ParentNode, SubToken, "syntax error in string interpolation");
+					return new LegacyErrorNode(ParentNode, SubToken, "syntax error in string interpolation");
 				}
 				FormatNode.appendNode(SubNode);
 			}
@@ -753,11 +753,11 @@ class StatementEndPatternFunction extends BMatchFunction {
 class BlockPatternFunction extends BMatchFunction {
 	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var AstNode blockNode = null;
-		if(LeftNode instanceof BlockNode) {
+		if(LeftNode instanceof LegacyBlockNode) {
 			blockNode = LeftNode;  // @see var
 		}
 		else {
-			blockNode = new BlockNode(ParentNode, null);
+			blockNode = new LegacyBlockNode(ParentNode, null);
 		}
 		@Var int SkipStopIndent = TokenContext.GetToken().GetIndentSize();
 		blockNode = TokenContext.MatchToken(blockNode, "{", BTokenContext._Required);
@@ -919,7 +919,7 @@ class TryPatternFunction extends BMatchFunction {
 			count = count + 1;
 		}
 		if(count == 0 && !TryNode.IsErrorNode()) {
-			TryNode = new ErrorNode(ParentNode, TryNode.SourceToken, "either catch or finally is expected");
+			TryNode = new LegacyErrorNode(ParentNode, TryNode.SourceToken, "either catch or finally is expected");
 		}
 		return TryNode;
 	}
@@ -942,7 +942,7 @@ class NamePatternFunction extends BMatchFunction {
 			NameNode.SourceToken = Token;
 			return NameNode;
 		}
-		return new ErrorNode(ParentNode, Token, "illegal name: \'" + Token.GetText() + "\'");
+		return new LegacyErrorNode(ParentNode, Token, "illegal name: \'" + Token.GetText() + "\'");
 	}
 }
 
@@ -976,7 +976,7 @@ class FunctionPatternFunction extends BMatchFunction {
 		@Var AstNode FuncNode = new BunFunctionNode(ParentNode, 0);
 		FuncNode = TokenContext.MatchToken(FuncNode, "function", BTokenContext._Required);
 		FuncNode = TokenContext.MatchPattern(FuncNode, BunFunctionNode._NameInfo, "$Name$", BTokenContext._Optional);
-		AstNode ParamNode = new BlockNode(FuncNode, null);
+		AstNode ParamNode = new LegacyBlockNode(FuncNode, null);
 		ParamNode = TokenContext.MatchNtimes(ParamNode, "(", "$Param$", ",", ")");
 		if(ParamNode.IsErrorNode()) {
 			return ParamNode;
@@ -1018,14 +1018,14 @@ class ExportPatternFunction extends BMatchFunction {
 			((BunClassNode)Node).IsExport = true;
 			return Node;
 		}
-		return new ErrorNode(ParentNode, NameToken, "export function, class, or let");
+		return new LegacyErrorNode(ParentNode, NameToken, "export function, class, or let");
 	}
 }
 
 class ImportPatternFunction extends BMatchFunction {
 	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken NameToken = TokenContext.GetToken(BTokenContext._MoveNext);
-		return new ErrorNode(ParentNode, NameToken, "unsupported import");
+		return new LegacyErrorNode(ParentNode, NameToken, "unsupported import");
 	}
 }
 

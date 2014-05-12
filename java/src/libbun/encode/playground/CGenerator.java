@@ -26,7 +26,7 @@
 package libbun.encode.playground;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
@@ -53,7 +53,7 @@ import libbun.ast.decl.BunClassNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.BunVarBlockNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.expression.BunFuncNameNode;
 import libbun.ast.expression.FuncCallNode;
 import libbun.ast.expression.GetFieldNode;
@@ -442,7 +442,7 @@ public class CGenerator extends LibBunSourceGenerator {
 		}
 	}
 
-	protected void GenerateStmtListNode(BlockNode Node) {
+	protected void GenerateStmtListNode(LegacyBlockNode Node) {
 		@Var int i = 0;
 		while (i < Node.GetListSize()) {
 			@Var AstNode SubNode = Node.GetListAt(i);
@@ -452,7 +452,7 @@ public class CGenerator extends LibBunSourceGenerator {
 		this.GenerateStatementEnd(Node);
 	}
 
-	@Override public void VisitBlockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(LegacyBlockNode Node) {
 		this.Source.AppendWhiteSpace();
 		this.Source.OpenIndent("{");
 		this.GenerateStmtListNode(Node);
@@ -790,7 +790,7 @@ public class CGenerator extends LibBunSourceGenerator {
 		this.Source.CloseIndent("}");
 	}
 
-	@Override public void VisitErrorNode(ErrorNode Node) {
+	@Override public void VisitErrorNode(LegacyErrorNode Node) {
 		@Var String Message = BunLogger._LogError(Node.SourceToken, Node.ErrorMessage);
 		this.Source.Append("libbun_perror(");
 		this.Source.Append(LibBunSystem._QuoteString(Message));

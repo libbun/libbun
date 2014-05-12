@@ -4,7 +4,7 @@ import libbun.ast.AstNode;
 import libbun.util.BField;
 import libbun.util.Var;
 
-public class TypeErrorNode extends ErrorNode {
+public class TypeErrorNode extends LegacyErrorNode {
 	@BField public AstNode ErrorNode;
 	public TypeErrorNode(String ErrorMessage, AstNode ErrorNode) {
 		super(ErrorNode.ParentNode, ErrorNode.SourceToken, ErrorMessage);

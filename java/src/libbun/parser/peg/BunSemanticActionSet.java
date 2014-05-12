@@ -25,7 +25,7 @@
 
 package libbun.parser.peg;
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BunAddNode;
@@ -618,7 +618,7 @@ class MapLiteralFunction extends SemanticFunction {
 
 class BlockFunction extends SemanticFunction {
 	@Override public AstNode Invoke(BunSource source, AstNode parentNode, PegObject po) {
-		return po.copySubTo(source, new BlockNode(parentNode, null));
+		return po.copySubTo(source, new LegacyBlockNode(parentNode, null));
 	}
 }
 

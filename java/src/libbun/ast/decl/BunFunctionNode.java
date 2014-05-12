@@ -25,7 +25,7 @@
 package libbun.ast.decl;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.common.CommonArray;
 import libbun.common.CommonStringBuilder;
 import libbun.encode.LibBunGenerator;
@@ -98,10 +98,10 @@ public class BunFunctionNode extends DefSymbolNode {
 		return FuncName;
 	}
 
-	public final BlockNode blockNode() {
+	public final LegacyBlockNode blockNode() {
 		@Var AstNode blockNode = this.AST[BunFunctionNode._Block];
-		if(blockNode instanceof BlockNode) {
-			return (BlockNode)blockNode;
+		if(blockNode instanceof LegacyBlockNode) {
+			return (LegacyBlockNode)blockNode;
 		}
 		assert(blockNode == null); // this must not happen
 		return null;
@@ -126,10 +126,10 @@ public class BunFunctionNode extends DefSymbolNode {
 		return null;
 	}
 
-	public final BlockNode ParamNode() {
+	public final LegacyBlockNode ParamNode() {
 		@Var AstNode blockNode = this.AST[BunFunctionNode._Params];
-		if(blockNode instanceof BlockNode) {
-			return (BlockNode)blockNode;
+		if(blockNode instanceof LegacyBlockNode) {
+			return (LegacyBlockNode)blockNode;
 		}
 		assert(blockNode == null); // this must not happen
 		return null;

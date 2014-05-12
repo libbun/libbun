@@ -3,7 +3,7 @@ package libbun.lang.bun.regexp;
 import libbun.ast.AstNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.literal.BunStringNode;
 import libbun.parser.classic.BSourceContext;
 import libbun.parser.classic.BToken;
@@ -68,7 +68,7 @@ class BunRegExpNode extends SyntaxSugarNode {
 			return new DesugarNode(this, FuncNode);
 		}
 		//System.out.println("debug: " + this.PatternValue);
-		return new DesugarNode(this, new ErrorNode(this, "unsupported regular expression"));
+		return new DesugarNode(this, new LegacyErrorNode(this, "unsupported regular expression"));
 	}
 }
 

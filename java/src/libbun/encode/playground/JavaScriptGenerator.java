@@ -25,7 +25,7 @@
 package libbun.encode.playground;
 
 import libbun.ast.binary.AssignNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.error.TypeErrorNode;
 import libbun.ast.expression.GetIndexNode;
 import libbun.ast.statement.BunTryNode;
@@ -59,7 +59,7 @@ public class JavaScriptGenerator extends libbun.encode.release.JavaScriptGenerat
 		}
 	}
 
-	@Override public void VisitErrorNode(ErrorNode Node) {
+	@Override public void VisitErrorNode(LegacyErrorNode Node) {
 		if(Node instanceof TypeErrorNode) {
 			@Var TypeErrorNode ErrorNode = (TypeErrorNode)Node;
 			this.GenerateExpression(ErrorNode.ErrorNode);

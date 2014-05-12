@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import libbun.ast.AstNode;
 import libbun.ast.EmptyNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.literal.BunStringNode;
 import libbun.common.CommonArray;
 import libbun.parser.classic.BPatternToken;
@@ -165,7 +165,7 @@ class CommandSymbolPatternFunction extends BMatchFunction {
 		@Var BToken CommandToken = TokenContext.GetToken(BTokenContext._MoveNext);
 		@Var String Command = ShellUtils.GetCommand(CommandToken.GetText());
 		if(Command == null) {
-			return new ErrorNode(ParentNode, CommandToken, "undefined command symbol");
+			return new LegacyErrorNode(ParentNode, CommandToken, "undefined command symbol");
 		}
 		@Var CommandNode CommandNode = new CommandNode(ParentNode, CommandToken, Command);
 		while(TokenContext.HasNext()) {

@@ -26,7 +26,7 @@
 package libbun.parser.classic;
 import libbun.ast.AstNode;
 import libbun.ast.EmptyNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.common.CommonArray;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.common.BunSource;
@@ -92,9 +92,9 @@ public class BTokenContext {
 		if(SourceToken == null || SourceToken.IsNull()) {
 			SourceToken = this.GetBeforeToken();
 			SourceToken = new BToken(SourceToken.source, SourceToken.endIndex, SourceToken.endIndex);
-			return new ErrorNode(null, SourceToken, ExpectedTokenText + " is expected");
+			return new LegacyErrorNode(null, SourceToken, ExpectedTokenText + " is expected");
 		}
-		return new ErrorNode(null, SourceToken, ExpectedTokenText + " is expected");
+		return new LegacyErrorNode(null, SourceToken, ExpectedTokenText + " is expected");
 	}
 
 	public void Vacume() {

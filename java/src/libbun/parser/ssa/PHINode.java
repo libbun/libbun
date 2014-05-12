@@ -1,7 +1,7 @@
 package libbun.parser.ssa;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.LocalDefinedNode;
 import libbun.ast.expression.GetNameNode;
 import libbun.common.CommonArray;
@@ -10,7 +10,7 @@ import libbun.util.Var;
 
 public class PHINode extends LocalDefinedNode {
 	public CommonArray<AstNode>      Args;
-	public CommonArray<BlockNode> Blocks;
+	public CommonArray<LegacyBlockNode> Blocks;
 	public Variable VarRef;
 	public Variable BackupValue;
 	public String VariableName;
@@ -20,11 +20,11 @@ public class PHINode extends LocalDefinedNode {
 		this.BackupValue = BackupValue;
 		this.VariableName = VariableName;
 		this.Args = new CommonArray<AstNode>(new AstNode[0]);
-		this.Blocks = new CommonArray<BlockNode>(new BlockNode[0]);
+		this.Blocks = new CommonArray<LegacyBlockNode>(new LegacyBlockNode[0]);
 		this.Type = NodeLib.GetType(BackupValue.Node);
 	}
 
-	public void AddIncoming(int Index, BlockNode block, AstNode node) {
+	public void AddIncoming(int Index, LegacyBlockNode block, AstNode node) {
 		while(Index + 1 > this.Args.size()) {
 			this.Args.add(this.BackupValue.Node);
 			this.Blocks.add(null);

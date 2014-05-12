@@ -11,10 +11,10 @@ import libbun.ast.decl.BunClassNode;
 import libbun.ast.decl.BunDefineNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
-import libbun.ast.error.ErrorNode2;
+import libbun.ast.error.ErrorNode;
 import libbun.ast.error.VerboseNode;
-import libbun.ast.expression.ApplyMacroNode;
 import libbun.ast.expression.ApplyFuncNode;
+import libbun.ast.expression.ApplyMacroNode;
 import libbun.ast.expression.FuncCallNode;
 import libbun.ast.expression.GetFieldNode;
 import libbun.ast.expression.GetIndexNode;
@@ -97,7 +97,7 @@ public abstract class BunModelVisitor {
 
 
 	public abstract void visitVerboseNode(VerboseNode node);
-	public abstract void visitErrorNode(ErrorNode2 node);
+	public abstract void visitErrorNode(ErrorNode node);
 
 	public abstract void visitSyntaxSugarNode(SyntaxSugarNode node);
 	public abstract void visitDesugarNode(DesugarNode node);

@@ -25,7 +25,7 @@
 package libbun.encode.playground;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
@@ -52,7 +52,7 @@ import libbun.ast.decl.BunClassNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.BunVarBlockNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.expression.BunFuncNameNode;
 import libbun.ast.expression.FuncCallNode;
 import libbun.ast.expression.GetFieldNode;
@@ -362,7 +362,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	@Override protected void GenerateStatementEnd(AstNode Node) {
 	}
 
-	protected void GenerateStmtListNode(BlockNode blockNode) {
+	protected void GenerateStmtListNode(LegacyBlockNode blockNode) {
 		@Var int Size = blockNode.GetListSize();
 		if(Size == 0) {
 			this.Source.Append("()");
@@ -382,7 +382,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 		}
 	}
 
-	@Override public void VisitBlockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(LegacyBlockNode Node) {
 		this.GenerateStmtListNode(Node);
 	}
 
@@ -561,7 +561,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 		this.Source.CloseIndent("}");
 	}
 
-	@Override public void VisitErrorNode(ErrorNode Node) {
+	@Override public void VisitErrorNode(LegacyErrorNode Node) {
 		@Var String Message = BunLogger._LogError(Node.SourceToken, Node.ErrorMessage);
 		this.Source.Append("/*", Message, "*/");
 	}

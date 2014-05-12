@@ -3,7 +3,7 @@ package libbun.encode.erlang;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
 import libbun.ast.binary.BunAndNode;
@@ -58,11 +58,11 @@ public class ErlangGenerator extends OldSourceGenerator {
 		this.AppendZStrDecl();
 	}
 
-	@Override public void GenerateStmtListNode(BlockNode blockNode) {
+	@Override public void GenerateStmtListNode(LegacyBlockNode blockNode) {
 		this.GenerateStmtListNode(blockNode, ",");
 	}
 
-	public void GenerateStmtListNode(BlockNode blockNode, String last) {
+	public void GenerateStmtListNode(LegacyBlockNode blockNode, String last) {
 		@Var int i = 0;
 		@Var int size = blockNode.GetListSize();
 		while (i < size) {
@@ -79,12 +79,12 @@ public class ErlangGenerator extends OldSourceGenerator {
 		}
 	}
 
-	@Override public void VisitBlockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(LegacyBlockNode Node) {
 		this.Source.OpenIndent();
 		this.GenerateStmtListNode(Node, ".");
 		this.Source.CloseIndent();
 	}
-	public void VisitBlockNode(BlockNode Node, String last) {
+	public void VisitBlockNode(LegacyBlockNode Node, String last) {
 		this.VarMgr.PushScope();
 		this.Source.OpenIndent();
 		this.VisitBlockNode(Node);
@@ -350,7 +350,7 @@ public class ErlangGenerator extends OldSourceGenerator {
 			this.Source.AppendNewLine();
 			this.GenerateExpression(IfNode.CondNode());
 			this.Source.Append(" ->");
-			this.VisitBlockNode((BlockNode)IfNode.ThenNode(), ";");
+			this.VisitBlockNode((LegacyBlockNode)IfNode.ThenNode(), ";");
 			this.Source.AppendLineFeed();
 			if (IfNode.HasElseNode()) {
 				this.AppendGuardAndBlock(IfNode.ElseNode());
@@ -360,7 +360,7 @@ public class ErlangGenerator extends OldSourceGenerator {
 		} else {
 			this.Source.AppendNewLine("true ->");
 			if (Node != null) {
-				this.VisitBlockNode((BlockNode)Node, "");
+				this.VisitBlockNode((LegacyBlockNode)Node, "");
 			} else {
 				this.Source.OpenIndent(null);
 				this.Source.AppendNewLine(this.VarMgr.GenVarTuple(VarFlag.AssignedByChildScope, false));

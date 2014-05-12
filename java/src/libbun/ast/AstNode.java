@@ -26,7 +26,7 @@
 package libbun.ast;
 
 import libbun.ast.decl.BunFunctionNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.expression.GetNameNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.statement.BunIfNode;
@@ -320,12 +320,12 @@ public abstract class AstNode {
 		return null;
 	}
 
-	@Nullable public final BlockNode GetScopeblockNode() {
+	@Nullable public final LegacyBlockNode GetScopeblockNode() {
 		@Var int SafeCount = 0;
 		@Var AstNode Node = this;
 		while(Node != null) {
-			if(Node instanceof BlockNode) {
-				return (BlockNode)Node;
+			if(Node instanceof LegacyBlockNode) {
+				return (LegacyBlockNode)Node;
 			}
 			assert(!(Node == Node.ParentNode));
 			//System.out.println("node: " + Node.getClass() + ", " + Node.hashCode() + ", " + SafeCount);
@@ -340,9 +340,9 @@ public abstract class AstNode {
 
 	public final SymbolTable getSymbolTable() {
 		@Var int SafeCount = 0;
-		@Var BlockNode blockNode = this.GetScopeblockNode();
+		@Var LegacyBlockNode blockNode = this.GetScopeblockNode();
 		while(blockNode.NullableGamma == null) {
-			@Var BlockNode ParentblockNode = blockNode.ParentNode.GetScopeblockNode();
+			@Var LegacyBlockNode ParentblockNode = blockNode.ParentNode.GetScopeblockNode();
 			blockNode = ParentblockNode;
 			if(LibBunSystem.DebugMode) {
 				SafeCount = SafeCount + 1;
@@ -354,9 +354,9 @@ public abstract class AstNode {
 
 	public final LibBunGamma GetGamma() {
 		@Var int SafeCount = 0;
-		@Var BlockNode blockNode = this.GetScopeblockNode();
+		@Var LegacyBlockNode blockNode = this.GetScopeblockNode();
 		while(blockNode.NullableGamma == null) {
-			@Var BlockNode ParentblockNode = blockNode.ParentNode.GetScopeblockNode();
+			@Var LegacyBlockNode ParentblockNode = blockNode.ParentNode.GetScopeblockNode();
 			blockNode = ParentblockNode;
 			if(LibBunSystem.DebugMode) {
 				SafeCount = SafeCount + 1;
@@ -368,7 +368,7 @@ public abstract class AstNode {
 
 
 	public final boolean IsErrorNode() {
-		return (this instanceof ErrorNode);
+		return (this instanceof LegacyErrorNode);
 	}
 
 	public abstract void Accept(LibBunVisitor Visitor);
@@ -403,7 +403,7 @@ public abstract class AstNode {
 	}
 
 	public final void ReplaceNode(String Name, AstNode Node) {
-		if(Node instanceof BlockNode) {
+		if(Node instanceof LegacyBlockNode) {
 			BunIfNode IfNode = new BunIfNode(null);  // {block} => if(true) {block}
 			IfNode.SetNode(BunIfNode._Cond, new BunBooleanNode(null, null, true));
 			IfNode.AST[BunIfNode._Then] = Node;

@@ -1,11 +1,11 @@
 package libbun.ast.sugar;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.ast.binary.AssignNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.statement.BunBreakNode;
 import libbun.ast.statement.BunWhileNode;
@@ -48,9 +48,9 @@ public class BunContinueNode extends SyntaxSugarNode {
 	@Override public DesugarNode PerformDesugar(LibBunTypeChecker Typer) {
 		@Var BunWhileNode WhileNode = this.LookupWhileNode();
 		if(WhileNode == null) {
-			return new DesugarNode(this, new ErrorNode(this.ParentNode, this.SourceToken, "continue must be inside the while statement"));
+			return new DesugarNode(this, new LegacyErrorNode(this.ParentNode, this.SourceToken, "continue must be inside the while statement"));
 		}
-		@Var BlockNode ParentblockNode = WhileNode.GetScopeblockNode();
+		@Var LegacyBlockNode ParentblockNode = WhileNode.GetScopeblockNode();
 		//@Var String VarName = Typer.Generator.NameUniqueSymbol("continue");
 		@Var String SugarCode = ""     +
 				"var _continue_ = true in {\n" +

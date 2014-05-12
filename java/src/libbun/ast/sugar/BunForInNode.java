@@ -1,7 +1,7 @@
 package libbun.ast.sugar;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.parser.classic.LibBunTypeChecker;
@@ -29,10 +29,10 @@ public final class BunForInNode extends SyntaxSugarNode {
 		return this.AST[BunForInNode._List];
 	}
 
-	public final BlockNode blockNode() {
+	public final LegacyBlockNode blockNode() {
 		@Var AstNode blockNode = this.AST[BunForInNode._Block];
-		if(blockNode instanceof BlockNode) {
-			return (BlockNode)blockNode;
+		if(blockNode instanceof LegacyBlockNode) {
+			return (LegacyBlockNode)blockNode;
 		}
 		assert(blockNode == null); // this must not happen
 		return null;

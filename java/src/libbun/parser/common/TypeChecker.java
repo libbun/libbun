@@ -2,7 +2,7 @@ package libbun.parser.common;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.error.TypeErrorNode;
 import libbun.ast.expression.ApplyMacroNode;
 import libbun.ast.expression.BunFuncNameNode;
@@ -167,11 +167,11 @@ public abstract class TypeChecker extends BunChecker {
 		if(ErrorToken == null) {
 			ErrorToken = Node.SourceToken;
 		}
-		this.ReturnNode(new ErrorNode(Node.ParentNode, ErrorToken, Message));
+		this.ReturnNode(new LegacyErrorNode(Node.ParentNode, ErrorToken, Message));
 	}
 
 	public final void ReturnErrorNode(AstNode Node, String Message) {
-		this.ReturnNode(new ErrorNode(Node.ParentNode, Node.SourceToken, Message));
+		this.ReturnNode(new LegacyErrorNode(Node.ParentNode, Node.SourceToken, Message));
 	}
 
 	public final void ReturnTypeErrorNode(String Message, AstNode ErrorNode) {

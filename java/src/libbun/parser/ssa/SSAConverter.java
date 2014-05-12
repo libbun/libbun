@@ -3,7 +3,7 @@ package libbun.parser.ssa;
 import java.util.HashMap;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BunAndNode;
 import libbun.ast.decl.BunFunctionNode;
@@ -242,7 +242,7 @@ public class SSAConverter extends ZASTTransformer {
 	 * }              | }
 	 */
 	private void RemoveJoinNode(AstNode TargetNode, JoinNode JNode) {
-		@Var BlockNode Parent = TargetNode.GetScopeblockNode();
+		@Var LegacyBlockNode Parent = TargetNode.GetScopeblockNode();
 		@Var int Index = 0;
 		assert(Parent != null);
 		while(Index < Parent.GetListSize()) {

@@ -1,7 +1,7 @@
 package libbun.ast.sugar;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.ast.statement.BunWhileNode;
@@ -22,7 +22,7 @@ public final class BunDoWhileNode extends SyntaxSugarNode {
 		return this.dupField(typedClone, new BunDoWhileNode(ParentNode));
 	}
 
-	public BunDoWhileNode(AstNode CondNode, BlockNode blockNode) {
+	public BunDoWhileNode(AstNode CondNode, LegacyBlockNode blockNode) {
 		super(null, 3);
 		this.SetNode(BunDoWhileNode._Cond, CondNode);
 		this.SetNode(BunDoWhileNode._Block, blockNode);
@@ -33,10 +33,10 @@ public final class BunDoWhileNode extends SyntaxSugarNode {
 		return this.AST[BunDoWhileNode._Cond];
 	}
 
-	public final BlockNode blockNode() {
+	public final LegacyBlockNode blockNode() {
 		@Var AstNode blockNode = this.AST[BunDoWhileNode._Block];
-		if(blockNode instanceof BlockNode) {
-			return (BlockNode)blockNode;
+		if(blockNode instanceof LegacyBlockNode) {
+			return (LegacyBlockNode)blockNode;
 		}
 		assert(blockNode == null); // this must not happen
 		return null;

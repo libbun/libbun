@@ -25,14 +25,14 @@
 package libbun.encode;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.ast.decl.BunClassNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.TopLevelNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.literal.BunNullNode;
 import libbun.ast.literal.DefaultValueNode;
 import libbun.common.CommonMap;
@@ -304,7 +304,7 @@ public abstract class LibBunGenerator extends BunVisitor {
 
 
 	public final void VisitUndefinedNode(AstNode Node) {
-		@Var ErrorNode ErrorNode = new ErrorNode(Node.ParentNode, Node.SourceToken, "undefined node:" + Node.toString());
+		@Var LegacyErrorNode ErrorNode = new LegacyErrorNode(Node.ParentNode, Node.SourceToken, "undefined node:" + Node.toString());
 		this.VisitErrorNode(ErrorNode);
 	}
 
@@ -354,7 +354,7 @@ public abstract class LibBunGenerator extends BunVisitor {
 			this.GenerateStatement(Node);
 			return true;
 		}
-		if(Node instanceof ErrorNode) {
+		if(Node instanceof LegacyErrorNode) {
 			this.GenerateStatement(Node);
 			return false;
 		}
@@ -379,7 +379,7 @@ public abstract class LibBunGenerator extends BunVisitor {
 
 	public final boolean LoadScript(String ScriptText, String FileName, int LineNumber) {
 		@Var boolean AllPassed = true;
-		@Var BlockNode TopblockNode = new BlockNode(null, this.RootGamma);
+		@Var LegacyBlockNode TopblockNode = new LegacyBlockNode(null, this.RootGamma);
 		@Var BTokenContext TokenContext = new BTokenContext(this.RootParser, this, FileName, LineNumber, ScriptText);
 		TokenContext.SkipEmptyStatement();
 		TokenContext.SetParseFlag(BTokenContext._AllowSkipIndent);

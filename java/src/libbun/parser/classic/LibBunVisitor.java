@@ -24,7 +24,7 @@
 
 package libbun.parser.classic;
 
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.GroupNode;
 import libbun.ast.LocalDefinedNode;
@@ -37,7 +37,7 @@ import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.BunVarBlockNode;
 import libbun.ast.decl.TopLevelNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.expression.ApplyMacroNode;
 import libbun.ast.expression.FuncCallNode;
 import libbun.ast.expression.GetFieldNode;
@@ -87,7 +87,7 @@ public abstract class LibBunVisitor {
 	public abstract void VisitInstanceOfNode(BunInstanceOfNode Node);
 	public abstract void VisitBinaryNode(BinaryOperatorNode Node);
 
-	public abstract void VisitBlockNode(BlockNode Node);
+	public abstract void VisitBlockNode(LegacyBlockNode Node);
 	public abstract void VisitVarblockNode(BunVarBlockNode Node);
 	public abstract void VisitIfNode(BunIfNode Node);
 	public abstract void VisitReturnNode(BunReturnNode Node);
@@ -100,7 +100,7 @@ public abstract class LibBunVisitor {
 	public abstract void VisitFunctionNode(BunFunctionNode Node);
 	public abstract void VisitClassNode(BunClassNode Node);
 
-	public abstract void VisitErrorNode(ErrorNode Node);
+	public abstract void VisitErrorNode(LegacyErrorNode Node);
 
 	public abstract void VisitTopLevelNode(TopLevelNode Node);
 	public abstract void VisitSyntaxSugarNode(SyntaxSugarNode Node);

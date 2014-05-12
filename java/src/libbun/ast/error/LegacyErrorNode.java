@@ -22,47 +22,33 @@
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // **************************************************************************
 
-package libbun.ast.decl;
+package libbun.ast.error;
+
 import libbun.ast.AstNode;
-import libbun.ast.LegacyBlockNode;
-import libbun.parser.classic.BNodeUtils;
+import libbun.ast.literal.ConstNode;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.util.Var;
+import libbun.parser.common.BunToken;
+import libbun.util.BField;
+import libbun.util.BIgnored;
 
-public class BunVarBlockNode extends LegacyBlockNode {
-	public static final int _VarDecl = 0;
-
-	public BunVarBlockNode(AstNode ParentNode, BunLetVarNode VarNode) {
-		super(ParentNode, null, 1);
-		this.SetNullableNode(BunVarBlockNode._VarDecl, VarNode);
+public class LegacyErrorNode extends ConstNode {
+	@BField public String ErrorMessage;
+	public LegacyErrorNode(AstNode ParentNode, BunToken SourceToken, String ErrorMessage) {
+		super(ParentNode, SourceToken);
+		this.ErrorMessage = ErrorMessage;
 	}
-
-	public BunVarBlockNode(AstNode ParentNode, BunLetVarNode VarNode, LegacyBlockNode ParentblockNode) {
-		super(ParentNode, null, 1);
-		this.SetNode(BunVarBlockNode._VarDecl, VarNode);
-		@Var int Index = BNodeUtils._AstListIndexOf(ParentblockNode, VarNode);
-		assert(Index >= 0);
-		// before: ParentblockNode = [NodeA, NodeB, ..., VarNode, NodeC, ..., NodeZ], this = []
-		// after : ParentblockNode = [NodeA, NodeB, ..., this],  this = [NodeC, ..., NodeZ]
-		BNodeUtils._MoveAstList(ParentblockNode, Index + 1, this);
-		ParentblockNode.SetListAt(Index, this);
+	public LegacyErrorNode(AstNode Node, String ErrorMessage) {
+		super(Node.ParentNode, Node.SourceToken);
+		this.ErrorMessage = ErrorMessage;
 	}
-
 	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
-		return this.dupField(typedClone, new BunVarBlockNode(ParentNode, null));
+		return this.dupField(typedClone, new LegacyErrorNode(ParentNode, null, this.ErrorMessage));
 	}
-
-	public final BunLetVarNode VarDeclNode() {
-		@Var AstNode VarNode = this.AST[BunVarBlockNode._VarDecl];
-		if(VarNode instanceof BunLetVarNode) {
-			return (BunLetVarNode)VarNode;
-		}
-		return null;
-	}
-
 	@Override public final void Accept(LibBunVisitor Visitor) {
-		Visitor.VisitVarblockNode(this);
+		Visitor.VisitErrorNode(this);
 	}
 
-
+	@BIgnored @Override public String toString() {
+		return "ErrorNode '" + this.ErrorMessage + "'";
+	}
 }

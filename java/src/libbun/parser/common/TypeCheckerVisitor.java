@@ -1,7 +1,7 @@
 package libbun.parser.common;
 
 import libbun.ast.AstNode;
-import libbun.ast.BlockNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.GroupNode;
 import libbun.ast.LocalDefinedNode;
@@ -33,7 +33,7 @@ import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.BunVarBlockNode;
 import libbun.ast.decl.DefSymbolNode;
 import libbun.ast.decl.TopLevelNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.expression.ApplyMacroNode;
 import libbun.ast.expression.FuncCallNode;
 import libbun.ast.expression.GetFieldNode;
@@ -355,7 +355,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 
 
 	@Override
-	public void VisitBlockNode(BlockNode node) {
+	public void VisitBlockNode(LegacyBlockNode node) {
 		for(int i = 0; i < node.size(); i++) {
 			@Var AstNode subNode = node.AST[i];
 			@Var AstNode typedNode = this.CheckType(subNode, BType.VoidType);
@@ -561,7 +561,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 	}
 
 	@Override
-	public void VisitErrorNode(ErrorNode node) {
+	public void VisitErrorNode(LegacyErrorNode node) {
 		// TODO Auto-generated method stub
 
 	}
