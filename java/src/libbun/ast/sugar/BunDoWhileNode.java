@@ -57,7 +57,7 @@ public final class BunDoWhileNode extends SyntaxSugarNode {
 			TypeChecker.CheckTypeAt(this, BunWhileNode._Next, BType.VoidType);
 			this.blockNode().appendNode(this.NextNode());
 		}
-		TypeChecker.ReturnTypeNode(this, BType.VoidType);
+		TypeChecker.returnTypeNode(this, BType.VoidType);
 	}
 
 	/**

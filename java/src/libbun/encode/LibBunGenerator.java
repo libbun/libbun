@@ -343,7 +343,7 @@ public abstract class LibBunGenerator extends BunVisitor {
 
 	private void PreProcess(AstNode Node) {
 		if(this.TypeChecker != null) {
-			Node = this.TypeChecker.CheckType(Node, BType.VoidType);
+			Node = this.TypeChecker.checkType(Node, BType.VoidType);
 		}
 	}
 

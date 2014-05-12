@@ -44,7 +44,7 @@ public class StringInterpolationNode extends SyntaxSugarNode {
 			}
 			i = i + 1;
 		}
-		TypeChecker.TypeNode(this, BType.StringType);
+		TypeChecker.typeNode(this, BType.StringType);
 	}
 
 	@Override public DesugarNode PerformDesugar(LibBunTypeChecker TypeChecker) {
@@ -61,7 +61,7 @@ public class StringInterpolationNode extends SyntaxSugarNode {
 		@Var BunAddNode BinaryNode = new BunAddNode(null);
 		BinaryNode.SetLeftNode(this.EnforceStringTypedNode(TypeChecker, LeftNode));
 		BinaryNode.SetRightNode(this.EnforceStringTypedNode(TypeChecker, RightNode));
-		TypeChecker.TypeNode(BinaryNode, BType.StringType);
+		TypeChecker.typeNode(BinaryNode, BType.StringType);
 		return BinaryNode;
 	}
 

@@ -1,15 +1,11 @@
 package libbun.parser.common;
 
-import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
+import libbun.ast.decl.DefSymbolNode;
 import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.error.TypeErrorNode;
 import libbun.ast.expression.ApplyMacroNode;
-import libbun.ast.expression.BunFuncNameNode;
-import libbun.ast.expression.FuncCallNode;
 import libbun.ast.unary.BunCastNode;
-import libbun.type.BFormFunc;
-import libbun.type.BFunc;
 import libbun.type.BFuncType;
 import libbun.type.BGreekType;
 import libbun.type.BType;
@@ -20,7 +16,7 @@ import libbun.util.Var;
 public abstract class TypeChecker extends BunChecker {
 
 	Namespace root = null;
-	private BType      StackedContextType = null;
+	private BType        StackedContextType = null;
 	private AstNode      ReturnedNode = null;
 
 	public TypeChecker() {
@@ -28,41 +24,41 @@ public abstract class TypeChecker extends BunChecker {
 
 	@Override public AstNode startCheck(AstNode bnode) {
 		this.root = bnode.getSymbolTable().namespace;
-		return this.CheckType(bnode, BType.VoidType);
+		return this.checkType(bnode, BType.VoidType);
 	}
 
-	public final AstNode CheckType(AstNode Node, BType ContextType) {
+	public final AstNode checkType(AstNode Node, BType ContextType) {
 		if(Node != null) {
 			if(Node.HasUntypedNode()) {
-				Node = this.VisitNode(Node, ContextType);
-				this.InferType(ContextType, Node);
+				Node = this.visitEachNode(Node, ContextType);
+				this.inferType(ContextType, Node);
 			}
 			Node = this.typeCheckImpl(Node, ContextType);
-			this.InferType(ContextType, Node);
+			this.inferType(ContextType, Node);
 		}
 		this.ReturnedNode = null;
 		return Node;
 	}
 
-	public final AstNode TryType(AstNode Node, BType ContextType) {
+	public final AstNode tryType(AstNode Node, BType ContextType) {
 		if(Node != null) {
 			if(Node.HasUntypedNode()) {
-				Node = this.VisitNode(Node, ContextType);
-				this.InferType(ContextType, Node);
+				Node = this.visitEachNode(Node, ContextType);
+				this.inferType(ContextType, Node);
 			}
 			Node = this.tryTypeImpl(Node, ContextType);
-			this.InferType(ContextType, Node);
+			this.inferType(ContextType, Node);
 		}
 		this.ReturnedNode = null;
 		return Node;
 	}
 
-	protected void InferType(BType contextType, AstNode bnode) {
+	protected void inferType(BType contextType, AstNode bnode) {
 
 	}
 
-	private AstNode VisitNode(AstNode Node, BType ContextType) {
-		@Var AstNode ParentNode = Node.ParentNode;
+	private AstNode visitEachNode(AstNode Node, BType ContextType) {
+		AstNode parentNode = Node.ParentNode;
 		this.StackedContextType = ContextType;
 		this.ReturnedNode = null;
 		Node.Accept(this);
@@ -72,11 +68,11 @@ public abstract class TypeChecker extends BunChecker {
 		else {
 			Node = this.ReturnedNode;
 		}
-		if(ParentNode != Node.ParentNode && ParentNode != null) {
+		if(parentNode != Node.ParentNode && parentNode != null) {
 			if(Node.ParentNode != null) {
 				LibBunSystem._PrintDebug("Preserving parent of typed new node: " + Node);
 			}
-			ParentNode.SetChild(Node, AstNode._PreservedParent);
+			parentNode.SetChild(Node, AstNode._PreservedParent);
 		}
 		return Node;
 	}
@@ -104,18 +100,16 @@ public abstract class TypeChecker extends BunChecker {
 	private final AstNode tryTypeImpl(AstNode Node, BType ContextType) {
 		if(Node.IsErrorNode()) {
 			if(!ContextType.IsVarType()) {
-				this.TypeNode(Node, ContextType);
+				this.typeNode(Node, ContextType);
 			}
 			return Node;
 		}
 		return Node;
 	}
 
-
-
 	public final void TryTypeAt(AstNode Node, int Index, BType ContextType) {
 		//		@Var ZNode N = Node.AST[Index];
-		Node.SetNode(Index, this.TryType(Node.AST[Index], ContextType));
+		Node.SetNode(Index, this.tryType(Node.AST[Index], ContextType));
 		//		if(N != Node.AST[Index]) {
 		//			System.out.println("Node="+Node+"\n\tFrom="+N+"\n\tTo="+Node.AST[Index]);
 		//		}
@@ -124,58 +118,58 @@ public abstract class TypeChecker extends BunChecker {
 
 	public final void CheckTypeAt(AstNode Node, int Index, BType ContextType) {
 		//		@Var ZNode N = Node.AST[Index];
-		Node.SetNode(Index, this.CheckType(Node.AST[Index], ContextType));
+		Node.SetNode(Index, this.checkType(Node.AST[Index], ContextType));
 		//		if(N != Node.AST[Index]) {
 		//			System.out.println("Node="+Node+"\n\tFrom="+N+"\n\tTo="+Node.AST[Index]);
 		//		}
 	}
 
 
-	public void TypeNode(AstNode node, BType type) {
+	public void typeNode(AstNode node, BType type) {
 		node.Type= type;
 	}
 
-	public final BType GetContextType() {
+	public final BType getContextType() {
 		return this.StackedContextType;
 	}
 
-	public final void ReturnNode(AstNode Node) {
+	public final void returnNode(AstNode Node) {
 		if(this.ReturnedNode != null) {
 			LibBunSystem._PrintDebug("previous returned node " + Node);
 		}
 		this.ReturnedNode = Node;
 	}
 
-	public final void ReturnTypeNode(AstNode Node, BType Type) {
-		this.TypeNode(Node, Type);
-		this.ReturnNode(Node);
+	public final void returnTypeNode(AstNode Node, BType Type) {
+		this.typeNode(Node, Type);
+		this.returnNode(Node);
 	}
 
 	public final void returnNodeAsFuncType(String name, AstNode bnode, int startIndex, BType t0, BType t1) {
-		this.ReturnNode(this.checkTypeAsFuncType(name, bnode, startIndex, t0, t1));
+		this.returnNode(this.checkAstWithFuncType(name, bnode, startIndex, t0, t1));
 	}
 
 	public final void returnNodeAsFuncType(String name, AstNode bnode, int startIndex, BType t0) {
-		this.ReturnNode(this.checkTypeAsFuncType(name, bnode, startIndex, t0, BType.VarType));
+		this.returnNode(this.checkAstWithFuncType(name, bnode, startIndex, t0, BType.VarType));
 	}
 
 	public final void returnNodeAsFuncType(String name, AstNode bnode, int startIndex) {
-		this.ReturnNode(this.checkTypeAsFuncType(name, bnode, startIndex, BType.VarType, BType.VarType));
+		this.returnNode(this.checkAstWithFuncType(name, bnode, startIndex, BType.VarType, BType.VarType));
 	}
 
-	public final void ReturnErrorNode(AstNode Node, BunToken ErrorToken, String Message) {
+	public final void returnNode(AstNode Node, BunToken ErrorToken, String Message) {
 		if(ErrorToken == null) {
 			ErrorToken = Node.SourceToken;
 		}
-		this.ReturnNode(new LegacyErrorNode(Node.ParentNode, ErrorToken, Message));
+		this.returnNode(new LegacyErrorNode(Node.ParentNode, ErrorToken, Message));
 	}
 
-	public final void ReturnErrorNode(AstNode Node, String Message) {
-		this.ReturnNode(new LegacyErrorNode(Node.ParentNode, Node.SourceToken, Message));
+	public final void returnErrorNode(AstNode Node, String Message) {
+		this.returnNode(new LegacyErrorNode(Node.ParentNode, Node.SourceToken, Message));
 	}
 
-	public final void ReturnTypeErrorNode(String Message, AstNode ErrorNode) {
-		this.ReturnNode(new TypeErrorNode(Message, ErrorNode));
+	public final void returnTypeErrorNode(String Message, AstNode ErrorNode) {
+		this.returnNode(new TypeErrorNode(Message, ErrorNode));
 	}
 
 	protected final AstNode CreateStupidCastNode(BType Requested, AstNode Node, BunToken bunToken, String Message) {
@@ -202,9 +196,9 @@ public abstract class TypeChecker extends BunChecker {
 		return this.CreateStupidCastNode(EnforcedType, Node);
 	}
 
-	protected AstNode checkTypeAsFuncType(String name, AstNode bnode, int startIndex, BType t0, BType t1) {
-		t0 = this.typecheckat(bnode, startIndex, t0);
-		t1 = this.typecheckat(bnode, startIndex+1, t1);
+	protected AstNode checkAstWithFuncType(String name, AstNode bnode, int startIndex, BType t0, BType t1) {
+		t0 = this.checkAstAt(bnode, startIndex, t0);
+		t1 = this.checkAstAt(bnode, startIndex+1, t1);
 		SymbolTable table = bnode.getSymbolTable();
 		BFuncType funcType = this.lookupFuncType(table, name, t0, t1, bnode.size() - startIndex);
 		bnode = this.checkTypeByFuncType(bnode, startIndex, funcType);
@@ -217,7 +211,7 @@ public abstract class TypeChecker extends BunChecker {
 		return bnode;
 	}
 
-	private BType typecheckat(AstNode bnode, int startIndex, BType t0) {
+	private BType checkAstAt(AstNode bnode, int startIndex, BType t0) {
 		if(startIndex < bnode.size()) {
 			this.CheckTypeAt(bnode, startIndex, t0);
 			if(t0.IsVarType()) {
@@ -229,10 +223,18 @@ public abstract class TypeChecker extends BunChecker {
 	}
 
 	protected BFuncType lookupFuncType(SymbolTable table, String name, BType t0, BType t1, int paramSize) {
+		DefSymbolNode defNode = table.getSymbol(name, t0, t1, paramSize);
+		if(defNode != null) {
+			return defNode.getDeclTypeAsFuncType();
+		}
 		return null;
 	}
 
 	protected String lookupMacroText(SymbolTable table, String name, BType t0, BType t1, int paramSize) {
+		DefSymbolNode defNode = table.getSymbol(name, t0, t1, paramSize);
+		if(defNode != null && defNode.isDefFunc()) {
+			return null; // defNode.getMacroText();  // fix me
+		}
 		return null;
 	}
 
@@ -242,14 +244,14 @@ public abstract class TypeChecker extends BunChecker {
 			for(;i < bnode.size(); i++) {
 				this.CheckTypeAt(bnode, i, BType.VarType);
 			}
-			this.TypeNode(bnode, BType.VarType);
+			this.typeNode(bnode, BType.VarType);
 			return bnode;
 		}
 		@Var BType[] Greek = BGreekType._NewGreekTypes(null);
 		for(;i < bnode.size(); i++) {
 			@Var BType paramType =  funcType.GetFuncParamType(i-startIndex);
 			@Var AstNode SubNode = bnode.AST[i];
-			SubNode = this.TryType(SubNode, paramType);
+			SubNode = this.tryType(SubNode, paramType);
 			if(!SubNode.IsUntyped() || !paramType.IsVarType()) {
 				if(!paramType.AcceptValueType(SubNode.Type, false, Greek)) {
 					SubNode = this.CreateStupidCastNode(paramType.GetGreekRealType(Greek), SubNode);
@@ -257,71 +259,9 @@ public abstract class TypeChecker extends BunChecker {
 			}
 			bnode.SetNode(i, SubNode);
 		}
-		this.TypeNode(bnode, funcType.GetReturnType().GetGreekRealType(Greek));
+		this.typeNode(bnode, funcType.GetReturnType().GetGreekRealType(Greek));
 		return bnode;
 	}
 
-
-	public final void TypeCheckNodeList(int startIndex, AstNode List) {
-		@Var int i = startIndex;
-		while(i < List.size()) {
-			this.CheckTypeAt(List, i, BType.VarType);
-			i = i + 1;
-		}
-	}
-
-	public final void TypeCheckNodeList(AbstractListNode List) {
-		@Var int i = 0;
-		while(i < List.GetListSize()) {
-			@Var AstNode SubNode = List.GetListAt(i);
-			SubNode = this.CheckType(SubNode, BType.VarType);
-			List.SetListAt(i, SubNode);
-			i = i + 1;
-		}
-	}
-
-	public final AstNode TypeListNodeAsFuncCall(AstNode FuncNode, BFuncType FuncType) {
-		int startIndex = 0;
-		if(FuncNode instanceof FuncCallNode) {
-			startIndex = 1;
-		}
-		@Var BType[] Greek = BGreekType._NewGreekTypes(null);
-		//		if(FuncNode.GetListSize() != FuncType.GetFuncParamSize()) {
-		//			System.err.println(ZLogger._LogError(FuncNode.SourceToken, "mismatch " + FuncType + ", " + FuncNode.GetListSize()+": " + FuncNode));
-		//		}
-		@Var int i = startIndex;
-		while(i < FuncNode.size()) {
-			@Var AstNode SubNode = FuncNode.get(i);
-			@Var BType ParamType =  FuncType.GetFuncParamType(i - startIndex);
-			SubNode = this.TryType(SubNode, ParamType);
-			if(!SubNode.IsUntyped() || !ParamType.IsVarType()) {
-				if(!ParamType.AcceptValueType(SubNode.Type, false, Greek)) {
-					SubNode = this.CreateStupidCastNode(ParamType.GetGreekRealType(Greek), SubNode);
-				}
-			}
-			FuncNode.set(i, SubNode);
-			i = i + 1;
-		}
-		this.TypeNode(FuncNode, FuncType.GetReturnType().GetGreekRealType(Greek));
-		return FuncNode;
-	}
-
-	public FuncCallNode CreateFuncCallNode(AstNode ParentNode, BunToken sourceToken, String FuncName, BFuncType FuncType) {
-		@Var FuncCallNode FuncNode = new FuncCallNode(ParentNode, new BunFuncNameNode(null, sourceToken, FuncName, FuncType));
-		FuncNode.Type = FuncType.GetReturnType();
-		return FuncNode;
-	}
-
-	public final AstNode CreateDefinedFuncCallNode(AstNode ParentNode, BunToken sourceToken, BFunc Func) {
-		@Var AstNode FuncNode = null;
-		if(Func instanceof BFormFunc) {
-			FuncNode = new ApplyMacroNode(ParentNode, sourceToken, (BFormFunc)Func);
-		}
-		else {
-			FuncNode = this.CreateFuncCallNode(ParentNode, sourceToken, Func.FuncName, Func.GetFuncType());
-		}
-		//	FuncNode.Type = Func.GetFuncType().GetRealType();
-		return FuncNode;
-	}
 
 }

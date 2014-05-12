@@ -42,7 +42,7 @@ public class BunContinueNode extends SyntaxSugarNode {
 	 **/
 
 	@Override public void PerformTyping(LibBunTypeChecker TypeChecker, BType ContextType) {
-		TypeChecker.TypeNode(this, BType.VoidType);
+		TypeChecker.typeNode(this, BType.VoidType);
 	}
 
 	@Override public DesugarNode PerformDesugar(LibBunTypeChecker Typer) {

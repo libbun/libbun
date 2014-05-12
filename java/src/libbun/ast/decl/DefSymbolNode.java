@@ -3,6 +3,7 @@ package libbun.ast.decl;
 import libbun.ast.AstNode;
 import libbun.ast.BunNode;
 import libbun.encode.LibBunGenerator;
+import libbun.type.BFuncType;
 import libbun.type.BType;
 import libbun.util.BField;
 import libbun.util.LibBunSystem;
@@ -98,6 +99,14 @@ public abstract class DefSymbolNode extends BunNode {
 
 	public final void SetDeclType(BType Type) {
 		this.GivenType = Type;
+	}
+
+	public final BFuncType getDeclTypeAsFuncType() {
+		BType funcType = this.DeclType();
+		if(funcType instanceof BFuncType) {
+			return (BFuncType)funcType;
+		}
+		return null;
 	}
 
 

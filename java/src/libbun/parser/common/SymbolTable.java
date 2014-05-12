@@ -29,6 +29,7 @@ import libbun.ast.LegacyBlockNode;
 import libbun.ast.decl.DefSymbolNode;
 import libbun.common.CommonMap;
 import libbun.type.BFuncType;
+import libbun.type.BType;
 import libbun.util.BField;
 import libbun.util.Var;
 
@@ -86,16 +87,49 @@ public class SymbolTable {
 		return null;
 	}
 
-	public DefSymbolNode getSymbol(String funcName, BFuncType funcType) {
-		// TODO Auto-generated method stub
+	// funcname
+
+	public String nameSignature(String funcName, BType t0, BType t1, int paramSize) {
+		return funcName + "__" + paramSize + t0.GetUniqueName()+t1.GetUniqueName();
+	}
+
+	private DefSymbolNode getSignatureImpl(String funcName, BType t0, BType t1, int paramSize) {
+		BType firstType = t1;
+		while(firstType != null) {
+			String symbol = this.nameSignature(funcName, t0, firstType, paramSize);
+			DefSymbolNode defNode = this.GetSymbol(symbol);
+			if(defNode != null) {
+				return defNode;
+			}
+			if(firstType == firstType.GetSuperType() || firstType.IsVoidType()) {
+				break;
+			}
+			firstType = firstType.GetSuperType();
+		}
 		return null;
 	}
 
-	public final void setSymbol(String Symbol, BFuncType funcType, DefSymbolNode EntryNode) {
-		if(this.symbolTable == null) {
-			this.symbolTable = new CommonMap<DefSymbolNode>(null);
+	public DefSymbolNode getSymbol(String funcName, BType t0, BType t1, int paramSize) {
+		BType recvType = t0;
+		while(recvType != null) {
+			DefSymbolNode defNode = this.getSignatureImpl(funcName, recvType, t1, paramSize);
+			if(defNode != null) {
+				return defNode;
+			}
+			if(recvType == recvType.GetSuperType() || recvType.IsVoidType()) {
+				break;
+			}
+			recvType = recvType.GetSuperType();
 		}
-		this.symbolTable.put(Symbol, EntryNode);
+		return null;
+	}
+
+	public DefSymbolNode getSymbol(String funcName, BFuncType funcType) {
+		return this.getSignatureImpl(funcName, funcType.GetRecvType(), funcType.GetRealType(), funcType.GetFuncParamSize());
+	}
+
+	public final void setSymbol(String funcName, BFuncType funcType, DefSymbolNode defNode) {
+		this.SetSymbol(funcType.StringfySignature(funcName), defNode);
 	}
 
 

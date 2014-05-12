@@ -24,7 +24,7 @@ public class BunAssertNode extends SyntaxSugarNode {
 
 	@Override public void PerformTyping(LibBunTypeChecker TypeChecker, BType ContextType) {
 		TypeChecker.CheckTypeAt(this, BunAssertNode._Expr, BType.BooleanType);
-		TypeChecker.TypeNode(this, BType.VoidType);
+		TypeChecker.typeNode(this, BType.VoidType);
 	}
 
 	@Override public DesugarNode PerformDesugar(LibBunTypeChecker TypeChecker) {

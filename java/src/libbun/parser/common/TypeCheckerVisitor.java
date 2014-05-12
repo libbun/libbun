@@ -75,50 +75,50 @@ public class TypeCheckerVisitor extends TypeChecker {
 
 	@Override
 	public void VisitDefaultValueNode(DefaultValueNode node) {
-		@Var BType Type = this.GetContextType();
+		@Var BType Type = this.getContextType();
 		if(Type.IsIntType()) {
-			this.ReturnTypeNode(new BunIntNode(node.ParentNode, 0), Type);
+			this.returnTypeNode(new BunIntNode(node.ParentNode, 0), Type);
 			return;
 		}
 		if(Type.IsBooleanType()) {
-			this.ReturnTypeNode(new BunFalseNode(node.ParentNode), Type);
+			this.returnTypeNode(new BunFalseNode(node.ParentNode), Type);
 			return;
 		}
 		if(Type.IsFloatType()) {
-			this.ReturnTypeNode(new BunFloatNode(node.ParentNode, 0.0), Type);
+			this.returnTypeNode(new BunFloatNode(node.ParentNode, 0.0), Type);
 			return;
 		}
 		if(!Type.IsVarType()) {
-			this.ReturnTypeNode(new BunNullNode(node.ParentNode), Type);
+			this.returnTypeNode(new BunNullNode(node.ParentNode), Type);
 			return;
 		}
-		this.ReturnTypeNode(node, Type);
+		this.returnTypeNode(node, Type);
 	}
 
 	@Override
 	public void VisitNullNode(BunNullNode node) {
-		@Var BType Type = this.GetContextType();
-		this.ReturnTypeNode(node, Type);
+		@Var BType Type = this.getContextType();
+		this.returnTypeNode(node, Type);
 	}
 
 	@Override
 	public void VisitBooleanNode(BunBooleanNode node) {
-		this.ReturnTypeNode(node, BType.BooleanType);
+		this.returnTypeNode(node, BType.BooleanType);
 	}
 
 	@Override
 	public void VisitIntNode(BunIntNode node) {
-		this.ReturnTypeNode(node, BType.IntType);
+		this.returnTypeNode(node, BType.IntType);
 	}
 
 	@Override
 	public void VisitFloatNode(BunFloatNode node) {
-		this.ReturnTypeNode(node, BType.FloatType);
+		this.returnTypeNode(node, BType.FloatType);
 	}
 
 	@Override
 	public void VisitStringNode(BunStringNode node) {
-		this.ReturnTypeNode(node, BType.StringType);
+		this.returnTypeNode(node, BType.StringType);
 	}
 
 	@Override
@@ -255,9 +255,9 @@ public class TypeCheckerVisitor extends TypeChecker {
 
 	@Override
 	public void VisitGroupNode(GroupNode node) {
-		BType contextType = this.GetContextType();
+		BType contextType = this.getContextType();
 		this.CheckTypeAt(node, GroupNode._Expr, contextType);
-		this.ReturnTypeNode(node, node.getTypeAt(GroupNode._Expr));
+		this.returnTypeNode(node, node.getTypeAt(GroupNode._Expr));
 	}
 
 	@Override
@@ -312,9 +312,9 @@ public class TypeCheckerVisitor extends TypeChecker {
 		@Var BType FuncNodeType = node.getTypeAt(FuncCallNode._Functor);
 		if(FuncNodeType instanceof BFuncType) {
 			this.checkTypeByFuncType(node, 1, (BFuncType)FuncNodeType);
-			this.ReturnNode(node);
+			this.returnNode(node);
 		}
-		this.ReturnTypeErrorNode("not function: " + FuncNodeType + " of node " + node.FunctorNode(), node);
+		this.returnTypeErrorNode("not function: " + FuncNodeType + " of node " + node.FunctorNode(), node);
 	}
 
 	@Override
@@ -333,10 +333,10 @@ public class TypeCheckerVisitor extends TypeChecker {
 			//				this.ReturnTypeNode(varNode.InitValueNode(), varNode.DeclType());
 			//				return;
 			//			}
-			this.ReturnTypeNode(node, varNode.DeclType());
+			this.returnTypeNode(node, varNode.DeclType());
 			return;
 		}
-		this.ReturnTypeNode(node, BType.VarType);
+		this.returnTypeNode(node, BType.VarType);
 	}
 
 	@Override public void VisitGetFieldNode(GetFieldNode Node) {
@@ -358,10 +358,10 @@ public class TypeCheckerVisitor extends TypeChecker {
 	public void VisitBlockNode(LegacyBlockNode node) {
 		for(int i = 0; i < node.size(); i++) {
 			@Var AstNode subNode = node.AST[i];
-			@Var AstNode typedNode = this.CheckType(subNode, BType.VoidType);
+			@Var AstNode typedNode = this.checkType(subNode, BType.VoidType);
 			while(subNode != node.AST[i]) {  // detecting replacement
 				subNode = node.AST[i];
-				typedNode = this.CheckType(subNode, BType.VoidType);
+				typedNode = this.checkType(subNode, BType.VoidType);
 			}
 			if(typedNode != subNode) {
 				node.SetNode(i, typedNode);
@@ -371,7 +371,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 				break;
 			}
 		}
-		this.ReturnTypeNode(node, BType.VoidType);
+		this.returnTypeNode(node, BType.VoidType);
 	}
 
 	@Override
@@ -386,7 +386,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 		if(node.HasElseNode()) {
 			this.CheckTypeAt(node, BunIfNode._Else, BType.VoidType);
 		}
-		this.ReturnTypeNode(node, BType.VoidType);
+		this.returnTypeNode(node, BType.VoidType);
 	}
 
 
@@ -397,11 +397,11 @@ public class TypeCheckerVisitor extends TypeChecker {
 			this.CheckTypeAt(node, BunWhileNode._Next, BType.VoidType);
 			//Node.blockNode().Append(Node.NextNode());
 		}
-		this.ReturnTypeNode(node, BType.VoidType);
+		this.returnTypeNode(node, BType.VoidType);
 	}
 
 	@Override public void VisitBreakNode(BunBreakNode node) {
-		this.ReturnTypeNode(node, BType.VoidType);
+		this.returnTypeNode(node, BType.VoidType);
 	}
 
 	@Override public void VisitThrowNode(BunThrowNode node) {
@@ -410,7 +410,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 		//			this.CurrentFunctionNode.SetReturnType(BType.VoidType);
 		//		}
 		this.CheckTypeAt(node, BunThrowNode._Expr, BType.VarType);
-		this.ReturnTypeNode(node, BType.VoidType);
+		this.returnTypeNode(node, BType.VoidType);
 	}
 
 	//	private BunFunctionNode FindParentFuncNode(BNode Node) {
@@ -442,7 +442,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 		if(node.HasFinallyblockNode()) {
 			this.CheckTypeAt(node, BunTryNode._Finally, BType.VoidType);
 		}
-		this.ReturnTypeNode(node, BType.VoidType);
+		this.returnTypeNode(node, BType.VoidType);
 	}
 
 	@Override
@@ -467,7 +467,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 		//				((BVarType)ReturnType).Infer(BType.VoidType, node.SourceToken);
 		//			}
 		//		}
-		this.ReturnTypeNode(node, BType.VoidType);
+		this.returnTypeNode(node, BType.VoidType);
 	}
 
 	@Override
@@ -482,13 +482,13 @@ public class TypeCheckerVisitor extends TypeChecker {
 				node.SetDeclType(ConstType);
 			}
 			node.GetGamma().SetSymbol(node.GetGivenName(), node);
-			this.ReturnTypeNode(node, BType.VoidType);
+			this.returnTypeNode(node, BType.VoidType);
 		}
 		else {
-			@Var BType ContextType = this.GetContextType();
+			@Var BType ContextType = this.getContextType();
 			@Var AstNode blockNode = new BunVarBlockNode(node.ParentNode, node, node.GetScopeLegacyBlockNode());
-			blockNode = this.CheckType(blockNode, ContextType);
-			this.ReturnNode(blockNode);
+			blockNode = this.checkType(blockNode, ContextType);
+			this.returnNode(blockNode);
 		}
 	}
 
@@ -506,7 +506,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 		node.SetReturnType(this.newVarType(node.ReturnType(), node));
 		for(int safeCount = 0; safeCount < 10; safeCount++) {
 			if(!this.defineFunction(node, false/*Enforced*/)) {
-				this.ReturnErrorNode(node, "redefinition of function: " + node.FuncName() + ": " + node.GetFuncType());
+				this.returnErrorNode(node, "redefinition of function: " + node.FuncName() + ": " + node.GetFuncType());
 			}
 			this.CheckTypeAt(node, BunFunctionNode._Block, BType.VoidType);
 			if(!node.blockNode().IsUntyped()) {
@@ -514,10 +514,10 @@ public class TypeCheckerVisitor extends TypeChecker {
 			}
 		}
 		if(!this.defineFunction(node, true/*Enforced*/)) {
-			this.ReturnErrorNode(node, "ambigious function: " + node.FuncName() + ": " + node.GetFuncType());
+			this.returnErrorNode(node, "ambigious function: " + node.FuncName() + ": " + node.GetFuncType());
 		}
 		this.popFunctionStack(node);
-		this.ReturnTypeNode(node, node.GetFuncType());
+		this.returnTypeNode(node, node.GetFuncType());
 	}
 
 	private BType newVarType(BType type, AstNode node) {
