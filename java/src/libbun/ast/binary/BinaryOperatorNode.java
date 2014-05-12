@@ -25,14 +25,16 @@
 package libbun.ast.binary;
 
 import libbun.ast.AstNode;
+import libbun.ast.BunNode;
 import libbun.common.CommonStringBuilder;
 import libbun.lang.bun.BunPrecedence;
 import libbun.parser.classic.BTokenContext;
+import libbun.parser.common.BunModelVisitor;
 import libbun.util.BField;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
-public abstract class BinaryOperatorNode extends AstNode {
+public abstract class BinaryOperatorNode extends BunNode {
 	public final static int _Left = 0;
 	public final static int _Right = 1;
 	@BField public int Precedence = 0;
@@ -44,6 +46,10 @@ public abstract class BinaryOperatorNode extends AstNode {
 
 	@Override public void bunfy(CommonStringBuilder builder) {
 		this.bunfyAST(builder, "(" + this.GetOperator(), 0, ")");
+	}
+
+	@Override public void acceptBunModel(BunModelVisitor v) {
+		v.visitBinaryNode(this);
 	}
 
 	public abstract String GetOperator();

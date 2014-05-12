@@ -33,8 +33,8 @@ public class ApplyMacroNode extends AbstractListNode {
 		assert(FormFunc != null);
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new ApplyMacroNode(ParentNode, this.SourceToken, this.FormFunc));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new ApplyMacroNode(ParentNode, this.SourceToken, this.FormFunc));
 	}
 
 	public final BFuncType GetFuncType() {

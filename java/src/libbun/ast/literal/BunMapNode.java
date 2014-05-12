@@ -35,8 +35,8 @@ public final class BunMapNode extends BunNode {
 	public BunMapNode(AstNode ParentNode) {
 		super(ParentNode, 0);
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunMapNode(ParentNode));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunMapNode(ParentNode));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {
 		this.bunfyAST(builder, "(map", 0, ")");

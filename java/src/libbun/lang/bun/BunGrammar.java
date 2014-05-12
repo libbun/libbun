@@ -64,7 +64,7 @@ import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
 import libbun.ast.literal.BunArrayNode;
-import libbun.ast.literal.BunAsmNode;
+import libbun.ast.literal.CodeNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.literal.BunFloatNode;
 import libbun.ast.literal.BunIntNode;
@@ -1081,12 +1081,12 @@ class AssertPatternFunction extends BMatchFunction {
 
 class AsmPatternFunction extends BMatchFunction {
 	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
-		@Var AstNode AsmNode = new BunAsmNode(ParentNode, null, null, null);
+		@Var AstNode AsmNode = new CodeNode(ParentNode, null, null, null);
 		AsmNode = TokenContext.MatchToken(AsmNode, "asm", BTokenContext._Required);
 		AsmNode = TokenContext.MatchToken(AsmNode, "(", BTokenContext._Required);
-		AsmNode = TokenContext.MatchPattern(AsmNode, BunAsmNode._Form, "$StringLiteral$", BTokenContext._Required);
+		AsmNode = TokenContext.MatchPattern(AsmNode, CodeNode._Form, "$StringLiteral$", BTokenContext._Required);
 		AsmNode = TokenContext.MatchToken(AsmNode, ")", BTokenContext._Required);
-		AsmNode = TokenContext.MatchPattern(AsmNode, BunAsmNode._TypeInfo, "$TypeAnnotation$", BTokenContext._Optional);
+		AsmNode = TokenContext.MatchPattern(AsmNode, CodeNode._TypeInfo, "$TypeAnnotation$", BTokenContext._Optional);
 		return AsmNode;
 	}
 }

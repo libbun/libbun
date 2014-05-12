@@ -42,8 +42,8 @@ public final class FuncCallNode extends AbstractListNode {
 		this.SetNullableNode(FuncCallNode._Functor, FuncNode);
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new FuncCallNode(ParentNode, null));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new FuncCallNode(ParentNode, null));
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

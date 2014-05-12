@@ -42,8 +42,8 @@ public final class BunBooleanNode extends LiteralNode {
 	public BunBooleanNode(boolean Value) {
 		this(null, null, Value);
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunBooleanNode(ParentNode, this.SourceToken, this.BooleanValue));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunBooleanNode(ParentNode, this.SourceToken, this.BooleanValue));
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

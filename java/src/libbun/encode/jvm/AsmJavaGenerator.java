@@ -99,7 +99,7 @@ import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
 import libbun.ast.literal.BunArrayNode;
-import libbun.ast.literal.BunAsmNode;
+import libbun.ast.literal.CodeNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.literal.BunFloatNode;
 import libbun.ast.literal.BunIntNode;
@@ -1284,7 +1284,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 		this.AsmBuilder.ApplyStaticMethod(Node, sMethod);
 	}
 
-	@Override public void VisitAsmNode(BunAsmNode Node) {
+	@Override public void VisitAsmNode(CodeNode Node) {
 		// TODO Auto-generated method stub
 	}
 

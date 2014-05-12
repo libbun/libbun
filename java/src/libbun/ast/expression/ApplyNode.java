@@ -15,8 +15,8 @@ public class ApplyNode extends AbstractListNode {
 		this.funcType = funcType;
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new ApplyNode(ParentNode, this.funcName, this.funcType));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new ApplyNode(ParentNode, this.funcName, this.funcType));
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

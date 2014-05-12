@@ -30,12 +30,12 @@ public class BunFuncNameNode extends LocalDefinedNode {
 		this.FuncParamSize = FuncParamSize;
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		if(TypedClone) {
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		if(typedClone) {
 			return this;
 		}
 		else {
-			return this.dupField(TypedClone, new GetNameNode(ParentNode, null, this.FuncName));
+			return this.dupField(typedClone, new GetNameNode(ParentNode, null, this.FuncName));
 		}
 	}
 

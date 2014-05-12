@@ -44,12 +44,12 @@ public final class BunClassNode extends AbstractListNode {
 		super(ParentNode, 2);
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
 		@Var BunClassNode NewNode = new BunClassNode(ParentNode);
 		NewNode.GivenName = this.GivenName;
 		NewNode.ClassType = this.ClassType;
 		NewNode.IsExport  = this.IsExport;
-		return this.dupField(TypedClone, NewNode);
+		return this.dupField(typedClone, NewNode);
 	}
 
 	public final String ClassName() {

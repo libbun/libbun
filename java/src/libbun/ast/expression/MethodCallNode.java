@@ -47,8 +47,8 @@ public final class MethodCallNode extends AbstractListNode {
 		this.GivenName = MethodName;
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new MethodCallNode(ParentNode, null, this.GivenName));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new MethodCallNode(ParentNode, null, this.GivenName));
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

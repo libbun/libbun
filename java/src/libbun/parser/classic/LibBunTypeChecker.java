@@ -35,7 +35,7 @@ import libbun.ast.error.ErrorNode;
 import libbun.ast.expression.ApplyMacroNode;
 import libbun.ast.expression.BunFuncNameNode;
 import libbun.ast.expression.FuncCallNode;
-import libbun.ast.literal.BunAsmNode;
+import libbun.ast.literal.CodeNode;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.common.BunLogger;
 import libbun.parser.common.BunToken;
@@ -225,7 +225,7 @@ public abstract class LibBunTypeChecker extends TypeChecker {
 
 	public abstract void DefineFunction(BunFunctionNode FunctionNode, boolean Enforced);
 
-	@Override public final void VisitAsmNode(BunAsmNode Node) {
+	@Override public final void VisitAsmNode(CodeNode Node) {
 		this.ReturnTypeNode(Node, Node.FormType());
 	}
 

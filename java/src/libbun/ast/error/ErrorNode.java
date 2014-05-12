@@ -41,8 +41,8 @@ public class ErrorNode extends ConstNode {
 		super(Node.ParentNode, Node.SourceToken);
 		this.ErrorMessage = ErrorMessage;
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new ErrorNode(ParentNode, null, this.ErrorMessage));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new ErrorNode(ParentNode, null, this.ErrorMessage));
 	}
 	@Override public final void Accept(LibBunVisitor Visitor) {
 		Visitor.VisitErrorNode(this);

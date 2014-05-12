@@ -67,7 +67,7 @@ import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.MutableNode;
 import libbun.ast.expression.NewObjectNode;
 import libbun.ast.literal.BunArrayNode;
-import libbun.ast.literal.BunAsmNode;
+import libbun.ast.literal.CodeNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.literal.BunFloatNode;
 import libbun.ast.literal.BunIntNode;
@@ -224,7 +224,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 		Node.ResolvedNode = VarNode;
 		if(VarNode != null) {
 			VarNode.Used();
-			if(VarNode.InitValueNode() instanceof BunAsmNode) {
+			if(VarNode.InitValueNode() instanceof CodeNode) {
 				this.ReturnTypeNode(VarNode.InitValueNode(), VarNode.DeclType());
 				return;
 			}

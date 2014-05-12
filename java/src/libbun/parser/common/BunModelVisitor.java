@@ -11,7 +11,8 @@ import libbun.ast.decl.BunClassNode;
 import libbun.ast.decl.BunDefineNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
-import libbun.ast.error.ErrorNode;
+import libbun.ast.error.ErrorNode2;
+import libbun.ast.error.VerboseNode;
 import libbun.ast.expression.ApplyMacroNode;
 import libbun.ast.expression.ApplyNode;
 import libbun.ast.expression.FuncCallNode;
@@ -94,13 +95,12 @@ public abstract class BunModelVisitor {
 	public abstract void visitFunctionNode(BunFunctionNode node);
 	public abstract void visitClassNode(BunClassNode node);
 
+
+	public abstract void visitVerboseNode(VerboseNode node);
+	public abstract void visitErrorNode(ErrorNode2 node);
+
 	public abstract void visitSyntaxSugarNode(SyntaxSugarNode node);
 	public abstract void visitDesugarNode(DesugarNode node);
-
-	public abstract void visitErrorNode(ErrorNode node);
-
-	//	public abstract void visitTopLevelNode(TopLevelNode node);
-	//	public abstract void visitLocalDefinedNode(LocalDefinedNode node);
 
 	private boolean StoppedVisitor;
 	public final void EnableVisitor() {

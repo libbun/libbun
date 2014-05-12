@@ -10,8 +10,8 @@ public class BunGreaterThanEqualsNode extends ComparatorNode {
 	public BunGreaterThanEqualsNode(AstNode ParentNode) {
 		super(ParentNode, BunPrecedence._CStyleCOMPARE);
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunGreaterThanEqualsNode(ParentNode));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunGreaterThanEqualsNode(ParentNode));
 	}
 	@Override public final String GetOperator() {
 		return ">=";

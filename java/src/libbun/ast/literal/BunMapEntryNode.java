@@ -14,8 +14,8 @@ public class BunMapEntryNode extends LocalDefinedNode {
 		super(ParentNode, 2);
 		this.Name = KeySymbol;
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunMapEntryNode(ParentNode, this.Name));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunMapEntryNode(ParentNode, this.Name));
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

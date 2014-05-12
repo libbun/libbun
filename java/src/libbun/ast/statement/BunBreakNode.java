@@ -32,8 +32,8 @@ public final class BunBreakNode extends AstNode {
 	public BunBreakNode(AstNode ParentNode) {
 		super(ParentNode, 0);
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunBreakNode(ParentNode));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunBreakNode(ParentNode));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {
 		builder.Append("(break)");

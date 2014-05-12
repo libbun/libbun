@@ -34,8 +34,8 @@ public final class BunArrayNode extends BunNode {
 	public BunArrayNode(AstNode ParentNode) {
 		super(ParentNode, 0);
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunArrayNode(ParentNode));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunArrayNode(ParentNode));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {
 		this.bunfyAST(builder, "(array", 0, ")");

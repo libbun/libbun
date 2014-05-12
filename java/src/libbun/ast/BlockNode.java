@@ -52,8 +52,8 @@ public class BlockNode extends AbstractListNode {
 		this.SetNode(0, VarNode);
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BlockNode(ParentNode, this.NullableGamma));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BlockNode(ParentNode, this.NullableGamma));
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

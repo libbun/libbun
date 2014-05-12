@@ -9,7 +9,7 @@ import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.TopLevelNode;
 import libbun.ast.expression.ApplyMacroNode;
-import libbun.ast.literal.BunAsmNode;
+import libbun.ast.literal.CodeNode;
 import libbun.ast.literal.LiteralNode;
 import libbun.ast.unary.BunCastNode;
 import libbun.common.CommonArray;
@@ -179,7 +179,7 @@ public abstract class LibBunSourceGenerator extends LibBunGenerator {
 		this.GenerateStatementEnd(Node);
 	}
 
-	@Override public final void VisitAsmNode(BunAsmNode Node) {
+	@Override public final void VisitAsmNode(CodeNode Node) {
 		this.ImportLibrary(Node.RequiredLibrary);
 		this.Source.Append(Node.GetFormText());
 	}

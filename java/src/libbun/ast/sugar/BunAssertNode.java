@@ -19,8 +19,8 @@ public class BunAssertNode extends SyntaxSugarNode {
 		super(ParentNode, 1);
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunAssertNode(ParentNode));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunAssertNode(ParentNode));
 	}
 
 	@Override public void PerformTyping(LibBunTypeChecker TypeChecker, BType ContextType) {

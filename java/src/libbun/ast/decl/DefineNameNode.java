@@ -19,7 +19,7 @@ public abstract class DefineNameNode extends AstNode {
 		super(ParentNode, Size);
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
 		return null; // FIXME
 	}
 

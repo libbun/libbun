@@ -46,13 +46,13 @@ public class GetNameNode extends MutableNode {
 		this.GivenName = GivenName;
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
 		@Var GetNameNode NewNode = new GetNameNode(ParentNode, this.SourceToken, this.GivenName);
-		if(TypedClone) {
+		if(typedClone) {
 			NewNode.IsImmutable = this.IsImmutable;
 			NewNode.ResolvedNode = this.ResolvedNode;
 		}
-		return this.dupField(TypedClone, NewNode);
+		return this.dupField(typedClone, NewNode);
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

@@ -42,7 +42,7 @@ import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
 import libbun.ast.literal.BunArrayNode;
-import libbun.ast.literal.BunAsmNode;
+import libbun.ast.literal.CodeNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.literal.BunFalseNode;
 import libbun.ast.literal.BunFloatNode;
@@ -261,7 +261,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 	}
 
 	@Override
-	public void VisitAsmNode(BunAsmNode node) {
+	public void VisitAsmNode(CodeNode node) {
 		// TODO Auto-generated method stub
 
 	}
@@ -329,7 +329,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 		if(varNode instanceof BunLetVarNode) {
 			node.ResolvedNode = (BunLetVarNode)varNode;
 			varNode.Used();
-			if(varNode.InitValueNode() instanceof BunAsmNode) {
+			if(varNode.InitValueNode() instanceof CodeNode) {
 				this.ReturnTypeNode(varNode.InitValueNode(), varNode.DeclType());
 				return;
 			}

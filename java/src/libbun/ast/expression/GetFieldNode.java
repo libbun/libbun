@@ -54,13 +54,13 @@ public class GetFieldNode extends MutableNode {
 		this.bunfyAST(builder, "(field", 0, ")");
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
 		@Var GetFieldNode NewNode = new GetFieldNode(ParentNode, null);
-		if(TypedClone) {
+		if(typedClone) {
 			NewNode.IsImmutable = this.IsImmutable;
 		}
 		NewNode.GivenName = this.GivenName;
-		return this.dupField(TypedClone, NewNode);
+		return this.dupField(typedClone, NewNode);
 	}
 
 	public final AstNode RecvNode() {

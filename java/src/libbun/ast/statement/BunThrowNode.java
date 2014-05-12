@@ -34,8 +34,8 @@ public final class BunThrowNode extends AstNode {
 		super(ParentNode, 1);
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunThrowNode(ParentNode));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunThrowNode(ParentNode));
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

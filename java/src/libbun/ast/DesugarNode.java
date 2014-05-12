@@ -34,12 +34,12 @@ public class DesugarNode extends SyntaxSugarNode {
 		this.OriginalNode = OriginalNode;
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		if(TypedClone) {
-			return this.dupField(TypedClone, new DesugarNode(ParentNode, this.OriginalNode.dup(TypedClone, ParentNode), this.AST.length));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		if(typedClone) {
+			return this.dupField(typedClone, new DesugarNode(ParentNode, this.OriginalNode.dup(typedClone, ParentNode), this.AST.length));
 		}
 		else {
-			return this.OriginalNode.dup(TypedClone, ParentNode);
+			return this.OriginalNode.dup(typedClone, ParentNode);
 		}
 	}
 

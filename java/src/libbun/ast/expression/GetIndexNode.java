@@ -39,12 +39,12 @@ public final class GetIndexNode extends MutableNode {
 		this.SetNullableNode(GetIndexNode._Recv, RecvNode);
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
 		@Var GetIndexNode NewNode = new GetIndexNode(ParentNode, null);
-		if(TypedClone) {
+		if(typedClone) {
 			NewNode.IsImmutable = this.IsImmutable;
 		}
-		return this.dupField(TypedClone, NewNode);
+		return this.dupField(typedClone, NewNode);
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

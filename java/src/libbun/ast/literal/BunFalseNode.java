@@ -11,8 +11,8 @@ public class BunFalseNode extends AstNode {
 		super(ParentNode,0);
 		this.Type = BType.BooleanType;
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunFalseNode(ParentNode));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunFalseNode(ParentNode));
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

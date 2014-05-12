@@ -36,8 +36,8 @@ public final class BunIfNode extends AstNode {
 	public BunIfNode(AstNode ParentNode) {
 		super(ParentNode, 3);
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunIfNode(ParentNode));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunIfNode(ParentNode));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {
 		this.bunfyAST(builder, "(if", 0, ")");

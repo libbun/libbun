@@ -35,8 +35,8 @@ public final class BunTypeNode extends LiteralNode {
 		super(ParentNode, SourceToken);
 		this.Type = Type;
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunTypeNode(ParentNode, this.SourceToken, this.Type));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunTypeNode(ParentNode, this.SourceToken, this.Type));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {
 		this.Type.bunfy(builder);

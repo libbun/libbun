@@ -32,8 +32,8 @@ public final class GroupNode extends AstNode {
 	public GroupNode(AstNode ParentNode) {
 		super(ParentNode, 1);
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new GroupNode(ParentNode));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new GroupNode(ParentNode));
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

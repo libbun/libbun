@@ -39,8 +39,8 @@ public final class BunIntNode extends BunValueNode {
 		this.Type = BType.IntType;
 		this.IntValue = Value;
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunIntNode(ParentNode, this.IntValue));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunIntNode(ParentNode, this.IntValue));
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

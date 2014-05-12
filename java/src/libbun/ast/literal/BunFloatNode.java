@@ -39,8 +39,8 @@ public final class BunFloatNode extends BunValueNode {
 		this.Type = BType.FloatType;
 		this.FloatValue = Value;
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunFloatNode(ParentNode, this.FloatValue));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunFloatNode(ParentNode, this.FloatValue));
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

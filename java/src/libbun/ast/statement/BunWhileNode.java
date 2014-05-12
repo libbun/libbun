@@ -40,8 +40,8 @@ public final class BunWhileNode extends AstNode {
 		super(ParentNode, 3);
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunWhileNode(ParentNode));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunWhileNode(ParentNode));
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

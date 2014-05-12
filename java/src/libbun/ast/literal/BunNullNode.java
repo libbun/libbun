@@ -34,8 +34,8 @@ public final class BunNullNode extends BunValueNode {
 	public BunNullNode(AstNode ParentNode) {
 		super(ParentNode);
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunNullNode(ParentNode));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunNullNode(ParentNode));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {
 		builder.Append("null");

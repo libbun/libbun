@@ -44,8 +44,8 @@ public class BunCastNode extends AstNode {
 			this.SetNode(BunCastNode._Expr, Node);
 		}
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunCastNode(ParentNode, this.Type, null));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunCastNode(ParentNode, this.Type, null));
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

@@ -56,7 +56,7 @@ import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
 import libbun.ast.literal.BunArrayNode;
-import libbun.ast.literal.BunAsmNode;
+import libbun.ast.literal.CodeNode;
 import libbun.ast.literal.BunFalseNode;
 import libbun.ast.literal.BunFloatNode;
 import libbun.ast.literal.BunIntNode;
@@ -756,7 +756,7 @@ class AssertFunction extends SemanticFunction {
 
 class AsmFunction extends SemanticFunction {
 	@Override public AstNode Invoke(BunSource source, AstNode parentNode, PegObject po) {
-		return po.copySubTo(source, new BunAsmNode(parentNode, null, null, null));
+		return po.copySubTo(source, new CodeNode(parentNode, null, null, null));
 	}
 }
 

@@ -46,7 +46,7 @@ import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
 import libbun.ast.literal.BunArrayNode;
-import libbun.ast.literal.BunAsmNode;
+import libbun.ast.literal.CodeNode;
 import libbun.ast.literal.BunMapNode;
 import libbun.ast.literal.LiteralNode;
 import libbun.ast.statement.BunBreakNode;
@@ -61,7 +61,7 @@ import libbun.ast.unary.UnaryOperatorNode;
 public abstract class LibBunVisitor {
 
 	public abstract void VisitGroupNode(GroupNode Node);
-	public abstract void VisitAsmNode(BunAsmNode Node);
+	public abstract void VisitAsmNode(CodeNode Node);
 
 	public abstract void VisitLiteralNode(LiteralNode Node);
 

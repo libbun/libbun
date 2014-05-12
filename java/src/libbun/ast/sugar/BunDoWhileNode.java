@@ -18,8 +18,8 @@ public final class BunDoWhileNode extends SyntaxSugarNode {
 		super(ParentNode, 3);
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunDoWhileNode(ParentNode));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunDoWhileNode(ParentNode));
 	}
 
 	public BunDoWhileNode(AstNode CondNode, BlockNode blockNode) {

@@ -48,8 +48,8 @@ public class BunVarBlockNode extends BlockNode {
 		ParentblockNode.SetListAt(Index, this);
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunVarBlockNode(ParentNode, null));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunVarBlockNode(ParentNode, null));
 	}
 
 	public final BunLetVarNode VarDeclNode() {

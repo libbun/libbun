@@ -14,8 +14,8 @@ public class BunRequireNode extends TopLevelNode {
 	public BunRequireNode(AstNode ParentNode) {
 		super(ParentNode, 1);
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunRequireNode(ParentNode));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunRequireNode(ParentNode));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {
 		this.bunfyAST(builder, "(require", 0, ")");

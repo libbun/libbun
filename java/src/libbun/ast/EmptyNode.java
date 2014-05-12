@@ -29,8 +29,8 @@ public final class EmptyNode extends LocalDefinedNode {
 	public EmptyNode(AstNode ParentNode) {
 		super(ParentNode, 0);
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new EmptyNode(ParentNode));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new EmptyNode(ParentNode));
 	}
 
 }

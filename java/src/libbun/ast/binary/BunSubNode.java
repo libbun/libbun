@@ -9,8 +9,8 @@ public class BunSubNode extends ArithmeticOperatorNode {
 	public BunSubNode(AstNode ParentNode) {
 		super(ParentNode, BunPrecedence._CStyleADD);
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunSubNode(ParentNode));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunSubNode(ParentNode));
 	}
 
 	@Override public final String GetOperator() {

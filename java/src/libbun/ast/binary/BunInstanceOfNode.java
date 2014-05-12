@@ -27,6 +27,7 @@ package libbun.ast.binary;
 import libbun.ast.AstNode;
 import libbun.lang.bun.BunPrecedence;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.BunModelVisitor;
 import libbun.type.BType;
 
 //E.g., $ExprNode instanceof TypeInfo
@@ -39,11 +40,18 @@ public final class BunInstanceOfNode extends BinaryOperatorNode {
 		super(ParentNode, BunPrecedence._Instanceof);
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunInstanceOfNode(ParentNode));
+	@Override
+	public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunInstanceOfNode(ParentNode));
 	}
 
-	@Override public String GetOperator() {
+	@Override
+	public void acceptBunModel(BunModelVisitor v) {
+		v.visitInstanceOfNode(this);
+	}
+
+	@Override
+	public String GetOperator() {
 		return "instanceof";
 	}
 

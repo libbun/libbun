@@ -48,8 +48,8 @@ public final class BunStringNode extends BunValueNode {
 		this.SourceToken = Source;
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new BunStringNode(ParentNode, this.StringValue));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new BunStringNode(ParentNode, this.StringValue));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {
 		builder.Append(LibBunSystem._QuoteString("\"", this.StringValue, "\""));

@@ -48,13 +48,13 @@ public class BunFunctionNode extends DefSymbolNode {
 		super(ParentNode, 5, symbolFlag);
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
 		@Var BunFunctionNode NewNode = new BunFunctionNode(ParentNode, this.symbolFlag);
 		NewNode.GivenType = this.GivenType;
 		NewNode.GivenName = this.GivenName;
 		NewNode.ParentFunctionNode = this.ParentFunctionNode;
 		NewNode.ReturnType = this.ReturnType;
-		return this.dupField(TypedClone, NewNode);
+		return this.dupField(typedClone, NewNode);
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

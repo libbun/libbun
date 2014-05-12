@@ -65,11 +65,11 @@ public abstract class AstNode {
 		}
 	}
 
-	protected AstNode dupField(boolean TypedClone, AstNode NewNode) {
+	protected AstNode dupField(boolean typedClone, AstNode NewNode) {
 		@Var int i = 0;
 		while(i < this.AST.length) {
 			if(this.AST[i] != null) {
-				NewNode.AST[i] = this.AST[i].dup(TypedClone, NewNode);
+				NewNode.AST[i] = this.AST[i].dup(typedClone, NewNode);
 				assert(NewNode.AST[i].getClass() == this.AST[i].getClass());
 			}
 			else {
@@ -78,7 +78,7 @@ public abstract class AstNode {
 			i = i + 1;
 		}
 		NewNode.SourceToken = this.SourceToken;
-		if(TypedClone) {
+		if(typedClone) {
 			NewNode.Type = this.Type;
 			NewNode.HasUntyped = this.HasUntyped;
 		}
@@ -88,8 +88,8 @@ public abstract class AstNode {
 		return NewNode;
 	}
 
-	//	public abstract BNode Dup(boolean TypedClone, BNode ParentNode);
-	public AstNode dup(boolean TypedClone, AstNode ParentNode) {
+	//	public abstract BNode Dup(boolean typedClone, BNode ParentNode);
+	public AstNode dup(boolean typedClone, AstNode ParentNode) {
 		throw new RuntimeException("TODO: Implement Dup method for " + this.getClass());
 	}
 

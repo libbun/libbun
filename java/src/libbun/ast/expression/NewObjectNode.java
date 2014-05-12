@@ -43,8 +43,8 @@ public final class NewObjectNode extends AbstractListNode {
 		super(ParentNode, 1);
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new NewObjectNode(ParentNode));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new NewObjectNode(ParentNode));
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

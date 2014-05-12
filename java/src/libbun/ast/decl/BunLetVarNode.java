@@ -23,10 +23,10 @@ public class BunLetVarNode extends DefSymbolNode {
 		this.GivenName = GivenName;
 	}
 
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
 		@Var BunLetVarNode NewNode = new BunLetVarNode(ParentNode, this.symbolFlag, this.GivenType, this.GivenName);
 		NewNode.NameIndex = this.NameIndex;
-		return this.dupField(TypedClone, NewNode);
+		return this.dupField(typedClone, NewNode);
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {

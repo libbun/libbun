@@ -11,8 +11,8 @@ public class DefaultValueNode extends BunValueNode {
 	public DefaultValueNode(AstNode ParentNode) {
 		super(ParentNode);
 	}
-	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
-		return this.dupField(TypedClone, new DefaultValueNode(ParentNode));
+	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+		return this.dupField(typedClone, new DefaultValueNode(ParentNode));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {
 		builder.Append("unspecified");
