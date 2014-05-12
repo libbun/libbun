@@ -1,6 +1,6 @@
 package libbun.lang.python;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.binary.BinaryOperatorNode;
 import libbun.ast.binary.BunEqualsNode;
@@ -51,15 +51,15 @@ class PythonStringLiteralTokenFunction extends BTokenFunction {
 }
 
 class PythonNotPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode UnaryNode = new BunNotNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode UnaryNode = new BunNotNode(ParentNode);
 		UnaryNode = TokenContext.MatchToken(UnaryNode, "not", BTokenContext._Required);
 		UnaryNode = TokenContext.MatchPattern(UnaryNode, UnaryOperatorNode._Recv, "$RightExpression$", BTokenContext._Required);
 		return UnaryNode;
 	}
 }
 class PythonEqualsPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunEqualsNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
@@ -68,8 +68,8 @@ class PythonEqualsPatternFunction extends BMatchFunction {
 class PythonParamPatternFunction extends BMatchFunction {
 
 	@Override
-	public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode ParamNode = new BunLetVarNode(ParentNode, BunLetVarNode._IsReadOnly, null, null);
+	public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode ParamNode = new BunLetVarNode(ParentNode, BunLetVarNode._IsReadOnly, null, null);
 		ParamNode = TokenContext.MatchPattern(ParamNode, BunLetVarNode._NameInfo, "$Name$", BTokenContext._Required);
 		return ParamNode;
 	}
@@ -77,10 +77,10 @@ class PythonParamPatternFunction extends BMatchFunction {
 }
 
 class PythonStatementPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var boolean Remembered = TokenContext.SetParseFlag(BTokenContext._AllowSkipIndent);
 		TokenContext.SetParseFlag(BTokenContext._NotAllowSkipIndent);
-		@Var BNode StmtNode = BunGrammar._DispatchPattern(ParentNode, TokenContext, null, true);
+		@Var AstNode StmtNode = BunGrammar._DispatchPattern(ParentNode, TokenContext, null, true);
 		TokenContext.SetParseFlag(Remembered);
 		return StmtNode;
 	}
@@ -88,8 +88,8 @@ class PythonStatementPatternFunction extends BMatchFunction {
 
 class PythonIfPatternFunction extends BMatchFunction{
 	@Override
-	public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode IfNode = new BunIfNode(ParentNode);
+	public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode IfNode = new BunIfNode(ParentNode);
 		IfNode = TokenContext.MatchToken(IfNode, "if", BTokenContext._Required);
 		IfNode = TokenContext.MatchPattern(IfNode, BunIfNode._Cond, "$Expression$", BTokenContext._Required, BTokenContext._AllowNewLine);
 		IfNode = TokenContext.MatchPattern(IfNode, BunIfNode._Then, "$Block$", BTokenContext._Required);
@@ -103,11 +103,11 @@ class PythonIfPatternFunction extends BMatchFunction{
 
 class PythonFunctionPatternFunction extends BMatchFunction {
 	@Override
-	public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode FuncNode = new BunFunctionNode(ParentNode, 0);
+	public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode FuncNode = new BunFunctionNode(ParentNode, 0);
 		FuncNode = TokenContext.MatchToken(FuncNode, "def", BTokenContext._Required);
 		FuncNode = TokenContext.MatchPattern(FuncNode, BunFunctionNode._NameInfo, "$Name$", BTokenContext._Optional);
-		BNode ParamNode = new BlockNode(FuncNode, null);
+		AstNode ParamNode = new BlockNode(FuncNode, null);
 		ParamNode = TokenContext.MatchNtimes(ParamNode, "(", "$Param$", ",", ")");
 		if(ParamNode.IsErrorNode()) {
 			return ParamNode;
@@ -136,8 +136,8 @@ class PythonCommentFunction extends BTokenFunction {
 
 class PythonBlockPatternFunction extends BMatchFunction {
 
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode blockNode = new BlockNode(ParentNode, ParentNode.GetGamma());
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode blockNode = new BlockNode(ParentNode, ParentNode.GetGamma());
 		@Var BToken SkipToken = TokenContext.GetToken();
 		blockNode = TokenContext.MatchToken(blockNode, ":", BTokenContext._Required);
 		if(!blockNode.IsErrorNode()) {
@@ -149,7 +149,7 @@ class PythonBlockPatternFunction extends BMatchFunction {
 					break;
 				}
 				IndentSize = Token.GetIndentSize();
-				blockNode = TokenContext.MatchPattern(blockNode, BNode._AppendIndex, "$Statement$", BTokenContext._Required);
+				blockNode = TokenContext.MatchPattern(blockNode, AstNode._AppendIndex, "$Statement$", BTokenContext._Required);
 				if(blockNode.IsErrorNode()) {
 					//FIXME: SkipError was deprecated
 					//TokenContext.SkipError(SkipToken);
@@ -166,8 +166,8 @@ class PythonBlockPatternFunction extends BMatchFunction {
 class PythonWhilePatternFunction extends BMatchFunction {
 
 	@Override
-	public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode WhileNode = new BunWhileNode(ParentNode);
+	public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode WhileNode = new BunWhileNode(ParentNode);
 		WhileNode = TokenContext.MatchToken(WhileNode, "while", BTokenContext._Required);
 		WhileNode = TokenContext.MatchPattern(WhileNode, BunWhileNode._Cond, "$Expression$", BTokenContext._Required, BTokenContext._AllowSkipIndent);
 		WhileNode = TokenContext.MatchPattern(WhileNode, BunWhileNode._Block, "$Block$", BTokenContext._Required);
@@ -179,8 +179,8 @@ class PythonWhilePatternFunction extends BMatchFunction {
 class PythonForPatternFunction extends BMatchFunction {
 
 	@Override
-	public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode ForNode = new BunForInNode(ParentNode);
+	public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode ForNode = new BunForInNode(ParentNode);
 		ForNode = TokenContext.MatchToken(ForNode, "for", BTokenContext._Required);
 		//FIXME Type check
 		ForNode = TokenContext.MatchPattern(ForNode, BunForInNode._Var, "$Expression$", BTokenContext._Required, BTokenContext._AllowSkipIndent);
@@ -195,7 +195,7 @@ class PythonForPatternFunction extends BMatchFunction {
 class PythonWithPatternFunction extends BMatchFunction {
 
 	@Override
-	public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		//FIXME
 		return null;
 	}
@@ -205,7 +205,7 @@ class PythonWithPatternFunction extends BMatchFunction {
 class PythonPassPatternFunction extends BMatchFunction {
 
 	@Override
-	public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		TokenContext.MatchToken("pass");//(null, "pass", BTokenContext._Required);
 		if(TokenContext.IsToken("pass")) {
 			TokenContext.MoveNext();

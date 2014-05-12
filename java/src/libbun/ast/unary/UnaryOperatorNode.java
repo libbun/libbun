@@ -25,13 +25,13 @@
 package libbun.ast.unary;
 
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 
-public abstract class UnaryOperatorNode extends BNode {
+public abstract class UnaryOperatorNode extends AstNode {
 	public final static int _Recv = 0;
-	public UnaryOperatorNode(BNode ParentNode) {
+	public UnaryOperatorNode(AstNode ParentNode) {
 		super(ParentNode, 1);
 	}
 
@@ -45,11 +45,11 @@ public abstract class UnaryOperatorNode extends BNode {
 
 	public abstract String GetOperator();
 
-	public final BNode RecvNode() {
+	public final AstNode RecvNode() {
 		return this.AST[UnaryOperatorNode._Recv ];
 	}
 
-	public final void setRecvNode(BNode node) {
+	public final void setRecvNode(AstNode node) {
 		this.SetNode(UnaryOperatorNode._Recv, node);
 	}
 

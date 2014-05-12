@@ -1,14 +1,14 @@
 package libbun.ast.unary;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunVisitor;
 
 public class BunComplementNode extends UnaryOperatorNode {
-	public BunComplementNode(BNode ParentNode) {
+	public BunComplementNode(AstNode ParentNode) {
 		super(ParentNode);
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunComplementNode(ParentNode));
 	}
 

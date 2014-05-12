@@ -24,7 +24,7 @@
 
 //ifdef  JAVA
 package libbun.encode.obsolete;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.decl.BunClassNode;
@@ -166,7 +166,7 @@ public class PerlGenerator extends OldSourceGenerator {
 		this.Source.OpenIndent(" {");
 		//		if(Node.HasNextVarNode()) { this.VisitVarDeclNode(Node.NextVarNode()); }
 		this.Source.Append(this.SemiColon);
-		@Var BNode blockNode = Node.blockNode();
+		@Var AstNode blockNode = Node.blockNode();
 		if(blockNode instanceof BlockNode) {
 			this.GenerateStmtListNode((BlockNode)blockNode);
 		}

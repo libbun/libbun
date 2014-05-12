@@ -24,16 +24,16 @@
 
 package libbun.ast.binary;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.lang.bun.BunPrecedence;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunVisitor;
 
 public final class BunOrNode extends BinaryOperatorNode {
-	public BunOrNode(BNode ParentNode) {
+	public BunOrNode(AstNode ParentNode) {
 		super(ParentNode, BunPrecedence._CStyleOR);
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunOrNode(ParentNode));
 	}
 

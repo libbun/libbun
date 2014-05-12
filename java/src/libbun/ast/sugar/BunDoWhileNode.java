@@ -1,6 +1,6 @@
 package libbun.ast.sugar;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
@@ -14,27 +14,27 @@ public final class BunDoWhileNode extends SyntaxSugarNode {
 	public final static int _Block = 1;
 	public final static int _Next  = 2;   // optional iteration statement
 
-	public BunDoWhileNode(BNode ParentNode) {
+	public BunDoWhileNode(AstNode ParentNode) {
 		super(ParentNode, 3);
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunDoWhileNode(ParentNode));
 	}
 
-	public BunDoWhileNode(BNode CondNode, BlockNode blockNode) {
+	public BunDoWhileNode(AstNode CondNode, BlockNode blockNode) {
 		super(null, 3);
 		this.SetNode(BunDoWhileNode._Cond, CondNode);
 		this.SetNode(BunDoWhileNode._Block, blockNode);
 		this.Type = BType.VoidType;
 	}
 
-	public final BNode CondNode() {
+	public final AstNode CondNode() {
 		return this.AST[BunDoWhileNode._Cond];
 	}
 
 	public final BlockNode blockNode() {
-		@Var BNode blockNode = this.AST[BunDoWhileNode._Block];
+		@Var AstNode blockNode = this.AST[BunDoWhileNode._Block];
 		if(blockNode instanceof BlockNode) {
 			return (BlockNode)blockNode;
 		}
@@ -46,7 +46,7 @@ public final class BunDoWhileNode extends SyntaxSugarNode {
 		return (this.AST[BunDoWhileNode._Next] != null);
 	}
 
-	public final BNode NextNode() {
+	public final AstNode NextNode() {
 		return this.AST[BunDoWhileNode._Next];
 	}
 
@@ -55,7 +55,7 @@ public final class BunDoWhileNode extends SyntaxSugarNode {
 		TypeChecker.CheckTypeAt(this, BunWhileNode._Block, BType.VoidType);
 		if(this.HasNextNode()) {
 			TypeChecker.CheckTypeAt(this, BunWhileNode._Next, BType.VoidType);
-			this.blockNode().Append(this.NextNode());
+			this.blockNode().appendNode(this.NextNode());
 		}
 		TypeChecker.ReturnTypeNode(this, BType.VoidType);
 	}
@@ -82,8 +82,8 @@ public final class BunDoWhileNode extends SyntaxSugarNode {
 				"    break;\n"    +
 				"  }\n"           +
 				"}";
-		@Var BNode ParentNode = this.ParentNode;
-		@Var BNode WhileNode = ParentNode.ParseExpression(SugarCode);
+		@Var AstNode ParentNode = this.ParentNode;
+		@Var AstNode WhileNode = ParentNode.ParseExpression(SugarCode);
 		WhileNode.ReplaceNode("Block::X", this.blockNode());
 		WhileNode.ReplaceNode("Expr::Y", this.CondNode());
 		System.out.println("WhileNode: " + WhileNode);

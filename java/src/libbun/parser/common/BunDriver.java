@@ -24,11 +24,11 @@
 
 package libbun.parser.common;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.parser.classic.BunVisitor;
 
 public abstract class BunDriver extends BunVisitor {
 
-	public abstract boolean perform(BNode bnode);
+	public abstract boolean perform(AstNode bnode);
 
 }

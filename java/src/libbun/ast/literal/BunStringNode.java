@@ -24,31 +24,31 @@
 
 package libbun.ast.literal;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.parser.common.BunToken;
-import libbun.parser.common.BunVisitor2;
+import libbun.parser.common.BunModelVisitor;
 import libbun.type.BType;
 import libbun.util.BField;
 import libbun.util.LibBunSystem;
 
 public final class BunStringNode extends BunValueNode {
 	@BField public String	StringValue;
-	public BunStringNode(BNode ParentNode, String Value) {
+	public BunStringNode(AstNode ParentNode, String Value) {
 		super(ParentNode);
 		this.Type = BType.StringType;
 		this.StringValue = Value;
 	}
-	public BunStringNode(BNode ParentNode, BunToken Source, String Value) {
+	public BunStringNode(AstNode ParentNode, BunToken Source, String Value) {
 		super(ParentNode);
 		this.Type = BType.StringType;
 		this.StringValue = Value;
 		this.SourceToken = Source;
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunStringNode(ParentNode, this.StringValue));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {
@@ -61,7 +61,7 @@ public final class BunStringNode extends BunValueNode {
 	}
 
 	@Override
-	public void accept2(BunVisitor2 visitor) {
+	public void acceptBunModel(BunModelVisitor visitor) {
 		visitor.visitStringNode(this);
 	}
 

@@ -1,6 +1,6 @@
 package libbun.ast.sugar;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
@@ -13,24 +13,24 @@ public final class BunForInNode extends SyntaxSugarNode {
 	public final static int _List  = 1;
 	public final static int _Block = 2;
 
-	public BunForInNode(BNode ParentNode) {
+	public BunForInNode(AstNode ParentNode) {
 		super(ParentNode, 3);
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunForInNode(ParentNode));
 	}
 
-	public final BNode VarNode() {
+	public final AstNode VarNode() {
 		return this.AST[BunForInNode._Var];
 	}
 
-	public final BNode ListNode() {
+	public final AstNode ListNode() {
 		return this.AST[BunForInNode._List];
 	}
 
 	public final BlockNode blockNode() {
-		@Var BNode blockNode = this.AST[BunForInNode._Block];
+		@Var AstNode blockNode = this.AST[BunForInNode._Block];
 		if(blockNode instanceof BlockNode) {
 			return (BlockNode)blockNode;
 		}

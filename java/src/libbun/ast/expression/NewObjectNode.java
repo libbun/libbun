@@ -25,7 +25,7 @@
 package libbun.ast.expression;
 
 import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunTypeChecker;
 import libbun.parser.classic.LibBunVisitor;
@@ -39,11 +39,11 @@ public final class NewObjectNode extends AbstractListNode {
 
 	@BField public BType GivenType = null;
 
-	public NewObjectNode(BNode ParentNode) {
+	public NewObjectNode(AstNode ParentNode) {
 		super(ParentNode, 1);
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new NewObjectNode(ParentNode));
 	}
 
@@ -71,10 +71,10 @@ public final class NewObjectNode extends AbstractListNode {
 
 	public final AbstractListNode ToFuncCallNode(LibBunTypeChecker Gamma, BFunc Func) {
 		@Var AbstractListNode FuncNode = Gamma.CreateDefinedFuncCallNode(this.ParentNode, this.SourceToken, Func);
-		FuncNode.Append(this);
+		FuncNode.appendNode(this);
 		@Var int i = 0;
 		while(i < this.GetListSize()) {
-			FuncNode.Append(this.GetListAt(i));
+			FuncNode.appendNode(this.GetListAt(i));
 			i = i + 1;
 		}
 		this.Type = this.ClassType();

@@ -24,23 +24,23 @@
 
 package libbun.ast.statement;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.util.Var;
 
-public final class BunTryNode extends BNode {
+public final class BunTryNode extends AstNode {
 	public final static int _Try      = 0;
 	public static final int _NameInfo = 1;
 	public final static int _Catch    = 2;
 	public final static int _Finally  = 3;
 
-	public BunTryNode(BNode ParentNode) {
+	public BunTryNode(AstNode ParentNode) {
 		super(ParentNode, 4);
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunTryNode(ParentNode));
 	}
 
@@ -49,7 +49,7 @@ public final class BunTryNode extends BNode {
 	}
 
 	public final BlockNode TryblockNode() {
-		@Var BNode blockNode = this.AST[BunTryNode._Try ];
+		@Var AstNode blockNode = this.AST[BunTryNode._Try ];
 		if(blockNode instanceof BlockNode) {
 			return (BlockNode)blockNode;
 		}
@@ -66,7 +66,7 @@ public final class BunTryNode extends BNode {
 	}
 
 	public final BlockNode CatchblockNode() {
-		@Var BNode blockNode = this.AST[BunTryNode._Catch ];
+		@Var AstNode blockNode = this.AST[BunTryNode._Catch ];
 		if(blockNode instanceof BlockNode) {
 			return (BlockNode)blockNode;
 		}
@@ -79,7 +79,7 @@ public final class BunTryNode extends BNode {
 	}
 
 	public final BlockNode FinallyblockNode() {
-		@Var BNode blockNode = this.AST[BunTryNode._Finally ];
+		@Var AstNode blockNode = this.AST[BunTryNode._Finally ];
 		if(blockNode instanceof BlockNode) {
 			return (BlockNode)blockNode;
 		}

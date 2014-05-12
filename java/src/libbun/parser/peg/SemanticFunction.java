@@ -1,6 +1,6 @@
 package libbun.parser.peg;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.parser.common.BunSource;
 import libbun.util.BField;
 
@@ -12,6 +12,6 @@ public abstract class SemanticFunction {
 	@Override public String toString() {
 		return this.FUNCTION;
 	}
-	public abstract BNode Invoke(BunSource source, BNode parentNode, PegObject pegObject);
+	public abstract AstNode Invoke(BunSource source, AstNode parentNode, PegObject pegObject);
 }
 

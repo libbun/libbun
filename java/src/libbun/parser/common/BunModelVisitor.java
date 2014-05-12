@@ -39,8 +39,7 @@ import libbun.ast.statement.BunWhileNode;
 import libbun.ast.unary.BunCastNode;
 import libbun.ast.unary.UnaryOperatorNode;
 
-public abstract class BunVisitor2 {
-
+public abstract class BunModelVisitor {
 
 	public abstract void visitDefaultValueNode(DefaultValueNode node);
 	public abstract void visitNullNode(BunNullNode node);
@@ -81,7 +80,7 @@ public abstract class BunVisitor2 {
 	//	public abstract void visitAssignNode(AssignNode node);
 	//	public abstract void visitSetFieldNode(SetFieldNode node);
 
-	public abstract void visitblockNode(BlockNode node);
+	public abstract void visitBlockNode(BlockNode node);
 	//	public abstract void visitVarblockNode(BunVarBlockNode node);
 	public abstract void visitIfNode(BunIfNode node);
 	public abstract void visitWhileNode(BunWhileNode node);

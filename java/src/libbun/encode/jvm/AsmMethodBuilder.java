@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.type.BFuncType;
 import libbun.type.BType;
 
@@ -60,7 +60,7 @@ class AsmMethodBuilder extends MethodNode {
 		}
 	}
 
-	void SetLineNumber(BNode Node) {
+	void SetLineNumber(AstNode Node) {
 		if(Node != null && Node.SourceToken != null) {
 			this.SetLineNumber(Node.SourceToken.GetLineNumber());
 		}
@@ -213,7 +213,7 @@ class AsmMethodBuilder extends MethodNode {
 		}
 	}
 
-	void CheckParamCast(Class<?> TargetClass, BNode Node) {
+	void CheckParamCast(Class<?> TargetClass, AstNode Node) {
 		Class<?> SourceClass = this.Generator.GetJavaClass(Node.Type);
 		if(TargetClass != SourceClass) {
 			this.Generator.Debug("C2="+Node + ": " + Node.Type);
@@ -221,7 +221,7 @@ class AsmMethodBuilder extends MethodNode {
 		}
 	}
 
-	void CheckReturnCast(BNode Node, Class<?> SouceClass) {
+	void CheckReturnCast(AstNode Node, Class<?> SouceClass) {
 		Class<?> TargetClass = this.Generator.GetJavaClass(Node.Type);
 		if(TargetClass != SouceClass) {
 			this.Generator.Debug("C1 "+Node + ": " + Node.Type);
@@ -229,21 +229,21 @@ class AsmMethodBuilder extends MethodNode {
 		}
 	}
 
-	void PushNode(Class<?> TargetClass, BNode Node) {
+	void PushNode(Class<?> TargetClass, AstNode Node) {
 		Node.Accept(this.Generator);
 		if(TargetClass != null) {
 			this.CheckParamCast(TargetClass, Node);
 		}
 	}
 
-	void ApplyStaticMethod(BNode Node, Method sMethod) {
+	void ApplyStaticMethod(AstNode Node, Method sMethod) {
 		String owner = Type.getInternalName(sMethod.getDeclaringClass());
 		this.SetLineNumber(Node);
 		this.visitMethodInsn(INVOKESTATIC, owner, sMethod.getName(), Type.getMethodDescriptor(sMethod));
 		this.CheckReturnCast(Node, sMethod.getReturnType());
 	}
 
-	void ApplyStaticMethod(BNode Node, Method sMethod, BNode[] Nodes) {
+	void ApplyStaticMethod(AstNode Node, Method sMethod, AstNode[] Nodes) {
 		Class<?>[] P = sMethod.getParameterTypes();
 		for(int i = 0; i < P.length; i++) {
 			this.PushNode(P[i], Nodes[i]);
@@ -251,7 +251,7 @@ class AsmMethodBuilder extends MethodNode {
 		this.ApplyStaticMethod(Node, sMethod);
 	}
 
-	void ApplyStaticMethod(BNode Node, Method sMethod, AbstractListNode ListNode) {
+	void ApplyStaticMethod(AstNode Node, Method sMethod, AbstractListNode ListNode) {
 		Class<?>[] P = sMethod.getParameterTypes();
 		for(int i = 0; i < P.length; i++) {
 			this.PushNode(P[i], ListNode.GetListAt(i));
@@ -259,7 +259,7 @@ class AsmMethodBuilder extends MethodNode {
 		this.ApplyStaticMethod(Node, sMethod);
 	}
 
-	void ApplyFuncName(BNode Node, String FuncName, BFuncType FuncType, AbstractListNode ListNode) {
+	void ApplyFuncName(AstNode Node, String FuncName, BFuncType FuncType, AbstractListNode ListNode) {
 		if(ListNode != null) {
 			for(int i = 0; i < ListNode.GetListSize(); i++) {
 				this.PushNode(null, ListNode.GetListAt(i));
@@ -277,7 +277,7 @@ class AsmMethodBuilder extends MethodNode {
 		}
 	}
 
-	void ApplyFuncObject(BNode Node, Class<?> FuncClass, BNode FuncNode, BFuncType FuncType, AbstractListNode ListNode) {
+	void ApplyFuncObject(AstNode Node, Class<?> FuncClass, AstNode FuncNode, BFuncType FuncType, AbstractListNode ListNode) {
 		this.PushNode(FuncClass, FuncNode);
 		for(int i = 0; i < ListNode.GetListSize(); i++) {
 			this.PushNode(null, ListNode.GetListAt(i));
@@ -286,8 +286,8 @@ class AsmMethodBuilder extends MethodNode {
 		this.visitMethodInsn(INVOKEVIRTUAL, FuncClass, "Invoke", FuncType);
 	}
 
-	void PushNodeListAsArray(Class<?> T, int StartIdx, AbstractListNode NodeList) {
-		this.PushInt(NodeList.GetListSize() - StartIdx);
+	void PushNodeListAsArray(Class<?> T, int startIndex, AstNode NodeList) {
+		this.PushInt(NodeList.size() - startIndex);
 		int StoreOpcode = -1;
 		if(T == boolean.class) {
 			this.visitIntInsn(Opcodes.NEWARRAY, Opcodes.T_BOOLEAN);
@@ -305,10 +305,10 @@ class AsmMethodBuilder extends MethodNode {
 			this.visitTypeInsn(ANEWARRAY, Type.getInternalName(T));
 			StoreOpcode = AASTORE;
 		}
-		for(int i = StartIdx; i < NodeList.GetListSize() ; i++) {
+		for(int i = startIndex; i < NodeList.size() ; i++) {
 			this.visitInsn(DUP);
-			this.PushInt(i - StartIdx);
-			this.PushNode(T, NodeList.GetListAt(i));
+			this.PushInt(i - startIndex);
+			this.PushNode(T, NodeList.get(i));
 			this.visitInsn(StoreOpcode);
 		}
 	}

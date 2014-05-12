@@ -1,6 +1,6 @@
 package libbun.parser.ssa;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.LocalDefinedNode;
 import libbun.ast.expression.GetNameNode;
@@ -9,7 +9,7 @@ import libbun.encode.LibBunGenerator;
 import libbun.util.Var;
 
 public class PHINode extends LocalDefinedNode {
-	public CommonArray<BNode>      Args;
+	public CommonArray<AstNode>      Args;
 	public CommonArray<BlockNode> Blocks;
 	public Variable VarRef;
 	public Variable BackupValue;
@@ -19,12 +19,12 @@ public class PHINode extends LocalDefinedNode {
 		super(null, 0);
 		this.BackupValue = BackupValue;
 		this.VariableName = VariableName;
-		this.Args = new CommonArray<BNode>(new BNode[0]);
+		this.Args = new CommonArray<AstNode>(new AstNode[0]);
 		this.Blocks = new CommonArray<BlockNode>(new BlockNode[0]);
 		this.Type = NodeLib.GetType(BackupValue.Node);
 	}
 
-	public void AddIncoming(int Index, BlockNode block, BNode node) {
+	public void AddIncoming(int Index, BlockNode block, AstNode node) {
 		while(Index + 1 > this.Args.size()) {
 			this.Args.add(this.BackupValue.Node);
 			this.Blocks.add(null);
@@ -42,7 +42,7 @@ public class PHINode extends LocalDefinedNode {
 		@Var String Txt = "PHI[";
 		@Var int i = 0;
 		while(i < this.Args.size()) {
-			BNode Node = CommonArray.GetIndex(this.Args, i);
+			AstNode Node = CommonArray.GetIndex(this.Args, i);
 			if (i != 0) {
 				Txt += ", ";
 			}
@@ -61,7 +61,7 @@ public class PHINode extends LocalDefinedNode {
 		return this.VariableName;
 	}
 
-	public BNode GetArgument(int Index) {
+	public AstNode GetArgument(int Index) {
 		return CommonArray.GetIndex(this.Args, Index);
 	}
 

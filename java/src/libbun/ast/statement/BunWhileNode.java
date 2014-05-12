@@ -24,23 +24,23 @@
 
 package libbun.ast.statement;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BType;
 import libbun.util.Var;
 
-public final class BunWhileNode extends BNode {
+public final class BunWhileNode extends AstNode {
 	public final static int _Cond  = 0;
 	public final static int _Block = 1;
 	public final static int _Next  = 2;   // optional iteration statement
 
-	public BunWhileNode(BNode ParentNode) {
+	public BunWhileNode(AstNode ParentNode) {
 		super(ParentNode, 3);
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunWhileNode(ParentNode));
 	}
 
@@ -48,7 +48,7 @@ public final class BunWhileNode extends BNode {
 		this.bunfyAST(builder, "(while", 0, ")");
 	}
 
-	public BunWhileNode(BNode CondNode, BlockNode blockNode) {
+	public BunWhileNode(AstNode CondNode, BlockNode blockNode) {
 		super(null, 3);
 		this.SetNode(BunWhileNode._Cond, CondNode);
 		this.SetNode(BunWhileNode._Block, blockNode);
@@ -59,12 +59,12 @@ public final class BunWhileNode extends BNode {
 		Visitor.VisitWhileNode(this);
 	}
 
-	public final BNode CondNode() {
+	public final AstNode CondNode() {
 		return this.AST[BunWhileNode._Cond];
 	}
 
 	public final BlockNode blockNode() {
-		@Var BNode blockNode = this.AST[BunWhileNode._Block];
+		@Var AstNode blockNode = this.AST[BunWhileNode._Block];
 		if(blockNode instanceof BlockNode) {
 			return (BlockNode)blockNode;
 		}
@@ -76,7 +76,7 @@ public final class BunWhileNode extends BNode {
 		return (this.AST[BunWhileNode._Next] != null);
 	}
 
-	public final BNode NextNode() {
+	public final AstNode NextNode() {
 		return this.AST[BunWhileNode._Next];
 	}
 

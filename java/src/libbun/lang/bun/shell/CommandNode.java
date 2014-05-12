@@ -1,6 +1,6 @@
 package libbun.lang.bun.shell;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
@@ -15,23 +15,23 @@ import libbun.util.BField;
 import libbun.util.Var;
 
 public class CommandNode extends SyntaxSugarNode {
-	@BField private final CommonArray<BNode> ArgList;
+	@BField private final CommonArray<AstNode> ArgList;
 	@BField private BType RetType = BType.VarType;
 	@BField public CommandNode PipedNextNode;
 
-	public CommandNode(BNode ParentNode, BToken Token, String Command) {
+	public CommandNode(AstNode ParentNode, BToken Token, String Command) {
 		super(ParentNode, 0);
 		this.SourceToken = Token;
 		this.PipedNextNode = null;
-		this.ArgList = new CommonArray<BNode>(new BNode[]{});
+		this.ArgList = new CommonArray<AstNode>(new AstNode[]{});
 		this.AppendArgNode(new ArgumentNode(ParentNode, Command));
 	}
 
-	public void AppendArgNode(BNode Node) {
+	public void AppendArgNode(AstNode Node) {
 		this.ArgList.add(this.SetChild(Node, true));
 	}
 
-	public BNode AppendPipedNextNode(CommandNode Node) {
+	public AstNode AppendPipedNextNode(CommandNode Node) {
 		@Var CommandNode CurrentNode = this;
 		while(CurrentNode.PipedNextNode != null) {
 			CurrentNode = CurrentNode.PipedNextNode;
@@ -44,11 +44,11 @@ public class CommandNode extends SyntaxSugarNode {
 		return this.ArgList.size();
 	}
 
-	public void SetArgAt(int Index, BNode ArgNode) {
+	public void SetArgAt(int Index, AstNode ArgNode) {
 		CommonArray.SetIndex(this.ArgList, Index, ArgNode);
 	}
 
-	public BNode GetArgAt(int Index) {
+	public AstNode GetArgAt(int Index) {
 		return CommonArray.GetIndex(this.ArgList, Index);
 	}
 
@@ -89,14 +89,14 @@ public class CommandNode extends SyntaxSugarNode {
 			@Var int size = CurrentNode.GetArgSize();
 			@Var int i = 0;
 			while(i < size) {
-				SubArrayNode.Append(CurrentNode.GetArgAt(i));
+				SubArrayNode.appendNode(CurrentNode.GetArgAt(i));
 				i = i + 1;
 			}
-			ArrayNode.Append(SubArrayNode);
+			ArrayNode.appendNode(SubArrayNode);
 			CurrentNode = CurrentNode.PipedNextNode;
 		}
 		@Var FuncCallNode Node = new FuncCallNode(this.ParentNode, new GetNameNode(this.ParentNode, null, FuncName));
-		Node.Append(ArrayNode);
+		Node.appendNode(ArrayNode);
 		return new DesugarNode(this, Node);
 	}
 }

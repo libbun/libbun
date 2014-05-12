@@ -1,6 +1,6 @@
 package libbun.encode.playground;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
@@ -99,14 +99,14 @@ public class BunGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitArrayLiteralNode(BunArrayNode Node) {
-		this.GenerateListNode("[", Node, ",", "]");
+		this.GenerateListNode("[", Node, 0, ",", "]");
 	}
 
 	@Override public void VisitMapLiteralNode(BunMapNode Node) {
 		this.Source.Append("{");
 		@Var int i = 0;
 		while(i < Node.GetListSize()) {
-			@Var BunMapEntryNode Entry = Node.GetMapEntryNode(i);
+			@Var BunMapEntryNode Entry = Node.getMapEntryNode(i);
 			this.GenerateExpression("", Entry.KeyNode(), ": ", Entry.ValueNode(), ",");
 			i = i + 1;
 		}
@@ -294,7 +294,7 @@ public class BunGenerator extends LibBunSourceGenerator {
 
 
 	@Override
-	protected void GenerateStatementEnd(BNode Node) {
+	protected void GenerateStatementEnd(AstNode Node) {
 		if(Node instanceof BunIfNode || Node instanceof BunWhileNode || Node instanceof BunTryNode || Node instanceof BunFunctionNode || Node instanceof BunClassNode || Node instanceof BlockNode) {
 			return;
 		}
@@ -306,13 +306,13 @@ public class BunGenerator extends LibBunSourceGenerator {
 	protected void GenerateStmtListNode(BlockNode Node) {
 		@Var int i = 0;
 		while (i < Node.GetListSize()) {
-			@Var BNode SubNode = Node.GetListAt(i);
+			@Var AstNode SubNode = Node.GetListAt(i);
 			this.GenerateStatement(SubNode);
 			i = i + 1;
 		}
 	}
 
-	@Override public void VisitblockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(BlockNode Node) {
 		this.Source.AppendWhiteSpace();
 		this.Source.OpenIndent("{");
 		this.GenerateStmtListNode(Node);
@@ -351,7 +351,7 @@ public class BunGenerator extends LibBunSourceGenerator {
 	@Override public void VisitWhileNode(BunWhileNode Node) {
 		this.GenerateExpression("while (", Node.CondNode(), ")");
 		if(Node.HasNextNode()) {
-			Node.blockNode().Append(Node.NextNode());
+			Node.blockNode().appendNode(Node.NextNode());
 		}
 		this.GenerateExpression(Node.blockNode());
 	}
@@ -439,7 +439,7 @@ public class BunGenerator extends LibBunSourceGenerator {
 
 	// Generation of specialized syntax sugar nodes ==========================
 
-	@Override protected boolean LocallyGenerated(BNode Node) {
+	@Override protected boolean LocallyGenerated(AstNode Node) {
 		if(Node instanceof StringInterpolationNode) {
 			return this.VisitStringInterpolationNode((StringInterpolationNode)Node);
 		}
@@ -449,7 +449,7 @@ public class BunGenerator extends LibBunSourceGenerator {
 	protected boolean VisitStringInterpolationNode(StringInterpolationNode Node) {
 		@Var int i = 0;
 		this.Source.Append("\"");
-		while(i < Node.GetAstSize()) {
+		while(i < Node.size()) {
 			if(i % 2 == 0) {
 				this.Source.Append(LibBunSystem._QuoteString("", Node.GetStringLiteralAt(i), ""));
 			}

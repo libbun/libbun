@@ -1,6 +1,6 @@
 package libbun.ast.decl;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.literal.DefaultValueNode;
 import libbun.encode.LibBunGenerator;
 import libbun.type.BType;
@@ -8,7 +8,7 @@ import libbun.util.BField;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
-public abstract class DefSymbolNode extends BNode {
+public abstract class DefSymbolNode extends AstNode {
 
 	public static final int _NameInfo = 0;    // SymbolNode
 	public static final int _TypeInfo = 1;    // TypeNode
@@ -24,7 +24,7 @@ public abstract class DefSymbolNode extends BNode {
 	@BField public BType   GivenType = null;
 	@BField public int     NameIndex = 0;
 
-	public DefSymbolNode(BNode parentNode, int size, int symbolFlag) {
+	public DefSymbolNode(AstNode parentNode, int size, int symbolFlag) {
 		super(parentNode, size);
 		this.symbolFlag = symbolFlag;
 	}
@@ -84,7 +84,7 @@ public abstract class DefSymbolNode extends BNode {
 		return Generator.NameUniqueSymbol(Name, this.NameIndex);
 	}
 
-	public final BNode InitValueNode() {
+	public final AstNode InitValueNode() {
 		if(this.AST[BunLetVarNode._InitValue] == null) {
 			this.SetNode(BunLetVarNode._InitValue, new DefaultValueNode(this));
 		}

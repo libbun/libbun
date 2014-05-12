@@ -1,12 +1,12 @@
 package libbun.ast.decl;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.parser.classic.LibBunGamma;
 import libbun.parser.classic.LibBunVisitor;
 
-public abstract class TopLevelNode extends BNode {
+public abstract class TopLevelNode extends AstNode {
 
-	public TopLevelNode(BNode ParentNode, int Size) {
+	public TopLevelNode(AstNode ParentNode, int Size) {
 		super(ParentNode, Size);
 	}
 

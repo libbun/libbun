@@ -1,15 +1,15 @@
 package libbun.ast.binary;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.lang.bun.BunPrecedence;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunVisitor;
 
 public class BunDivNode extends ArithmeticOperatorNode {
-	public BunDivNode(BNode ParentNode) {
+	public BunDivNode(AstNode ParentNode) {
 		super(ParentNode, BunPrecedence._CStyleMUL);
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunDivNode(ParentNode));
 	}
 	@Override public final String GetOperator() {

@@ -1,6 +1,6 @@
 package libbun.parser.common;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.GroupNode;
@@ -257,7 +257,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 	public void VisitGroupNode(GroupNode node) {
 		BType contextType = this.GetContextType();
 		this.CheckTypeAt(node, GroupNode._Expr, contextType);
-		this.ReturnTypeNode(node, node.GetAstType(GroupNode._Expr));
+		this.ReturnTypeNode(node, node.getTypeAt(GroupNode._Expr));
 	}
 
 	@Override
@@ -309,7 +309,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 			}
 		}
 		this.CheckTypeAt(node, FuncCallNode._Functor, BType.VarType);
-		@Var BType FuncNodeType = node.GetAstType(FuncCallNode._Functor);
+		@Var BType FuncNodeType = node.getTypeAt(FuncCallNode._Functor);
 		if(FuncNodeType instanceof BFuncType) {
 			this.checkTypeByFuncType(node, 1, (BFuncType)FuncNodeType);
 			this.ReturnNode(node);
@@ -355,10 +355,10 @@ public class TypeCheckerVisitor extends TypeChecker {
 
 
 	@Override
-	public void VisitblockNode(BlockNode node) {
-		for(int i = 0; i < node.GetAstSize(); i++) {
-			@Var BNode subNode = node.AST[i];
-			@Var BNode typedNode = this.CheckType(subNode, BType.VoidType);
+	public void VisitBlockNode(BlockNode node) {
+		for(int i = 0; i < node.size(); i++) {
+			@Var AstNode subNode = node.AST[i];
+			@Var AstNode typedNode = this.CheckType(subNode, BType.VoidType);
 			while(subNode != node.AST[i]) {  // detecting replacement
 				subNode = node.AST[i];
 				typedNode = this.CheckType(subNode, BType.VoidType);
@@ -473,11 +473,11 @@ public class TypeCheckerVisitor extends TypeChecker {
 	@Override
 	public void VisitLetNode(BunLetVarNode node) {
 
-		if(node.IsTopLevel()) {
+		if(node.isTopLevel()) {
 			@Var BType DeclType = node.DeclType();
 			this.CheckTypeAt(node, BunLetVarNode._InitValue, DeclType);
 			@Var BType ConstType = node.InitValueNode().Type;
-			node.SetAstType(BunLetVarNode._NameInfo, ConstType);
+			node.setTypeAt(BunLetVarNode._NameInfo, ConstType);
 			if(DeclType.IsVarType()) {
 				node.SetDeclType(ConstType);
 			}
@@ -486,7 +486,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 		}
 		else {
 			@Var BType ContextType = this.GetContextType();
-			@Var BNode blockNode = new BunVarBlockNode(node.ParentNode, node, node.GetScopeblockNode());
+			@Var AstNode blockNode = new BunVarBlockNode(node.ParentNode, node, node.GetScopeblockNode());
 			blockNode = this.CheckType(blockNode, ContextType);
 			this.ReturnNode(blockNode);
 		}
@@ -494,7 +494,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 
 	@Override public void VisitFunctionNode(BunFunctionNode node) {
 		if(!BNodeUtils._HasFunctionBreak(node.blockNode())) {
-			node.blockNode().SetNode(BNode._AppendIndex, new BunReturnNode(node));
+			node.blockNode().SetNode(AstNode._AppendIndex, new BunReturnNode(node));
 		}
 		@Var SymbolTable blockTable = node.blockNode().getBlockSymbolTable();
 		this.pushFunctionStack(node);
@@ -520,7 +520,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 		this.ReturnTypeNode(node, node.GetFuncType());
 	}
 
-	private BType newVarType(BType type, BNode node) {
+	private BType newVarType(BType type, AstNode node) {
 		return type;
 	}
 

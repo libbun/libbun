@@ -24,7 +24,7 @@
 
 
 package libbun.lang.bun;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.EmptyNode;
 import libbun.ast.GroupNode;
@@ -275,27 +275,27 @@ class StringLiteralTokenFunction extends BTokenFunction {
 // Syntax Pattern
 
 class NullPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		TokenContext.GetToken(BTokenContext._MoveNext);
 		return new BunNullNode(ParentNode);
 	}
 }
 
 class TruePatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		return new BunBooleanNode(ParentNode, TokenContext.GetToken(BTokenContext._MoveNext), true);
 	}
 }
 
 class FalsePatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		return new BunBooleanNode(ParentNode, TokenContext.GetToken(BTokenContext._MoveNext), false);
 	}
 }
 
 class BunNotPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode UnaryNode = new BunNotNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode UnaryNode = new BunNotNode(ParentNode);
 		UnaryNode = TokenContext.MatchToken(UnaryNode, "!", BTokenContext._Required);
 		UnaryNode = TokenContext.MatchPattern(UnaryNode, UnaryOperatorNode._Recv, "$RightExpression$", BTokenContext._Required);
 		return UnaryNode;
@@ -303,169 +303,169 @@ class BunNotPatternFunction extends BMatchFunction {
 }
 
 class BunPlusPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode UnaryNode = new BunPlusNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode UnaryNode = new BunPlusNode(ParentNode);
 		UnaryNode = TokenContext.MatchToken(UnaryNode, "+", BTokenContext._Required);
 		return TokenContext.MatchPattern(UnaryNode, UnaryOperatorNode._Recv, "$RightExpression$", BTokenContext._Required);
 	}
 }
 class BunMinusPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode UnaryNode = new BunMinusNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode UnaryNode = new BunMinusNode(ParentNode);
 		UnaryNode = TokenContext.MatchToken(UnaryNode, "-", BTokenContext._Required);
 		return TokenContext.MatchPattern(UnaryNode, UnaryOperatorNode._Recv, "$RightExpression$", BTokenContext._Required);
 	}
 }
 class BunComplementPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode UnaryNode = new BunComplementNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode UnaryNode = new BunComplementNode(ParentNode);
 		UnaryNode = TokenContext.MatchToken(UnaryNode, "~", BTokenContext._Required);
 		return TokenContext.MatchPattern(UnaryNode, UnaryOperatorNode._Recv, "$RightExpression$", BTokenContext._Required);
 	}
 }
 
 class BunAndPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunAndNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class BunOrPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunOrNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class BunAddPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunAddNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class BunSubPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunSubNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class BunMulPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunMulNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class BunDivPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunDivNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class BunModPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunModNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class BunBitwiseAndPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunBitwiseAndNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class BunBitwiseOrPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunBitwiseOrNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class BunBitwiseXorPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunBitwiseXorNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class BunLeftShiftPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunLeftShiftNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class BunRightShiftPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunRightShiftNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class BunEqualsPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunEqualsNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class BunNotEqualsPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunNotEqualsNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class BunLessThanPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunLessThanNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class BunLessThanEqualsPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunLessThanEqualsNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class BunGreaterThanPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunGreaterThanNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class BunGreaterThanEqualsPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunGreaterThanEqualsNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class InstanceOfPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new BunInstanceOfNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext, "$OpenType$");
 	}
 }
 
 class AssignPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BinaryOperatorNode BinaryNode = new AssignNode(ParentNode);
 		return BinaryNode.SetParsedNode(ParentNode, LeftNode, BinaryNode.GetOperator(), TokenContext);
 	}
 }
 
 class StringLiteralPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
 		return new BunStringNode(ParentNode, Token, LibBunSystem._UnquoteString(Token.GetText()));
 	}
@@ -489,27 +489,27 @@ class StringInterpolationTokenFunction extends BTokenFunction {
 
 class StringInterpolationPatternFunction extends BMatchFunction {
 	public final static BTokenFunction StringInterpolationToken = new StringInterpolationTokenFunction();
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var StringInterpolationNode FormatNode = new StringInterpolationNode(ParentNode);
 		@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
 		TokenContext = TokenContext.SubContext(Token.startIndex + 1, Token.endIndex - 1);
 		while(true) {
 			@Var BToken SubToken = TokenContext.ParseTokenBy(StringInterpolationToken);
 			if(SubToken == null) {
-				FormatNode.Append(new BunStringNode(FormatNode, Token, ""));
+				FormatNode.appendNode(new BunStringNode(FormatNode, Token, ""));
 				break;
 			}
 			if(SubToken.EndsWith("${")) {
 				SubToken.endIndex = SubToken.endIndex - 2;
 				if(SubToken.size() == 0) {
-					FormatNode.Append(new BunStringNode(FormatNode, Token, ""));
+					FormatNode.appendNode(new BunStringNode(FormatNode, Token, ""));
 				}
 				else {
-					FormatNode.Append(new BunStringNode(FormatNode, SubToken, LibBunSystem._UnquoteString(SubToken.GetText())));
+					FormatNode.appendNode(new BunStringNode(FormatNode, SubToken, LibBunSystem._UnquoteString(SubToken.GetText())));
 				}
 				//				SubToken = TokenContext.GetToken();
 				//System.out.println("#before: ###" + SubToken.GetText()+"###");
-				@Var BNode SubNode = TokenContext.ParsePattern(FormatNode, "$Expression$", BTokenContext._Required);
+				@Var AstNode SubNode = TokenContext.ParsePattern(FormatNode, "$Expression$", BTokenContext._Required);
 				if(SubNode.IsErrorNode()) {
 					return SubNode;
 				}
@@ -519,10 +519,10 @@ class StringInterpolationPatternFunction extends BMatchFunction {
 				if(!SubToken.EqualsText('}')) {
 					return new ErrorNode(ParentNode, SubToken, "syntax error in string interpolation");
 				}
-				FormatNode.Append(SubNode);
+				FormatNode.appendNode(SubNode);
 			}
 			else {
-				FormatNode.Append(new BunStringNode(FormatNode, SubToken, LibBunSystem._UnquoteString(SubToken.GetText())));
+				FormatNode.appendNode(new BunStringNode(FormatNode, SubToken, LibBunSystem._UnquoteString(SubToken.GetText())));
 				break;
 			}
 		}
@@ -532,25 +532,25 @@ class StringInterpolationPatternFunction extends BMatchFunction {
 
 
 class IntLiteralPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
-		BNode node = new BunIntNode(ParentNode, LibBunSystem._ParseInt(Token.GetText()));
+		AstNode node = new BunIntNode(ParentNode, LibBunSystem._ParseInt(Token.GetText()));
 		node.SourceToken = Token;
 		return node;
 	}
 }
 
 class FloatLiteralPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
-		BNode node = new BunFloatNode(ParentNode, LibBunSystem._ParseFloat(Token.GetText()));
+		AstNode node = new BunFloatNode(ParentNode, LibBunSystem._ParseFloat(Token.GetText()));
 		node.SourceToken = Token;
 		return node;
 	}
 }
 
 class DefinedTypePatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
 		@Var BType Type = ParentNode.GetGamma().GetType(Token.GetText(), Token, false/*IsCreation*/);
 		if(Type != null) {
@@ -562,7 +562,7 @@ class DefinedTypePatternFunction extends BMatchFunction {
 }
 
 class OpenTypePatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken MaybeToken   = null;
 		@Var BToken MutableToken = null;
 		if(TokenContext.IsToken("maybe")) {
@@ -575,7 +575,7 @@ class OpenTypePatternFunction extends BMatchFunction {
 		@Var BType Type = ParentNode.GetGamma().GetType(Token.GetText(), Token, true/*IsCreation*/);
 		if(Type != null) {
 			@Var BunTypeNode TypeNode = new BunTypeNode(ParentNode, Token, Type);
-			@Var BNode Node = TokenContext.ParsePatternAfter(ParentNode, TypeNode, "$TypeRight$", BTokenContext._Optional);
+			@Var AstNode Node = TokenContext.ParsePatternAfter(ParentNode, TypeNode, "$TypeRight$", BTokenContext._Optional);
 			if(Node instanceof BunTypeNode) {
 				@Var LibBunTypeChecker Gamma = ParentNode.GetGamma().Generator.TypeChecker;
 				if(MutableToken != null) {
@@ -592,7 +592,7 @@ class OpenTypePatternFunction extends BMatchFunction {
 }
 
 class RightTypePatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftTypeNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftTypeNode) {
 		@Var BToken SourceToken = TokenContext.GetToken();
 		if(LeftTypeNode.Type.GetParamSize() > 0) {
 			if(TokenContext.MatchToken("<")) {  // Generics
@@ -621,7 +621,7 @@ class RightTypePatternFunction extends BMatchFunction {
 }
 
 class TypeAnnotationPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		if(TokenContext.MatchToken(":")) {
 			return TokenContext.ParsePattern(ParentNode, "$OpenType$", BTokenContext._Required);
 		}
@@ -630,8 +630,8 @@ class TypeAnnotationPatternFunction extends BMatchFunction {
 }
 
 class GetFieldPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode GetterNode = new GetFieldNode(ParentNode, LeftNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode GetterNode = new GetFieldNode(ParentNode, LeftNode);
 		GetterNode = TokenContext.MatchToken(GetterNode, ".", BTokenContext._Required);
 		GetterNode = TokenContext.MatchPattern(GetterNode, GetFieldNode._NameInfo, "$Name$", BTokenContext._Required);
 		return GetterNode;
@@ -639,8 +639,8 @@ class GetFieldPatternFunction extends BMatchFunction {
 }
 
 class MethodCallPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode Node = new MethodCallNode(ParentNode, LeftNode, null);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode Node = new MethodCallNode(ParentNode, LeftNode, null);
 		Node = TokenContext.MatchToken(Node, ".", BTokenContext._Required);
 		Node = TokenContext.MatchPattern(Node, MethodCallNode._NameInfo, "$Name$", BTokenContext._Required);
 		Node = TokenContext.MatchNtimes(Node, "(", "$Expression$", ",", ")");
@@ -649,8 +649,8 @@ class MethodCallPatternFunction extends BMatchFunction {
 }
 
 class GroupPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode Node = new GroupNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode Node = new GroupNode(ParentNode);
 		Node = TokenContext.MatchToken(Node, "(", BTokenContext._Required);
 		Node = TokenContext.MatchPattern(Node, GroupNode._Expr, "$Expression$", BTokenContext._Required, BTokenContext._AllowSkipIndent);
 		Node = TokenContext.MatchToken(Node, ")", BTokenContext._Required);
@@ -659,8 +659,8 @@ class GroupPatternFunction extends BMatchFunction {
 }
 
 class CastPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode CastNode = new BunCastNode(ParentNode, BType.VarType, null);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode CastNode = new BunCastNode(ParentNode, BType.VarType, null);
 		CastNode = TokenContext.MatchToken(CastNode, "(", BTokenContext._Required);
 		CastNode = TokenContext.MatchPattern(CastNode, BunCastNode._TypeInfo, "$Type$", BTokenContext._Required);
 		CastNode = TokenContext.MatchToken(CastNode, ")", BTokenContext._Required);
@@ -673,16 +673,16 @@ class CastPatternFunction extends BMatchFunction {
 }
 
 class FuncCallPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode ApplyNode = new FuncCallNode(ParentNode, LeftNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode ApplyNode = new FuncCallNode(ParentNode, LeftNode);
 		ApplyNode = TokenContext.MatchNtimes(ApplyNode, "(", "$Expression$", ",", ")");
 		return ApplyNode;
 	}
 }
 
 class GetIndexPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode IndexerNode = new GetIndexNode(ParentNode, LeftNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode IndexerNode = new GetIndexNode(ParentNode, LeftNode);
 		IndexerNode = TokenContext.MatchToken(IndexerNode, "[", BTokenContext._Required);
 		IndexerNode = TokenContext.MatchPattern(IndexerNode, GetIndexNode._Index, "$Expression$", BTokenContext._Required, BTokenContext._AllowSkipIndent);
 		IndexerNode = TokenContext.MatchToken(IndexerNode, "]", BTokenContext._Required);
@@ -691,16 +691,16 @@ class GetIndexPatternFunction extends BMatchFunction {
 }
 
 class ArrayLiteralPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode LiteralNode = new BunArrayNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode LiteralNode = new BunArrayNode(ParentNode);
 		LiteralNode = TokenContext.MatchNtimes(LiteralNode, "[", "$Expression$", ",", "]");
 		return LiteralNode;
 	}
 }
 
 class NewObjectPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode LiteralNode = new NewObjectNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode LiteralNode = new NewObjectNode(ParentNode);
 		LiteralNode = TokenContext.MatchToken(LiteralNode, "new", BTokenContext._Required);
 		LiteralNode = TokenContext.MatchPattern(LiteralNode, NewObjectNode._TypeInfo, "$OpenType$", BTokenContext._Optional);
 		LiteralNode = TokenContext.MatchNtimes(LiteralNode, "(", "$Expression$", ",", ")");
@@ -709,8 +709,8 @@ class NewObjectPatternFunction extends BMatchFunction {
 }
 
 class MapEntryPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode LiteralNode = new BunMapEntryNode(ParentNode, null);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode LiteralNode = new BunMapEntryNode(ParentNode, null);
 		LiteralNode = TokenContext.MatchPattern(LiteralNode, BunMapEntryNode._Key, "$Expression$", BTokenContext._Required);
 		LiteralNode = TokenContext.MatchToken(LiteralNode, ":", BTokenContext._Required);
 		LiteralNode = TokenContext.MatchPattern(LiteralNode, BunMapEntryNode._Value, "$Expression$", BTokenContext._Required);
@@ -719,15 +719,15 @@ class MapEntryPatternFunction extends BMatchFunction {
 }
 
 class MapLiteralPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode LiteralNode = new BunMapNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode LiteralNode = new BunMapNode(ParentNode);
 		LiteralNode = TokenContext.MatchNtimes(LiteralNode, "{", "$MapEntry$", ",", "}");
 		return LiteralNode;
 	}
 }
 
 class StatementEndPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var boolean ContextAllowance = TokenContext.SetParseFlag(false);
 		@Var BToken Token = null;
 		if(TokenContext.HasNext()) {
@@ -751,8 +751,8 @@ class StatementEndPatternFunction extends BMatchFunction {
 }
 
 class BlockPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode blockNode = null;
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode blockNode = null;
 		if(LeftNode instanceof BlockNode) {
 			blockNode = LeftNode;  // @see var
 		}
@@ -767,9 +767,9 @@ class BlockPatternFunction extends BMatchFunction {
 				if(TokenContext.MatchToken("}")) {
 					break;
 				}
-				@Var BNode blockNode2 = TokenContext.MatchPattern(blockNode, BNode._AppendIndex, "$Statement$", BTokenContext._Required);
+				@Var AstNode blockNode2 = TokenContext.MatchPattern(blockNode, AstNode._AppendIndex, "$Statement$", BTokenContext._Required);
 				if(blockNode2.IsErrorNode()) {
-					blockNode.SetNode(BNode._AppendIndex, blockNode2);
+					blockNode.SetNode(AstNode._AppendIndex, blockNode2);
 					while(TokenContext.HasNext()) {
 						@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
 						if(Token.EqualsText('}')) {
@@ -790,14 +790,14 @@ class BlockPatternFunction extends BMatchFunction {
 }
 
 class AnnotationPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 }
 
 class SymbolExpressionPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken NameToken = TokenContext.GetToken(BTokenContext._MoveNext);
 		//		if(TokenContext.IsToken("=")) {
 		//			return new ErrorNode(ParentNode, TokenContext.GetToken(), "assignment is not en expression");
@@ -809,7 +809,7 @@ class SymbolExpressionPatternFunction extends BMatchFunction {
 }
 
 class SymbolStatementPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken NameToken = TokenContext.GetToken(BTokenContext._MoveNext);
 		@Var GetNameNode NameNode = new GetNameNode(ParentNode, NameToken, NameToken.GetText());
 		//		if(TokenContext.IsToken("=")) {
@@ -825,12 +825,12 @@ class SymbolStatementPatternFunction extends BMatchFunction {
 }
 
 class StatementPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var boolean Remembered = TokenContext.SetParseFlag(BTokenContext._AllowSkipIndent);
 		//		@Var ZAnnotationNode AnnotationNode = (ZAnnotationNode)TokenContext.ParsePattern(ParentNode, "$Annotation$", ZTokenContext.Optional2);
 		TokenContext.SetParseFlag(BTokenContext._NotAllowSkipIndent);
-		@Var BNode StmtNode = BunGrammar._DispatchPattern(ParentNode, TokenContext, null, true);
-		StmtNode = TokenContext.MatchPattern(StmtNode, BNode._Nop, ";", BTokenContext._Required);
+		@Var AstNode StmtNode = BunGrammar._DispatchPattern(ParentNode, TokenContext, null, true);
+		StmtNode = TokenContext.MatchPattern(StmtNode, AstNode._Nop, ";", BTokenContext._Required);
 		//		if(AnnotationNode != null) {
 		//			AnnotationNode.Append(StmtNode);
 		//			StmtNode = AnnotationNode;
@@ -841,27 +841,27 @@ class StatementPatternFunction extends BMatchFunction {
 }
 
 class ExpressionPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		return BunGrammar._DispatchPattern(ParentNode, TokenContext, LeftNode, true);
 	}
 }
 
 class RightExpressionPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		return BunGrammar._DispatchPattern(ParentNode, TokenContext, LeftNode, false);
 	}
 }
 
 class InStatementPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		TokenContext.SetParseFlag(BTokenContext._AllowSkipIndent);
 		return BunGrammar._DispatchPattern(ParentNode, TokenContext, null, true);
 	}
 }
 
 class IfPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode IfNode = new BunIfNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode IfNode = new BunIfNode(ParentNode);
 		IfNode = TokenContext.MatchToken(IfNode, "if", BTokenContext._Required);
 		IfNode = TokenContext.MatchToken(IfNode, "(", BTokenContext._Required);
 		IfNode = TokenContext.MatchPattern(IfNode, BunIfNode._Cond, "$Expression$", BTokenContext._Required, BTokenContext._AllowNewLine);
@@ -880,8 +880,8 @@ class IfPatternFunction extends BMatchFunction {
 }
 
 class WhilePatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode WhileNode = new BunWhileNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode WhileNode = new BunWhileNode(ParentNode);
 		WhileNode = TokenContext.MatchToken(WhileNode, "while", BTokenContext._Required);
 		WhileNode = TokenContext.MatchToken(WhileNode, "(", BTokenContext._Required);
 		WhileNode = TokenContext.MatchPattern(WhileNode, BunWhileNode._Cond, "$Expression$", BTokenContext._Required, BTokenContext._AllowSkipIndent);
@@ -895,16 +895,16 @@ class WhilePatternFunction extends BMatchFunction {
 }
 
 class BreakPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode BreakNode = new BunBreakNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode BreakNode = new BunBreakNode(ParentNode);
 		BreakNode = TokenContext.MatchToken(BreakNode, "break", BTokenContext._Required);
 		return BreakNode;
 	}
 }
 
 class ReturnPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode ReturnNode = new BunReturnNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode ReturnNode = new BunReturnNode(ParentNode);
 		ReturnNode = TokenContext.MatchToken(ReturnNode, "return", BTokenContext._Required);
 		ReturnNode = TokenContext.MatchPattern(ReturnNode, BunReturnNode._Expr, "$Expression$", BTokenContext._Optional);
 		return ReturnNode;
@@ -912,8 +912,8 @@ class ReturnPatternFunction extends BMatchFunction {
 }
 
 class TryPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode TryNode = new BunTryNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode TryNode = new BunTryNode(ParentNode);
 		TryNode = TokenContext.MatchToken(TryNode, "try", BTokenContext._Required);
 		TryNode = TokenContext.MatchPattern(TryNode, BunTryNode._Try, "$Block$", BTokenContext._Required);
 		@Var int count = 0;
@@ -936,8 +936,8 @@ class TryPatternFunction extends BMatchFunction {
 }
 
 class ThrowPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode ThrowNode = new BunThrowNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode ThrowNode = new BunThrowNode(ParentNode);
 		ThrowNode = TokenContext.MatchToken(ThrowNode, "throw", BTokenContext._Required);
 		ThrowNode = TokenContext.MatchPattern(ThrowNode, BunThrowNode._Expr, "$Expression$", BTokenContext._Required);
 		return ThrowNode;
@@ -945,7 +945,7 @@ class ThrowPatternFunction extends BMatchFunction {
 }
 
 class NamePatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
 		if(LibBunSystem._IsSymbol(Token.GetChar())) {
 			return new GetNameNode(ParentNode, Token, Token.GetText());
@@ -955,8 +955,8 @@ class NamePatternFunction extends BMatchFunction {
 }
 
 class VarPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode VarNode = new BunLetVarNode(ParentNode, 0, null, null);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode VarNode = new BunLetVarNode(ParentNode, 0, null, null);
 		VarNode = TokenContext.MatchToken(VarNode, "var", BTokenContext._Required);
 		VarNode = TokenContext.MatchPattern(VarNode, BunLetVarNode._NameInfo, "$Name$", BTokenContext._Required);
 		VarNode = TokenContext.MatchPattern(VarNode, BunLetVarNode._TypeInfo, "$TypeAnnotation$", BTokenContext._Optional);
@@ -971,8 +971,8 @@ class VarPatternFunction extends BMatchFunction {
 }
 
 class ParamPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode ParamNode = new BunLetVarNode(ParentNode, BunLetVarNode._IsReadOnly, null, null);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode ParamNode = new BunLetVarNode(ParentNode, BunLetVarNode._IsReadOnly, null, null);
 		ParamNode = TokenContext.MatchPattern(ParamNode, BunLetVarNode._NameInfo, "$Name$", BTokenContext._Required);
 		ParamNode = TokenContext.MatchPattern(ParamNode, BunLetVarNode._TypeInfo, "$TypeAnnotation$", BTokenContext._Optional);
 		return ParamNode;
@@ -980,11 +980,11 @@ class ParamPatternFunction extends BMatchFunction {
 }
 
 class FunctionPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode FuncNode = new BunFunctionNode(ParentNode, 0);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode FuncNode = new BunFunctionNode(ParentNode, 0);
 		FuncNode = TokenContext.MatchToken(FuncNode, "function", BTokenContext._Required);
 		FuncNode = TokenContext.MatchPattern(FuncNode, BunFunctionNode._NameInfo, "$Name$", BTokenContext._Optional);
-		BNode ParamNode = new BlockNode(FuncNode, null);
+		AstNode ParamNode = new BlockNode(FuncNode, null);
 		ParamNode = TokenContext.MatchNtimes(ParamNode, "(", "$Param$", ",", ")");
 		if(ParamNode.IsErrorNode()) {
 			return ParamNode;
@@ -997,8 +997,8 @@ class FunctionPatternFunction extends BMatchFunction {
 }
 
 class LetPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode LetNode = new BunLetVarNode(ParentNode, BunLetVarNode._IsReadOnly, null, null);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode LetNode = new BunLetVarNode(ParentNode, BunLetVarNode._IsReadOnly, null, null);
 		LetNode = TokenContext.MatchToken(LetNode, "let", BTokenContext._Required);
 		LetNode = TokenContext.MatchPattern(LetNode, BunLetVarNode._NameInfo, "$Name$", BTokenContext._Required);
 		LetNode = TokenContext.MatchPattern(LetNode, BunLetVarNode._TypeInfo, "$TypeAnnotation$", BTokenContext._Optional);
@@ -1009,9 +1009,9 @@ class LetPatternFunction extends BMatchFunction {
 }
 
 class ExportPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken NameToken = TokenContext.GetToken(BTokenContext._MoveNext);
-		@Var BNode Node = TokenContext.ParsePattern(ParentNode, "function", BTokenContext._Optional);
+		@Var AstNode Node = TokenContext.ParsePattern(ParentNode, "function", BTokenContext._Optional);
 		if(Node instanceof DefSymbolNode) {
 			((DefSymbolNode)Node).symbolFlag = ((DefSymbolNode)Node).symbolFlag | DefSymbolNode._IsExport;
 			return Node;
@@ -1031,15 +1031,15 @@ class ExportPatternFunction extends BMatchFunction {
 }
 
 class ImportPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken NameToken = TokenContext.GetToken(BTokenContext._MoveNext);
 		return new ErrorNode(ParentNode, NameToken, "unsupported import");
 	}
 }
 
 class ClassPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode ClassNode = new BunClassNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode ClassNode = new BunClassNode(ParentNode);
 		ClassNode = TokenContext.MatchToken(ClassNode, "class", BTokenContext._Required);
 		ClassNode = TokenContext.MatchPattern(ClassNode, BunClassNode._NameInfo, "$Name$", BTokenContext._Required);
 		if(TokenContext.MatchNewLineToken("extends")) {
@@ -1051,16 +1051,16 @@ class ClassPatternFunction extends BMatchFunction {
 }
 
 class FieldPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var boolean Rememberd = TokenContext.SetParseFlag(false);
-		@Var BNode VarNode = new BunLetVarNode(ParentNode, 0, null, null);
+		@Var AstNode VarNode = new BunLetVarNode(ParentNode, 0, null, null);
 		VarNode = TokenContext.MatchToken(VarNode, "var", BTokenContext._Required);
 		VarNode = TokenContext.MatchPattern(VarNode, BunLetVarNode._NameInfo, "$Name$", BTokenContext._Required);
 		VarNode = TokenContext.MatchPattern(VarNode, BunLetVarNode._TypeInfo, "$TypeAnnotation$", BTokenContext._Optional);
 		if(TokenContext.MatchToken("=")) {
 			VarNode = TokenContext.MatchPattern(VarNode, BunLetVarNode._InitValue, "$Expression$", BTokenContext._Required);
 		}
-		VarNode = TokenContext.MatchPattern(VarNode, BNode._Nop, ";", BTokenContext._Required);
+		VarNode = TokenContext.MatchPattern(VarNode, AstNode._Nop, ";", BTokenContext._Required);
 		TokenContext.SetParseFlag(Rememberd);
 		return VarNode;
 	}
@@ -1068,8 +1068,8 @@ class FieldPatternFunction extends BMatchFunction {
 
 
 class AssertPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode AssertNode = new BunAssertNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode AssertNode = new BunAssertNode(ParentNode);
 		AssertNode = TokenContext.MatchToken(AssertNode, "assert", BTokenContext._Required);
 		AssertNode = TokenContext.MatchToken(AssertNode, "(", BTokenContext._Required);
 		AssertNode = TokenContext.MatchPattern(AssertNode, BunThrowNode._Expr, "$Expression$", BTokenContext._Required, BTokenContext._AllowSkipIndent);
@@ -1080,8 +1080,8 @@ class AssertPatternFunction extends BMatchFunction {
 }
 
 class AsmPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode AsmNode = new BunAsmNode(ParentNode, null, null, null);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode AsmNode = new BunAsmNode(ParentNode, null, null, null);
 		AsmNode = TokenContext.MatchToken(AsmNode, "asm", BTokenContext._Required);
 		AsmNode = TokenContext.MatchToken(AsmNode, "(", BTokenContext._Required);
 		AsmNode = TokenContext.MatchPattern(AsmNode, BunAsmNode._Form, "$StringLiteral$", BTokenContext._Required);
@@ -1092,7 +1092,7 @@ class AsmPatternFunction extends BMatchFunction {
 }
 
 class LongNamePatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken NameToken = TokenContext.ParseLargeToken();
 		//		System.out.println("'"+ NameToken.GetText() + "'");
 		return new GetNameNode(ParentNode, NameToken, NameToken.GetText());
@@ -1100,8 +1100,8 @@ class LongNamePatternFunction extends BMatchFunction {
 }
 
 class BunDefinePatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode LetNode = new BunLetVarNode(ParentNode, BunLetVarNode._IsReadOnly, null, null);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode LetNode = new BunLetVarNode(ParentNode, BunLetVarNode._IsReadOnly, null, null);
 		LetNode = TokenContext.MatchToken(LetNode, "define", BTokenContext._Required);
 		LetNode = TokenContext.MatchPattern(LetNode, BunLetVarNode._NameInfo, "$LongName$", BTokenContext._Required);
 		LetNode = TokenContext.MatchPattern(LetNode, BunLetVarNode._InitValue, "$StringLiteral$", BTokenContext._Required);
@@ -1114,8 +1114,8 @@ class BunDefinePatternFunction extends BMatchFunction {
 }
 
 class RequirePatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode RequireNode = new BunRequireNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode RequireNode = new BunRequireNode(ParentNode);
 		RequireNode = TokenContext.MatchToken(RequireNode, "require", BTokenContext._Required);
 		RequireNode = TokenContext.MatchPattern(RequireNode, BunRequireNode._Path, "$LongName$", BTokenContext._Required);
 		return RequireNode;
@@ -1360,7 +1360,7 @@ public class BunGrammar {
 		return null;
 	}
 
-	public final static BNode _DispatchPattern(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode, boolean AllowBinary) {
+	public final static AstNode _DispatchPattern(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode, boolean AllowBinary) {
 		@Var BToken Token = TokenContext.GetToken();
 		@Var LibBunSyntax Pattern = null;
 		@Var LibBunGamma Gamma = ParentNode.GetGamma();

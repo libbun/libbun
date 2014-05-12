@@ -45,19 +45,19 @@ import libbun.util.LibBunSystem;
 import libbun.util.Nullable;
 import libbun.util.Var;
 
-public abstract class BNode {
+public abstract class AstNode {
 	public final static int _AppendIndex = -1;
 	public final static int _Nop =      -3;
 	public final static boolean _EnforcedParent = true;
 	public final static boolean _PreservedParent = false;
 
-	@BField public BNode    ParentNode;
+	@BField public AstNode    ParentNode;
 	@BField public BunToken SourceToken;
-	@BField public BNode    AST[] = null;
+	@BField public AstNode    AST[] = null;
 	@BField public BType    Type = BType.VarType;
 	@BField public boolean  HasUntyped = true;
 
-	public BNode(@Nullable BNode ParentNode, int Size) {
+	public AstNode(@Nullable AstNode ParentNode, int Size) {
 		assert(this != ParentNode);
 		this.ParentNode = ParentNode;
 		if(Size > 0) {
@@ -65,7 +65,7 @@ public abstract class BNode {
 		}
 	}
 
-	protected BNode dupField(boolean TypedClone, BNode NewNode) {
+	protected AstNode dupField(boolean TypedClone, AstNode NewNode) {
 		@Var int i = 0;
 		while(i < this.AST.length) {
 			if(this.AST[i] != null) {
@@ -89,9 +89,34 @@ public abstract class BNode {
 	}
 
 	//	public abstract BNode Dup(boolean TypedClone, BNode ParentNode);
-	public BNode dup(boolean TypedClone, BNode ParentNode) {
+	public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		throw new RuntimeException("TODO: Implement Dup method for " + this.getClass());
 	}
+
+	public final void bunfyAST(CommonStringBuilder builder, String openClause, int startIdx, String closeClause) {
+		builder.Append(openClause);
+		for(int i = startIdx; i < this.size(); i++) {
+			if(this.AST[i] != null) {
+				builder.Append(" ");
+				this.AST[i].bunfy(builder);
+			}
+		}
+		builder.Append(closeClause);
+	}
+
+	//	public abstract void bunfy(CommonStringBuilder builder);
+	public void bunfy(CommonStringBuilder builder) {
+		this.bunfyAST(builder, "/*(", 0, ")*/");
+	}
+
+	public String bunfy() {
+		CommonStringBuilder builder = new CommonStringBuilder();
+		this.bunfy(builder);
+		return builder.toString();
+	}
+
+
+
 
 	public final String GetSourceLocation() {
 		if(this.SourceToken != null) {
@@ -133,38 +158,33 @@ public abstract class BNode {
 		return Self;
 	}
 
-	public final void bunfyAST(CommonStringBuilder builder, String openClause, int startIdx, String closeClause) {
-		builder.Append(openClause);
-		for(int i = startIdx; i < this.GetAstSize(); i++) {
-			if(this.AST[i] != null) {
-				builder.Append(" ");
-				this.AST[i].bunfy(builder);
-			}
-		}
-		builder.Append(closeClause);
-	}
-
-	//	public abstract void bunfy(CommonStringBuilder builder);
-	public void bunfy(CommonStringBuilder builder) {
-		this.bunfyAST(builder, "/*(", 0, ")*/");
-	}
-
-	public String bunfy() {
-		CommonStringBuilder builder = new CommonStringBuilder();
-		this.bunfy(builder);
-		return builder.toString();
-	}
 
 	// AST[]
 
-	public final int GetAstSize() {
+	public final int size() {
 		if(this.AST == null) {
 			return 0;
 		}
 		return this.AST.length;
 	}
 
-	public final BNode SetChild(BNode Node, boolean EnforcedParent) {
+	public final AstNode get(int index) {
+		return this.AST[index];
+	}
+
+	public final void set(int index, AstNode node) {
+		if(index == -1) {
+			this.appendNode(node);
+		}
+		else {
+			this.AST[index] = node;
+			if(node != null) {
+				node.ParentNode = this;
+			}
+		}
+	}
+
+	public final AstNode SetChild(AstNode Node, boolean EnforcedParent) {
 		assert(this != Node);
 		if(EnforcedParent || Node.ParentNode == null) {
 			Node.ParentNode = this;
@@ -172,31 +192,31 @@ public abstract class BNode {
 		return Node;
 	}
 
-	public final BNode SetParent(BNode Node, boolean Enforced) {
+	public final AstNode SetParent(AstNode Node, boolean Enforced) {
 		if(Enforced || this.ParentNode == null) {
 			this.ParentNode = Node;
 		}
 		return this;
 	}
 
-	public final BNode SetNode(int Index, BNode Node, boolean EnforcedParent) {
+	public final AstNode SetNode(int Index, AstNode Node, boolean EnforcedParent) {
 		if(Index >= 0) {
-			assert(Index < this.GetAstSize());
+			assert(Index < this.size());
 			this.AST[Index] = this.SetChild(Node, EnforcedParent);
 		}
-		else if(Index == BNode._AppendIndex) {
-			this.Append(Node);
+		else if(Index == AstNode._AppendIndex) {
+			this.appendNode(Node);
 		}
 		return Node;
 	}
 
-	public final void SetNode(int Index, BNode Node) {
-		this.SetNode(Index, Node, BNode._EnforcedParent);
+	public final void SetNode(int Index, AstNode Node) {
+		this.SetNode(Index, Node, AstNode._EnforcedParent);
 	}
 
-	public final void SetNullableNode(int Index, @Nullable BNode Node) {
+	public final void SetNullableNode(int Index, @Nullable AstNode Node) {
 		if(Node != null) {
-			this.SetNode(Index, Node, BNode._EnforcedParent);
+			this.SetNode(Index, Node, AstNode._EnforcedParent);
 		}
 	}
 
@@ -205,7 +225,7 @@ public abstract class BNode {
 			this.AST = LibBunSystem._NewNodeArray(size);
 		}
 		else if(this.AST.length != size) {
-			@Var BNode[] newast = LibBunSystem._NewNodeArray(size);
+			@Var AstNode[] newast = LibBunSystem._NewNodeArray(size);
 			if(size > this.AST.length) {
 				LibBunSystem._ArrayCopy(this.AST, 0, newast, 0, this.AST.length);
 			}
@@ -217,52 +237,52 @@ public abstract class BNode {
 	}
 
 	public final void expandAstToSize(int newSize) {
-		if(newSize > this.GetAstSize()) {
+		if(newSize > this.size()) {
 			this.resizeAst(newSize);
 		}
 	}
 
-	public final void Append(BNode Node, boolean EnforcedParent) {
+	private final void appendNode(AstNode Node, boolean EnforcedParent) {
 		if(this.AST == null) {
 			this.AST = LibBunSystem._NewNodeArray(1);
 			this.SetNode(0, Node, EnforcedParent);
 		}
 		else {
-			@Var BNode[] newAST = LibBunSystem._NewNodeArray(this.AST.length+1);
+			@Var AstNode[] newAST = LibBunSystem._NewNodeArray(this.AST.length+1);
 			LibBunSystem._ArrayCopy(this.AST, 0, newAST, 0, this.AST.length);
 			this.AST = newAST;
 			this.SetNode(this.AST.length - 1, Node, EnforcedParent);
 		}
 	}
 
-	public final void Append(BNode Node) {
+	public final void appendNode(AstNode Node) {
 		if(Node instanceof ContainerNode) {
 			@Var ContainerNode Container = (ContainerNode)Node;
 			@Var int i = 0;
 			while(i < Container.AST.length) {
-				this.Append(Container.AST[i], BNode._EnforcedParent);
+				this.appendNode(Container.AST[i], AstNode._EnforcedParent);
 				i = i + 1;
 			}
 		}
 		else {
-			this.Append(Node, BNode._EnforcedParent);
+			this.appendNode(Node, AstNode._EnforcedParent);
 		}
 	}
 
-	public final BType GetAstType(int Index) {
+	public final BType getTypeAt(int Index) {
 		if(Index < this.AST.length) {
 			return this.AST[Index].Type.GetRealType();
 		}
 		return BType.VoidType;  // to retrieve RecvType
 	}
 
-	public final void SetAstType(int Index, BType Type) {
+	public final void setTypeAt(int Index, BType Type) {
 		if(this.AST[Index] != null) {
 			this.AST[Index].Type = Type;
 		}
 	}
 
-	public final BunToken GetAstToken(int TokenIndex) {
+	public final BunToken getTokenAt(int TokenIndex) {
 		if(TokenIndex >= 0 && this.AST[TokenIndex] != null) {
 			return this.AST[TokenIndex].SourceToken;
 		}
@@ -271,8 +291,8 @@ public abstract class BNode {
 
 	// ParentNode
 
-	public final boolean IsTopLevel() {
-		@Var @Nullable BNode Cur = this.ParentNode;
+	public final boolean isTopLevel() {
+		@Var @Nullable AstNode Cur = this.ParentNode;
 		while(Cur != null) {
 			if(Cur instanceof BunFunctionNode) {
 				return false;
@@ -283,7 +303,7 @@ public abstract class BNode {
 	}
 
 	@Nullable public final BunFunctionNode GetDefiningFunctionNode() {
-		@Var @Nullable BNode Cur = this;
+		@Var @Nullable AstNode Cur = this;
 		while(Cur != null) {
 			if(Cur instanceof BunFunctionNode) {
 				return (BunFunctionNode)Cur;
@@ -295,7 +315,7 @@ public abstract class BNode {
 
 	@Nullable public final BlockNode GetScopeblockNode() {
 		@Var int SafeCount = 0;
-		@Var BNode Node = this;
+		@Var AstNode Node = this;
 		while(Node != null) {
 			if(Node instanceof BlockNode) {
 				return (BlockNode)Node;
@@ -355,7 +375,7 @@ public abstract class BNode {
 		if(this.HasUntyped) {
 			if(!this.IsUntyped()) {
 				@Var int i = 0;
-				while(i < this.GetAstSize()) {
+				while(i < this.size()) {
 					if(this.AST[i] != null && this.AST[i].HasUntypedNode()) {
 						//LibZen._PrintLine("@Untyped " + LibZen._GetClassName(this) + "[" + i + "] " + this.AST[i]);
 						return true;
@@ -368,14 +388,14 @@ public abstract class BNode {
 		return this.HasUntyped;
 	}
 
-	public final BNode ParseExpression(String SourceText) {
+	public final AstNode ParseExpression(String SourceText) {
 		LibBunGenerator Generator = this.GetGamma().Generator;
 		BunSource Source = new BunSource("(sugar)", 1, SourceText, Generator.Logger);
 		BTokenContext TokenContext = new BTokenContext(Generator.RootParser, Generator, Source, 0, SourceText.length());
 		return TokenContext.ParsePattern(this, "$Expression$", BTokenContext._Required);
 	}
 
-	public final void ReplaceNode(String Name, BNode Node) {
+	public final void ReplaceNode(String Name, AstNode Node) {
 		if(Node instanceof BlockNode) {
 			BunIfNode IfNode = new BunIfNode(null);  // {block} => if(true) {block}
 			IfNode.SetNode(BunIfNode._Cond, new BunBooleanNode(null, null, true));
@@ -383,8 +403,8 @@ public abstract class BNode {
 			Node = IfNode;
 		}
 		@Var int i = 0;
-		while(i < this.GetAstSize()) {
-			BNode SubNode = this.AST[i];
+		while(i < this.size()) {
+			AstNode SubNode = this.AST[i];
 			if(SubNode instanceof GetNameNode) {
 				@Var String NodeName = ((GetNameNode)SubNode).GivenName;
 				if(NodeName.equals(Name)) {

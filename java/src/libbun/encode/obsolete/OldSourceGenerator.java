@@ -25,7 +25,7 @@
 package libbun.encode.obsolete;
 
 import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.GroupNode;
@@ -141,13 +141,13 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override
-	protected void GenerateStatementEnd(BNode Node) {
+	protected void GenerateStatementEnd(AstNode Node) {
 		if(this.SemiColon != null && (!this.Source.EndsWith('}') || !this.Source.EndsWith(';'))) {
 			this.Source.Append(this.SemiColon);
 		}
 	}
 
-	protected final void GenerateCode2(String Pre, BType ContextType, BNode Node, String Delim, BType ContextType2, BNode Node2, String Post) {
+	protected final void GenerateCode2(String Pre, BType ContextType, AstNode Node, String Delim, BType ContextType2, AstNode Node2, String Post) {
 		if(Pre != null && Pre.length() > 0) {
 			this.Source.Append(Pre);
 		}
@@ -161,7 +161,7 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 		}
 	}
 
-	final protected boolean IsNeededSurroud(BNode Node) {
+	final protected boolean IsNeededSurroud(AstNode Node) {
 		if(Node instanceof BinaryOperatorNode) {
 			return true;
 		}
@@ -169,7 +169,7 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override
-	protected void GenerateExpression(BNode Node) {
+	protected void GenerateExpression(AstNode Node) {
 		if(this.IsNeededSurroud(Node)) {
 			this.GenerateExpression("(", Node, ")");
 		}
@@ -185,7 +185,7 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override
-	public void GenerateStatement(BNode Node) {
+	public void GenerateStatement(AstNode Node) {
 		this.Source.AppendNewLine();
 		if(Node instanceof BunCastNode && Node.Type == BType.VoidType) {
 			Node.AST[BunCastNode._Expr].Accept(this);
@@ -199,13 +199,13 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 	protected void GenerateStmtListNode(BlockNode Node) {
 		@Var int i = 0;
 		while (i < Node.GetListSize()) {
-			@Var BNode SubNode = Node.GetListAt(i);
+			@Var AstNode SubNode = Node.GetListAt(i);
 			this.GenerateStatement(SubNode);
 			i = i + 1;
 		}
 	}
 
-	@Override public void VisitblockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(BlockNode Node) {
 		this.Source.AppendWhiteSpace();
 		this.Source.OpenIndent("{");
 		this.GenerateStmtListNode(Node);
@@ -249,14 +249,14 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitArrayLiteralNode(BunArrayNode Node) {
-		this.GenerateListNode("[", Node, "]");
+		this.GenerateListNode("[", Node, 0, ", ", "]");
 	}
 
 	@Override public void VisitMapLiteralNode(BunMapNode Node) {
 		this.Source.Append("{");
 		@Var int i = 0;
 		while(i < Node.GetListSize()) {
-			@Var BunMapEntryNode Entry = Node.GetMapEntryNode(i);
+			@Var BunMapEntryNode Entry = Node.getMapEntryNode(i);
 			this.GenerateExpression("", Entry.KeyNode(), ": ", Entry.ValueNode(), ",");
 			i = i + 1;
 		}
@@ -279,7 +279,7 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitGetNameNode(GetNameNode Node) {
-		@Var BNode ResolvedNode = Node.ResolvedNode;
+		@Var AstNode ResolvedNode = Node.ResolvedNode;
 		if(ResolvedNode == null && !this.LangInfo.AllowUndefinedSymbol) {
 			BunLogger._LogError(Node.SourceToken, "undefined symbol: " + Node.GivenName);
 		}
@@ -575,7 +575,7 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 		@Var DesugarNode DesugarNode = Node.PerformDesugar(this.TypeChecker);
 		this.GenerateExpression(DesugarNode.AST[0]);
 		@Var int i = 1;
-		while(i < DesugarNode.GetAstSize()) {
+		while(i < DesugarNode.size()) {
 			this.Source.Append(this.SemiColon);
 			this.Source.AppendNewLine();
 			this.GenerateExpression(DesugarNode.AST[i]);
@@ -594,7 +594,7 @@ public class OldSourceGenerator extends LibBunSourceGenerator {
 		this.Source.Append(OpenToken);
 		@Var int i = 0;
 		while(i < VargNode.GetListSize()) {
-			@Var BNode ParamNode = VargNode.GetListAt(i);
+			@Var AstNode ParamNode = VargNode.GetListAt(i);
 			if (i > 0) {
 				this.Source.Append(DelimToken);
 			}

@@ -1,6 +1,6 @@
 package libbun.ast.decl;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.literal.BunAsmNode;
 import libbun.ast.literal.BunStringNode;
 import libbun.parser.classic.LibBunGamma;
@@ -13,16 +13,16 @@ import libbun.util.Var;
 public class BunDefineNode extends TopLevelNode {
 	@BField public BunLetVarNode DefineNode;
 
-	public BunDefineNode(BNode ParentNode, BunLetVarNode DefineNode) {
+	public BunDefineNode(AstNode ParentNode, BunLetVarNode DefineNode) {
 		super(ParentNode, 0);
 		this.DefineNode = DefineNode;
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunDefineNode(ParentNode, this.DefineNode));
 	}
 
 	private String GetFormText() {
-		@Var BNode Node = this.DefineNode.InitValueNode();
+		@Var AstNode Node = this.DefineNode.InitValueNode();
 		if(Node instanceof BunStringNode) {
 			return ((BunStringNode)Node).StringValue;
 		}
@@ -55,7 +55,7 @@ public class BunDefineNode extends TopLevelNode {
 		else {
 			//let symbol = asm "macro": type;
 			@Var BunAsmNode AsmNode = new BunAsmNode(null, LibName, FormText, FormType);
-			AsmNode.SourceToken = this.DefineNode.GetAstToken(BunLetVarNode._NameInfo);
+			AsmNode.SourceToken = this.DefineNode.getTokenAt(BunLetVarNode._NameInfo);
 			AsmNode.Type = FormType;
 			this.DefineNode.GivenType = FormType;
 			this.DefineNode.GivenName = FormText;

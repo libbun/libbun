@@ -25,7 +25,7 @@
 package libbun.ast.unary;
 
 import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunTypeChecker;
 import libbun.parser.classic.LibBunVisitor;
@@ -33,18 +33,18 @@ import libbun.type.BFunc;
 import libbun.type.BType;
 import libbun.util.Var;
 
-public class BunCastNode extends BNode {
+public class BunCastNode extends AstNode {
 	public final static int _Expr = 0;
 	public final static int _TypeInfo = 1;
 
-	public BunCastNode(BNode ParentNode, BType CastType, BNode Node) {
+	public BunCastNode(AstNode ParentNode, BType CastType, AstNode Node) {
 		super(ParentNode, 2);
 		this.Type = CastType;
 		if(Node != null) {
 			this.SetNode(BunCastNode._Expr, Node);
 		}
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunCastNode(ParentNode, this.Type, null));
 	}
 
@@ -56,7 +56,7 @@ public class BunCastNode extends BNode {
 		builder.Append(")");
 	}
 
-	public final BNode ExprNode() {
+	public final AstNode ExprNode() {
 		return this.AST[BunCastNode._Expr ];
 	}
 
@@ -73,7 +73,7 @@ public class BunCastNode extends BNode {
 
 	public final AbstractListNode ToFuncCallNode(LibBunTypeChecker TypeChecker, BFunc ConverterFunc) {
 		@Var AbstractListNode FuncNode = TypeChecker.CreateDefinedFuncCallNode(this.ParentNode, this.SourceToken, ConverterFunc);
-		FuncNode.Append(this.ExprNode());
+		FuncNode.appendNode(this.ExprNode());
 		return FuncNode;
 	}
 

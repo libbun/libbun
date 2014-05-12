@@ -24,7 +24,7 @@
 
 
 package libbun.parser.classic;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.EmptyNode;
 import libbun.ast.error.ErrorNode;
 import libbun.common.CommonArray;
@@ -88,7 +88,7 @@ public class BTokenContext {
 		return this.LatestToken;
 	}
 
-	public BNode CreateExpectedErrorNode(BToken SourceToken, String ExpectedTokenText) {
+	public AstNode CreateExpectedErrorNode(BToken SourceToken, String ExpectedTokenText) {
 		if(SourceToken == null || SourceToken.IsNull()) {
 			SourceToken = this.GetBeforeToken();
 			SourceToken = new BToken(SourceToken.source, SourceToken.endIndex, SourceToken.endIndex);
@@ -225,7 +225,7 @@ public class BTokenContext {
 		return new BToken(Token.source, StartIndex, EndIndex);
 	}
 
-	public BNode MatchToken(BNode ParentNode, String TokenText, boolean IsRequired) {
+	public AstNode MatchToken(AstNode ParentNode, String TokenText, boolean IsRequired) {
 		if(!ParentNode.IsErrorNode()) {
 			@Var int RollbackPosition = this.CurrentPosition;
 			@Var BToken Token = this.GetToken(BTokenContext._MoveNext);
@@ -250,11 +250,11 @@ public class BTokenContext {
 		return this.ApplyingPattern;
 	}
 
-	public final BNode ApplyMatchPattern(BNode ParentNode, BNode LeftNode, LibBunSyntax Pattern, boolean IsRequired) {
+	public final AstNode ApplyMatchPattern(AstNode ParentNode, AstNode LeftNode, LibBunSyntax Pattern, boolean IsRequired) {
 		@Var int RollbackPosition = this.CurrentPosition;
 		@Var LibBunSyntax CurrentPattern = Pattern;
 		@Var BToken TopToken = this.GetToken();
-		@Var BNode ParsedNode = null;
+		@Var AstNode ParsedNode = null;
 		while(CurrentPattern != null) {
 			@Var boolean Remembered = this.IsAllowSkipIndent;
 			this.CurrentPosition = RollbackPosition;
@@ -280,20 +280,20 @@ public class BTokenContext {
 		return ParsedNode;
 	}
 
-	public final BNode ParsePatternAfter(BNode ParentNode, BNode LeftNode, String PatternName, boolean IsRequired) {
+	public final AstNode ParsePatternAfter(AstNode ParentNode, AstNode LeftNode, String PatternName, boolean IsRequired) {
 		@Var LibBunSyntax Pattern = this.Parser.GetSyntaxPattern(PatternName);
-		@Var BNode ParsedNode = this.ApplyMatchPattern(ParentNode, LeftNode, Pattern, IsRequired);
+		@Var AstNode ParsedNode = this.ApplyMatchPattern(ParentNode, LeftNode, Pattern, IsRequired);
 		return ParsedNode;
 	}
 
-	public final BNode ParsePattern(BNode ParentNode, String PatternName, boolean IsRequired) {
+	public final AstNode ParsePattern(AstNode ParentNode, String PatternName, boolean IsRequired) {
 		return this.ParsePatternAfter(ParentNode, null, PatternName, IsRequired);
 	}
 
-	public BNode MatchPattern(BNode ParentNode, int Index, String PatternName, boolean IsRequired, boolean AllowSkipIndent) {
+	public AstNode MatchPattern(AstNode ParentNode, int Index, String PatternName, boolean IsRequired, boolean AllowSkipIndent) {
 		if(!ParentNode.IsErrorNode()) {
 			@Var boolean Rememberd = this.SetParseFlag(AllowSkipIndent);
-			@Var BNode ParsedNode = this.ParsePattern(ParentNode, PatternName, IsRequired);
+			@Var AstNode ParsedNode = this.ParsePattern(ParentNode, PatternName, IsRequired);
 			this.SetParseFlag(Rememberd);
 			if(ParsedNode != null) {
 				if(ParsedNode.IsErrorNode()) {
@@ -309,11 +309,11 @@ public class BTokenContext {
 		return ParentNode;
 	}
 
-	public BNode MatchPattern(BNode ParentNode, int Index, String PatternName, boolean IsRequired) {
+	public AstNode MatchPattern(AstNode ParentNode, int Index, String PatternName, boolean IsRequired) {
 		return this.MatchPattern(ParentNode, Index, PatternName, IsRequired, BTokenContext._NotAllowSkipIndent);
 	}
 
-	public BNode MatchOptionaPattern(BNode ParentNode, int Index, boolean AllowNewLine, String TokenText, String PatternName) {
+	public AstNode MatchOptionaPattern(AstNode ParentNode, int Index, boolean AllowNewLine, String TokenText, String PatternName) {
 		if(!ParentNode.IsErrorNode()) {
 			if(this.MatchToken(TokenText)) {
 				return this.MatchPattern(ParentNode, Index, PatternName, BTokenContext._Optional, BTokenContext._NotAllowSkipIndent);
@@ -322,7 +322,7 @@ public class BTokenContext {
 		return ParentNode;
 	}
 
-	public BNode MatchNtimes(BNode ParentNode, String StartToken, String PatternName, String DelimToken, String StopToken) {
+	public AstNode MatchNtimes(AstNode ParentNode, String StartToken, String PatternName, String DelimToken, String StopToken) {
 		@Var boolean Rememberd = this.SetParseFlag(true);
 		@Var boolean IsRequired =   BTokenContext._Optional;
 		if(StartToken != null) {
@@ -336,7 +336,7 @@ public class BTokenContext {
 				}
 				IsRequired = BTokenContext._Required;
 			}
-			@Var BNode ParsedNode = this.ParsePattern(ParentNode, PatternName, IsRequired);
+			@Var AstNode ParsedNode = this.ParsePattern(ParentNode, PatternName, IsRequired);
 			if(ParsedNode == null) {
 				break;
 			}
@@ -344,7 +344,7 @@ public class BTokenContext {
 				return ParsedNode;
 			}
 			if(!(ParsedNode instanceof EmptyNode)) {
-				ParentNode.SetNode(BNode._AppendIndex, ParsedNode);
+				ParentNode.SetNode(AstNode._AppendIndex, ParsedNode);
 			}
 			if(DelimToken != null) {
 				if(!this.MatchToken(DelimToken)) {

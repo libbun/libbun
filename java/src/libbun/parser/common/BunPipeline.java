@@ -1,6 +1,6 @@
 package libbun.parser.common;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.common.CommonMap;
 import libbun.parser.peg.PegParser;
@@ -24,12 +24,12 @@ public class BunPipeline {
 		BunSource source = new BunSource(FileName, LineNumber, ScriptText, this.logger);
 		BunParserContext parserContext = this.parser.newContext(source, 0, ScriptText.length());
 		while(parserContext.hasNode()) {
-			BNode parsedNode = parserContext.parseNode(TopblockNode, "TopLevel");
-			TopblockNode.Append(parsedNode);
+			AstNode parsedNode = parserContext.parseNode(TopblockNode, "TopLevel");
+			TopblockNode.appendNode(parsedNode);
 			if(parsedNode.IsErrorNode()) {
 				break;
 			}
-			BNode checkedNode = this.checker.startCheck(parsedNode);
+			AstNode checkedNode = this.checker.startCheck(parsedNode);
 			if(checkedNode != parsedNode) {
 				TopblockNode.ReplaceWith(parsedNode, checkedNode);
 			}
@@ -40,7 +40,7 @@ public class BunPipeline {
 		this.logger.OutputErrorsToStdErr();
 		@Var int i = 0;
 		while(i < TopblockNode.GetListSize()) {
-			@Var BNode bnode = TopblockNode.GetListAt(i);
+			@Var AstNode bnode = TopblockNode.GetListAt(i);
 			this.driver.perform(bnode);
 			i = i + 1;
 		}

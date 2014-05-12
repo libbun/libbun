@@ -24,7 +24,7 @@
 
 package libbun.ast.expression;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.common.CommonStringBuilder;
 import libbun.encode.LibBunGenerator;
@@ -40,13 +40,13 @@ public class GetNameNode extends MutableNode {
 	@BField @Nullable public BunLetVarNode ResolvedNode = null;
 	@BField public int     VarIndex = 0;
 
-	public GetNameNode(BNode ParentNode, BunToken sourceToken, String GivenName) {
+	public GetNameNode(AstNode ParentNode, BunToken sourceToken, String GivenName) {
 		super(ParentNode, 0);
 		this.SourceToken = sourceToken;
 		this.GivenName = GivenName;
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		@Var GetNameNode NewNode = new GetNameNode(ParentNode, this.SourceToken, this.GivenName);
 		if(TypedClone) {
 			NewNode.IsImmutable = this.IsImmutable;

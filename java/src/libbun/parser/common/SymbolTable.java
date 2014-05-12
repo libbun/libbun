@@ -24,7 +24,7 @@
 
 
 package libbun.parser.common;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.decl.DefSymbolNode;
 import libbun.common.CommonMap;
@@ -51,7 +51,7 @@ public class SymbolTable {
 
 	public final SymbolTable getParentTable() {
 		if(this.blockNode != null) {
-			@Var BNode Node = this.blockNode.ParentNode;
+			@Var AstNode Node = this.blockNode.ParentNode;
 			while(Node != null) {
 				if(Node instanceof BlockNode) {
 					@Var BlockNode blockNode = (BlockNode)Node;

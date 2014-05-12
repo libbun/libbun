@@ -1,10 +1,10 @@
 package libbun.ast.binary;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 
 
 public abstract class BitwiseOperatorNode extends BinaryOperatorNode {
-	public BitwiseOperatorNode(BNode ParentNode, int Precedence) {
+	public BitwiseOperatorNode(AstNode ParentNode, int Precedence) {
 		super(ParentNode, Precedence);
 	}
 }

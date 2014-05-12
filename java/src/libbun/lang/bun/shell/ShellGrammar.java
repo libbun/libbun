@@ -2,7 +2,7 @@ package libbun.lang.bun.shell;
 
 import java.util.ArrayList;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.EmptyNode;
 import libbun.ast.error.ErrorNode;
 import libbun.ast.literal.BunStringNode;
@@ -55,7 +55,7 @@ class CommandSymbolTokenFunction extends BTokenFunction {
 // Syntax Pattern
 class ImportPatternFunction extends BMatchFunction {
 	@Override
-	public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		TokenContext.MoveNext();
 		BToken Token = TokenContext.GetToken();
 		if(Token.EqualsText("command")) {
@@ -64,7 +64,7 @@ class ImportPatternFunction extends BMatchFunction {
 		return this.MatchEnvPattern(ParentNode, TokenContext, Token);
 	}
 
-	public BNode MatchEnvPattern(BNode ParentNode, BTokenContext TokenContext, BToken Token) {
+	public AstNode MatchEnvPattern(AstNode ParentNode, BTokenContext TokenContext, BToken Token) {
 		return null;	//do not support it
 	}
 }
@@ -109,7 +109,7 @@ class ImportCommandPatternFunction extends BMatchFunction {
 		}
 	}
 
-	private void SetCommandSymbol(BNode ParentNode, BTokenContext TokenContext, ArrayList<BToken> TokenList) {	//TODO: command scope
+	private void SetCommandSymbol(AstNode ParentNode, BTokenContext TokenContext, ArrayList<BToken> TokenList) {	//TODO: command scope
 		@Var BToken CommandToken = this.ToCommandToken(TokenList);
 		if(CommandToken == null) {
 			return;
@@ -137,7 +137,7 @@ class ImportCommandPatternFunction extends BMatchFunction {
 	}
 
 	@Override
-	public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var ArrayList<BToken> TokenList = new ArrayList<BToken>();
 		TokenContext.MoveNext();
 		while(TokenContext.HasNext()) {
@@ -161,7 +161,7 @@ class ImportCommandPatternFunction extends BMatchFunction {
 class CommandSymbolPatternFunction extends BMatchFunction {
 	public final static String _PatternName = "$CommandSymbol$";
 
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken CommandToken = TokenContext.GetToken(BTokenContext._MoveNext);
 		@Var String Command = ShellUtils.GetCommand(CommandToken.GetText());
 		if(Command == null) {
@@ -171,25 +171,25 @@ class CommandSymbolPatternFunction extends BMatchFunction {
 		while(TokenContext.HasNext()) {
 			if(TokenContext.MatchToken("|")) {
 				// Match Prefix Option
-				@Var BNode PrefixOptionNode = TokenContext.ParsePatternAfter(ParentNode, CommandNode, PrefixOptionPatternFunction._PatternName, BTokenContext._Optional);
+				@Var AstNode PrefixOptionNode = TokenContext.ParsePatternAfter(ParentNode, CommandNode, PrefixOptionPatternFunction._PatternName, BTokenContext._Optional);
 				if(PrefixOptionNode != null) {
 					return CommandNode.AppendPipedNextNode((CommandNode)PrefixOptionNode);
 				}
 				// Match Command Symbol
-				@Var BNode PipedNode = TokenContext.ParsePattern(ParentNode, CommandSymbolPatternFunction._PatternName, BTokenContext._Required);
+				@Var AstNode PipedNode = TokenContext.ParsePattern(ParentNode, CommandSymbolPatternFunction._PatternName, BTokenContext._Required);
 				if(PipedNode.IsErrorNode()) {
 					return PipedNode;
 				}
 				return CommandNode.AppendPipedNextNode((CommandNode)PipedNode);
 			}
 			// Match Redirect
-			@Var BNode RedirectNode = TokenContext.ParsePattern(ParentNode, RedirectPatternFunction._PatternName, BTokenContext._Optional);
+			@Var AstNode RedirectNode = TokenContext.ParsePattern(ParentNode, RedirectPatternFunction._PatternName, BTokenContext._Optional);
 			if(RedirectNode != null) {
 				CommandNode.AppendPipedNextNode((CommandNode)RedirectNode);
 				continue;
 			}
 			// Match Suffix Option
-			@Var BNode SuffixOptionNode = TokenContext.ParsePattern(ParentNode, SuffixOptionPatternFunction._PatternName, BTokenContext._Optional);
+			@Var AstNode SuffixOptionNode = TokenContext.ParsePattern(ParentNode, SuffixOptionPatternFunction._PatternName, BTokenContext._Optional);
 			if(SuffixOptionNode != null) {
 				if(SuffixOptionNode.IsErrorNode()) {
 					return SuffixOptionNode;
@@ -197,7 +197,7 @@ class CommandSymbolPatternFunction extends BMatchFunction {
 				return CommandNode.AppendPipedNextNode((CommandNode)SuffixOptionNode);
 			}
 			// Match Argument
-			@Var BNode ArgNode = TokenContext.ParsePattern(ParentNode, SimpleArgumentPatternFunction._PatternName, BTokenContext._Optional);
+			@Var AstNode ArgNode = TokenContext.ParsePattern(ParentNode, SimpleArgumentPatternFunction._PatternName, BTokenContext._Optional);
 			if(ArgNode == null) {
 				break;
 			}
@@ -210,14 +210,14 @@ class CommandSymbolPatternFunction extends BMatchFunction {
 class SimpleArgumentPatternFunction extends BMatchFunction {	// subset of CommandArgPatternFunc
 	public final static String _PatternName = "$CommandArg$";
 
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		if(ShellUtils._MatchStopToken(TokenContext)) {
 			return null;
 		}
 		@Var boolean FoundSubstitution = false;
 		@Var boolean FoundEscape = false;
 		@Var CommonArray<BToken> TokenList = new CommonArray<BToken>(new BToken[]{});
-		@Var CommonArray<BNode> NodeList = new CommonArray<BNode>(new BNode[]{});
+		@Var CommonArray<AstNode> NodeList = new CommonArray<AstNode>(new AstNode[]{});
 		while(!ShellUtils._MatchStopToken(TokenContext)) {
 			@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
 			if(Token instanceof BPatternToken && ((BPatternToken)Token).PresetPattern.equals("$StringLiteral$")) {
@@ -233,7 +233,7 @@ class SimpleArgumentPatternFunction extends BMatchFunction {	// subset of Comman
 			FoundEscape = this.CheckEscape(Token, FoundEscape);
 		}
 		this.Flush(TokenContext, NodeList, TokenList);
-		@Var BNode ArgNode = new ArgumentNode(ParentNode, FoundSubstitution ? ArgumentNode._Substitution : ArgumentNode._Normal);
+		@Var AstNode ArgNode = new ArgumentNode(ParentNode, FoundSubstitution ? ArgumentNode._Substitution : ArgumentNode._Normal);
 		ArgNode.SetNode(ArgumentNode._Expr, ShellUtils._ToNode(ParentNode, TokenContext, NodeList));
 		return ArgNode;
 	}
@@ -245,7 +245,7 @@ class SimpleArgumentPatternFunction extends BMatchFunction {	// subset of Comman
 		return false;
 	}
 
-	private void Flush(BTokenContext TokenContext, CommonArray<BNode> NodeList, CommonArray<BToken> TokenList) {
+	private void Flush(BTokenContext TokenContext, CommonArray<AstNode> NodeList, CommonArray<BToken> TokenList) {
 		@Var int size = TokenList.size();
 		if(size == 0) {
 			return;
@@ -274,7 +274,7 @@ class RedirectPatternFunction extends BMatchFunction {
 	public final static String _PatternName = "$Redirect$";
 
 	// <, >, >>, >&, 1>, 2>, 1>>, 2>>, &>, &>>
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
 		@Var String RedirectSymbol = Token.GetText();
 		if(Token.EqualsText(">>") || Token.EqualsText("<")) {
@@ -315,10 +315,10 @@ class RedirectPatternFunction extends BMatchFunction {
 		return null;
 	}
 
-	private BNode CreateRedirectNode(BNode ParentNode, BTokenContext TokenContext, String RedirectSymbol, boolean existTarget) {
+	private AstNode CreateRedirectNode(AstNode ParentNode, BTokenContext TokenContext, String RedirectSymbol, boolean existTarget) {
 		@Var CommandNode Node = new CommandNode(ParentNode, null, RedirectSymbol);
 		if(existTarget) {
-			@Var BNode TargetNode = TokenContext.ParsePattern(Node, SimpleArgumentPatternFunction._PatternName, BTokenContext._Required);
+			@Var AstNode TargetNode = TokenContext.ParsePattern(Node, SimpleArgumentPatternFunction._PatternName, BTokenContext._Required);
 			if(TargetNode.IsErrorNode()) {
 				return TargetNode;
 			}
@@ -331,11 +331,11 @@ class RedirectPatternFunction extends BMatchFunction {
 class PrefixOptionPatternFunction extends BMatchFunction {
 	public final static String _PatternName = "$PrefixOption$";
 
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
 		@Var String Symbol = Token.GetText();
 		if(Symbol.equals(ShellUtils._trace)) {
-			@Var BNode CommandNode = TokenContext.ParsePattern(ParentNode, CommandSymbolPatternFunction._PatternName, BTokenContext._Required);
+			@Var AstNode CommandNode = TokenContext.ParsePattern(ParentNode, CommandSymbolPatternFunction._PatternName, BTokenContext._Required);
 			if(CommandNode.IsErrorNode()) {
 				return CommandNode;
 			}
@@ -343,11 +343,11 @@ class PrefixOptionPatternFunction extends BMatchFunction {
 			return Node.AppendPipedNextNode((CommandNode) CommandNode);
 		}
 		if(Symbol.equals(ShellUtils._timeout) && LeftNode == null) {
-			@Var BNode TimeNode = this.ParseTimeout(ParentNode, TokenContext);
+			@Var AstNode TimeNode = this.ParseTimeout(ParentNode, TokenContext);
 			if(TimeNode.IsErrorNode()) {
 				return TimeNode;
 			}
-			@Var BNode CommandNode = TokenContext.ParsePattern(ParentNode, CommandSymbolPatternFunction._PatternName, BTokenContext._Required);
+			@Var AstNode CommandNode = TokenContext.ParsePattern(ParentNode, CommandSymbolPatternFunction._PatternName, BTokenContext._Required);
 			if(CommandNode.IsErrorNode()) {
 				return CommandNode;
 			}
@@ -358,7 +358,7 @@ class PrefixOptionPatternFunction extends BMatchFunction {
 		return null;
 	}
 
-	public BNode ParseTimeout(BNode ParentNode, BTokenContext TokenContext) {
+	public AstNode ParseTimeout(AstNode ParentNode, BTokenContext TokenContext) {
 		@Var BToken NumToken = TokenContext.GetToken(BTokenContext._MoveNext);
 		if((NumToken instanceof BPatternToken)) {
 			if(((BPatternToken)NumToken).PresetPattern.PatternName.equals(("$IntegerLiteral$"))) {
@@ -389,7 +389,7 @@ class PrefixOptionPatternFunction extends BMatchFunction {
 class SuffixOptionPatternFunction extends BMatchFunction {
 	public final static String _PatternName = "$SuffixOption$";
 
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken Token = TokenContext.GetToken();
 		TokenContext.MoveNext();
 		@Var String OptionSymbol = Token.GetText();

@@ -1,6 +1,6 @@
 package libbun.parser.peg;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.common.CommonArray;
 import libbun.common.CommonMap;
 import libbun.parser.common.BunParserContext;
@@ -34,7 +34,7 @@ public final class PegContext extends BunParserContext {
 		return this.sourcePosition < this.endPosition;
 	}
 
-	@Override public BNode parseNode(BNode parentNode, String key) {
+	@Override public AstNode parseNode(AstNode parentNode, String key) {
 		PegObject po = this.parsePegNode(new PegParsedNode(null, 0, 0), key, false);
 		return po.eval(this.source, parentNode);
 	}
@@ -406,7 +406,7 @@ public final class PegContext extends BunParserContext {
 		this.pushImpl(trace, msg, 'm', null, 0, null);
 	}
 
-	void push(Peg trace, BNode parentNode, int index, BNode childNode) {
+	void push(Peg trace, AstNode parentNode, int index, AstNode childNode) {
 		this.pushImpl(trace, "", 'p', parentNode, index, childNode);
 	}
 

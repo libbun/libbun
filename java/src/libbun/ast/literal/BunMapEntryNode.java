@@ -1,6 +1,6 @@
 package libbun.ast.literal;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.LocalDefinedNode;
 import libbun.common.CommonStringBuilder;
 import libbun.util.BField;
@@ -10,11 +10,11 @@ public class BunMapEntryNode extends LocalDefinedNode {
 	public final static int _Value = 1;
 	@BField public String  Name = null;
 
-	public BunMapEntryNode(BNode ParentNode, String KeySymbol) {
+	public BunMapEntryNode(AstNode ParentNode, String KeySymbol) {
 		super(ParentNode, 2);
 		this.Name = KeySymbol;
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunMapEntryNode(ParentNode, this.Name));
 	}
 
@@ -26,11 +26,11 @@ public class BunMapEntryNode extends LocalDefinedNode {
 		builder.Append(")");
 	}
 
-	public final BNode KeyNode() {
+	public final AstNode KeyNode() {
 		return this.AST[BunMapEntryNode._Key];
 	}
 
-	public final BNode ValueNode() {
+	public final AstNode ValueNode() {
 		return this.AST[BunMapEntryNode._Value];
 	}
 }

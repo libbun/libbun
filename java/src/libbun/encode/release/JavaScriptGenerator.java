@@ -25,7 +25,7 @@
 
 package libbun.encode.release;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
@@ -184,7 +184,7 @@ public class JavaScriptGenerator extends LibBunSourceGenerator {
 		this.Source.Append("{");
 		@Var int i = 0;
 		while(i < Node.GetListSize()) {
-			@Var BunMapEntryNode Entry = Node.GetMapEntryNode(i);
+			@Var BunMapEntryNode Entry = Node.getMapEntryNode(i);
 			this.GenerateExpression("", Entry.KeyNode(), ": ", Entry.ValueNode(), ",");
 			i = i + 1;
 		}
@@ -234,7 +234,7 @@ public class JavaScriptGenerator extends LibBunSourceGenerator {
 		@Var int i = 0;
 		while (i < Node.GetListSize()) {
 			@Var BunLetVarNode FieldNode = Node.GetFieldNode(i);
-			@Var BNode ValueNode = FieldNode.InitValueNode();
+			@Var AstNode ValueNode = FieldNode.InitValueNode();
 			if(!(ValueNode instanceof BunNullNode)) {
 				this.Source.AppendNewLine("this.");
 				this.Source.Append(FieldNode.GetGivenName());
@@ -404,7 +404,7 @@ public class JavaScriptGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitArrayLiteralNode(BunArrayNode Node) {
-		this.GenerateListNode("[", Node, ",", "]");
+		this.GenerateListNode("[", Node, 0, ",", "]");
 	}
 
 	protected final void GenerateFuncName(BunFuncNameNode Node) {
@@ -428,7 +428,7 @@ public class JavaScriptGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitGetNameNode(GetNameNode Node) {
-		@Var BNode ResolvedNode = Node.ResolvedNode;
+		@Var AstNode ResolvedNode = Node.ResolvedNode;
 		if(ResolvedNode == null && !this.LangInfo.AllowUndefinedSymbol) {
 			BunLogger._LogError(Node.SourceToken, "undefined symbol: " + Node.GivenName);
 		}
@@ -438,7 +438,7 @@ public class JavaScriptGenerator extends LibBunSourceGenerator {
 	@Override public void VisitAssignNode(AssignNode Node) {
 		if(Node.LeftNode() instanceof GetIndexNode){
 			@Var GetIndexNode Indexer = (GetIndexNode)Node.LeftNode();
-			@Var BType RecvType = Indexer.GetAstType(GetIndexNode._Recv);
+			@Var BType RecvType = Indexer.getTypeAt(GetIndexNode._Recv);
 			if(RecvType.IsArrayType()) {
 				this.ImportLibrary("@arrayset");
 				this.GenerateExpression("libbun_arrayset(", Indexer.RecvNode(), ", ", Indexer.IndexNode(), ", ");
@@ -461,7 +461,7 @@ public class JavaScriptGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitGetIndexNode(GetIndexNode Node) {
-		@Var BType RecvType = Node.GetAstType(GetIndexNode._Recv);
+		@Var BType RecvType = Node.getTypeAt(GetIndexNode._Recv);
 		if(RecvType.IsMapType()) {
 			this.ImportLibrary("@mapget");
 			this.GenerateExpression("libbun_mapget(", Node.RecvNode(), ", ", Node.IndexNode(), ")");
@@ -505,13 +505,13 @@ public class JavaScriptGenerator extends LibBunSourceGenerator {
 	private void VisitStmtList(BlockNode blockNode) {
 		@Var int i = 0;
 		while (i < blockNode.GetListSize()) {
-			@Var BNode SubNode = blockNode.GetListAt(i);
+			@Var AstNode SubNode = blockNode.GetListAt(i);
 			this.GenerateStatement(SubNode);
 			i = i + 1;
 		}
 	}
 
-	@Override public void VisitblockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(BlockNode Node) {
 		this.Source.OpenIndent("{");
 		this.VisitStmtList(Node);
 		this.Source.CloseIndent("}");
@@ -549,7 +549,7 @@ public class JavaScriptGenerator extends LibBunSourceGenerator {
 	public void VisitWhileNode(BunWhileNode Node) {
 		this.GenerateExpression("while (", Node.CondNode(), ")");
 		if(Node.HasNextNode()) {
-			Node.blockNode().Append(Node.NextNode());
+			Node.blockNode().appendNode(Node.NextNode());
 		}
 		this.GenerateExpression(Node.blockNode());
 	}
@@ -560,7 +560,7 @@ public class JavaScriptGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override
-	protected void GenerateStatementEnd(BNode Node) {
+	protected void GenerateStatementEnd(AstNode Node) {
 		if(!this.Source.EndsWith(';') && !this.Source.EndsWith('}')){
 			this.Source.Append(";");
 		}

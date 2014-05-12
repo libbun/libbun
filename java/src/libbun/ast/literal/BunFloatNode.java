@@ -24,22 +24,22 @@
 
 package libbun.ast.literal;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.parser.common.BunVisitor2;
+import libbun.parser.common.BunModelVisitor;
 import libbun.type.BType;
 import libbun.util.BField;
 
 public final class BunFloatNode extends BunValueNode {
 	@BField public double	FloatValue;
-	public BunFloatNode(BNode ParentNode, double Value) {
+	public BunFloatNode(AstNode ParentNode, double Value) {
 		super(ParentNode);
 		this.Type = BType.FloatType;
 		this.FloatValue = Value;
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunFloatNode(ParentNode, this.FloatValue));
 	}
 
@@ -57,7 +57,7 @@ public final class BunFloatNode extends BunValueNode {
 	}
 
 	@Override
-	public void accept2(BunVisitor2 visitor) {
+	public void acceptBunModel(BunModelVisitor visitor) {
 		visitor.visitFloatNode(this);
 	}
 

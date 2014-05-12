@@ -1,7 +1,7 @@
 package libbun.ast.expression;
 
 import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.parser.common.BunToken;
 import libbun.type.BFormFunc;
@@ -11,29 +11,29 @@ import libbun.util.BField;
 public class ApplyMacroNode extends AbstractListNode {
 
 	public String macroText = null;
-	public BNode  origNode = null;
+	public AstNode  origNode = null;
 
-	public ApplyMacroNode(String macroText, BNode node, int startIndex) {
+	public ApplyMacroNode(String macroText, AstNode node, int startIndex) {
 		super(node.ParentNode, 0);
 		this.macroText = macroText;
 		this.origNode = node;
 		this.SourceToken = node.SourceToken;
-		for(int i = startIndex; i < node.GetAstSize(); i++) {
-			this.Append(node.AST[i]);
+		for(int i = startIndex; i < node.size(); i++) {
+			this.appendNode(node.AST[i]);
 		}
 		this.Type = node.Type;
 	}
 
 	@BField public BFormFunc FormFunc;
 
-	public ApplyMacroNode(BNode ParentNode, BunToken sourceToken, BFormFunc FormFunc) {
+	public ApplyMacroNode(AstNode ParentNode, BunToken sourceToken, BFormFunc FormFunc) {
 		super(ParentNode, 0);
 		this.SourceToken = sourceToken;
 		this.FormFunc = FormFunc;
 		assert(FormFunc != null);
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new ApplyMacroNode(ParentNode, this.SourceToken, this.FormFunc));
 	}
 

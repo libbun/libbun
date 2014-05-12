@@ -1,12 +1,12 @@
 package libbun.ast.literal;
 
-import libbun.ast.BNode;
-import libbun.ast.BunNode2;
+import libbun.ast.AstNode;
+import libbun.ast.BunNode;
 
 
-public abstract class BunValueNode extends BunNode2 {
+public abstract class BunValueNode extends BunNode {
 
-	public BunValueNode(BNode parentNode) {
+	public BunValueNode(AstNode parentNode) {
 		super(parentNode, 0);
 	}
 

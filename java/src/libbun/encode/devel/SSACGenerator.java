@@ -25,7 +25,7 @@
 
 package libbun.encode.devel;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.LocalDefinedNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BunInstanceOfNode;
@@ -78,7 +78,7 @@ public class SSACGenerator extends OldSourceGenerator {
 		this.Header.AppendNewLine("#include<", LibName, ">");
 	}
 
-	@Override protected void GenerateExpression(BNode Node) {
+	@Override protected void GenerateExpression(AstNode Node) {
 		if(Node.IsUntyped() && !Node.IsErrorNode() && !(Node instanceof BunFuncNameNode)) {
 			this.Source.Append("/*untyped*/" + this.NullLiteral);
 			BunLogger._LogError(Node.SourceToken, "untyped error: " + Node);
@@ -120,11 +120,11 @@ public class SSACGenerator extends OldSourceGenerator {
 		else {
 			this.Source.Append("LibZen_NewArray(");
 		}
-		this.Source.Append(String.valueOf(Node.GetListSize()));
-		if(Node.GetListSize() > 0) {
+		this.Source.Append(String.valueOf(Node.size()));
+		if(Node.size() > 0) {
 			this.Source.Append(this.Camma);
 		}
-		this.GenerateListNode("", Node, ")");
+		this.GenerateListNode("", Node, 0, ", ", ")");
 	}
 
 	@Override public void VisitMapLiteralNode(BunMapNode Node) {
@@ -145,7 +145,7 @@ public class SSACGenerator extends OldSourceGenerator {
 		if(Node.GetListSize() > 0) {
 			this.Source.Append(this.Camma);
 		}
-		this.GenerateListNode("", Node, ")");
+		this.GenerateListNode("", Node, 0, ", ", ")");
 	}
 
 	@Override public void VisitNewObjectNode(NewObjectNode Node) {
@@ -154,7 +154,7 @@ public class SSACGenerator extends OldSourceGenerator {
 	}
 
 	@Override public void VisitGetIndexNode(GetIndexNode Node) {
-		this.Source.Append(this.NameType(Node.GetAstType(GetIndexNode._Recv)) + "GetIndex");
+		this.Source.Append(this.NameType(Node.getTypeAt(GetIndexNode._Recv)) + "GetIndex");
 		this.Source.Append("(");
 		this.GenerateExpression(Node.IndexNode());
 		this.Source.Append(")");
@@ -296,7 +296,7 @@ public class SSACGenerator extends OldSourceGenerator {
 
 	@Override public void VisitLetNode(BunLetVarNode Node) {
 		this.Source.Append("static ");
-		this.GenerateTypeName(Node.GetAstType(BunLetVarNode._InitValue));
+		this.GenerateTypeName(Node.getTypeAt(BunLetVarNode._InitValue));
 		this.Source.Append(" ");
 		this.Source.Append(Node.GetUniqueName(this));
 		this.GenerateExpression(" = ", Node.InitValueNode(), this.SemiColon);
@@ -487,7 +487,7 @@ public class SSACGenerator extends OldSourceGenerator {
 		this.Source.Append("phi(");
 		@Var int i = 0;
 		while(i < phi.Args.size()) {
-			BNode Arg = CommonArray.GetIndex(phi.Args, i);
+			AstNode Arg = CommonArray.GetIndex(phi.Args, i);
 			// Arg is instanceof ZLetVarNode or ZVarblockNode or ZSetNameNode or PHINode
 			if(i != 0) {
 				this.Source.Append(", ");

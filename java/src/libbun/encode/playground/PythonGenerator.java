@@ -1,6 +1,6 @@
 package libbun.encode.playground;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
@@ -227,14 +227,14 @@ public class PythonGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitArrayLiteralNode(BunArrayNode Node) {
-		this.GenerateListNode("[", Node, ",", "]");
+		this.GenerateListNode("[", Node, 0, ",", "]");
 	}
 
 	@Override public void VisitMapLiteralNode(BunMapNode Node) {
 		this.Source.Append("{");
 		@Var int i = 0;
 		while(i < Node.GetListSize()) {
-			@Var BunMapEntryNode Entry = Node.GetMapEntryNode(i);
+			@Var BunMapEntryNode Entry = Node.getMapEntryNode(i);
 			this.GenerateExpression("", Entry.KeyNode(), ": ", Entry.ValueNode(), ",");
 			i = i + 1;
 		}
@@ -267,7 +267,7 @@ public class PythonGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitGetNameNode(GetNameNode Node) {
-		@Var BNode ResolvedNode = Node.ResolvedNode;
+		@Var AstNode ResolvedNode = Node.ResolvedNode;
 		if(ResolvedNode == null && !this.LangInfo.AllowUndefinedSymbol) {
 			BunLogger._LogError(Node.SourceToken, "undefined symbol: " + Node.GivenName);
 		}
@@ -319,13 +319,13 @@ public class PythonGenerator extends LibBunSourceGenerator {
 	}
 
 
-	@Override protected void GenerateStatementEnd(BNode Node) {
+	@Override protected void GenerateStatementEnd(AstNode Node) {
 	}
 
 	private void GenerateStmtList(BlockNode blockNode) {
 		@Var int i = 0;
 		while (i < blockNode.GetListSize()) {
-			@Var BNode SubNode = blockNode.GetListAt(i);
+			@Var AstNode SubNode = blockNode.GetListAt(i);
 			this.GenerateStatement(SubNode);
 			i = i + 1;
 		}
@@ -334,7 +334,7 @@ public class PythonGenerator extends LibBunSourceGenerator {
 		}
 	}
 
-	@Override public void VisitblockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(BlockNode Node) {
 		this.Source.OpenIndent(":");
 		this.GenerateStmtList(Node);
 		this.Source.CloseIndent("");
@@ -352,7 +352,7 @@ public class PythonGenerator extends LibBunSourceGenerator {
 		this.GenerateExpression(Node.CondNode());
 		this.GenerateExpression(Node.ThenNode());
 		if (Node.HasElseNode()) {
-			BNode ElseNode = Node.ElseNode();
+			AstNode ElseNode = Node.ElseNode();
 			if(ElseNode instanceof BunIfNode) {
 				this.Source.AppendNewLine("el");
 			}
@@ -374,7 +374,7 @@ public class PythonGenerator extends LibBunSourceGenerator {
 	@Override public void VisitWhileNode(BunWhileNode Node) {
 		this.GenerateExpression("while (", Node.CondNode(),")");
 		if(Node.HasNextNode()) {
-			Node.blockNode().Append(Node.NextNode());
+			Node.blockNode().appendNode(Node.NextNode());
 		}
 		this.GenerateExpression(Node.blockNode());
 	}
@@ -523,7 +523,7 @@ public class PythonGenerator extends LibBunSourceGenerator {
 
 	// Generation of specialized syntax sugar nodes ==========================
 
-	@Override protected boolean LocallyGenerated(BNode Node) {
+	@Override protected boolean LocallyGenerated(AstNode Node) {
 		if(Node instanceof StringInterpolationNode) {
 			return this.VisitStringInterpolationNode((StringInterpolationNode)Node);
 		}
@@ -537,14 +537,14 @@ public class PythonGenerator extends LibBunSourceGenerator {
 	protected boolean VisitStringInterpolationNode(StringInterpolationNode Node) {
 		@Var String Format = "";
 		@Var int i = 0;
-		while(i < Node.GetAstSize()) {
+		while(i < Node.size()) {
 			if(i % 2 == 0) {
 				if(Node.AST[i] instanceof BunStringNode) {
 					Format = Format + this.NormalizePythonFormat(Node.GetStringLiteralAt(i));
 				}
 			}
 			else {
-				@Var BType Type = Node.GetAstType(i);
+				@Var BType Type = Node.getTypeAt(i);
 				@Var String Formatter = "%s";
 				if(Type.IsIntType()) {
 					Formatter = "%d";
@@ -557,10 +557,10 @@ public class PythonGenerator extends LibBunSourceGenerator {
 			i = i + 1;
 		}
 		this.Source.Append(LibBunSystem._QuoteString("u'", Format, "'"));
-		if(Node.GetAstSize() > 1) {
+		if(Node.size() > 1) {
 			this.Source.Append(" % (");
 			i = 1;
-			while(i < Node.GetAstSize()) {
+			while(i < Node.size()) {
 				if(i > 2) {
 					this.Source.Append(", ");
 				}

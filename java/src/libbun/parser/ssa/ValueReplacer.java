@@ -1,25 +1,25 @@
 package libbun.parser.ssa;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.expression.GetNameNode;
 import libbun.encode.LibBunGenerator;
 
 public class ValueReplacer extends ZASTTransformer {
 	//private BNode OldNode;
-	private BNode NewNode;
+	private AstNode NewNode;
 	private final LibBunGenerator Generator;
 	public ValueReplacer(LibBunGenerator Generator) {
 		this.SetTarget(null, null);
 		this.Generator = Generator;
 	}
 
-	public void SetTarget(BNode OldNode, BNode NewNode) {
+	public void SetTarget(AstNode OldNode, AstNode NewNode) {
 		//this.OldNode = OldNode;
 		this.NewNode = NewNode;
 	}
 
 	@Override
-	protected void VisitAfter(BNode Node, int Index) {
+	protected void VisitAfter(AstNode Node, int Index) {
 		if(Node.AST[Index] instanceof GetNameNode) {
 			GetNameNode GNode = (GetNameNode) Node.AST[Index];
 			PHINode phi = (PHINode) this.NewNode;

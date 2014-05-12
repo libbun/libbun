@@ -1,6 +1,6 @@
 package libbun.ast.literal;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BType;
@@ -8,7 +8,7 @@ import libbun.util.BField;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
-public class BunAsmNode extends BNode {
+public class BunAsmNode extends AstNode {
 	public final static int _Form = 0;
 	public static final int _TypeInfo = 1;
 	@BField public String RequiredLibrary = null;
@@ -16,14 +16,14 @@ public class BunAsmNode extends BNode {
 	@BField String FormText = null;
 	@BField BType  FormType = null;
 
-	public BunAsmNode(BNode ParentNode, String LibName, String FormText, BType FormType) {
+	public BunAsmNode(AstNode ParentNode, String LibName, String FormText, BType FormType) {
 		super(ParentNode, 2);
 		this.RequiredLibrary = LibName;
 		this.FormText = FormText;
 		this.FormType = FormType;
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunAsmNode(ParentNode, this.RequiredLibrary, this.FormText, this.FormType));
 	}
 
@@ -43,7 +43,7 @@ public class BunAsmNode extends BNode {
 
 	public final String GetFormText() {
 		if(this.FormText == null) {
-			@Var BNode Node = this.AST[BunAsmNode._Form];
+			@Var AstNode Node = this.AST[BunAsmNode._Form];
 			if(Node instanceof BunStringNode) {
 				this.FormText = ((BunStringNode)Node).StringValue;
 			}

@@ -57,7 +57,7 @@ public class RubyGenerator extends OldSourceGenerator {
 	//	}
 
 	@Override
-	public void VisitblockNode(BlockNode Node) {
+	public void VisitBlockNode(BlockNode Node) {
 		this.Source.Append("do");
 		throw new RuntimeException("FIXME: don't use for statement");
 		//		for(ZNode SubNode : Node.StmtList) {

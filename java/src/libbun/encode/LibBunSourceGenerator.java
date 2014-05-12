@@ -1,7 +1,7 @@
 package libbun.encode;
 
 import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.LocalDefinedNode;
 import libbun.ast.SyntaxSugarNode;
@@ -134,7 +134,7 @@ public abstract class LibBunSourceGenerator extends LibBunGenerator {
 		this.Source.Append(this.GetNativeTypeName(Type.GetRealType()));
 	}
 
-	protected final void GenerateExpression(String Pre, BNode Node, String Post) {
+	protected final void GenerateExpression(String Pre, AstNode Node, String Post) {
 		if(Pre != null && Pre.length() > 0) {
 			this.Source.Append(Pre);
 		}
@@ -144,7 +144,7 @@ public abstract class LibBunSourceGenerator extends LibBunGenerator {
 		}
 	}
 
-	protected final void GenerateExpression(String Pre, BNode Node, String Delim, BNode Node2, String Post) {
+	protected final void GenerateExpression(String Pre, AstNode Node, String Delim, AstNode Node2, String Post) {
 		if(Pre != null && Pre.length() > 0) {
 			this.Source.Append(Pre);
 		}
@@ -158,7 +158,7 @@ public abstract class LibBunSourceGenerator extends LibBunGenerator {
 		}
 	}
 
-	protected final void GenerateExpression(String Text1, BNode Node1, String Text2, BNode Node2, String Text3, BNode Node3, String Text4) {
+	protected final void GenerateExpression(String Text1, AstNode Node1, String Text2, AstNode Node2, String Text3, AstNode Node3, String Text4) {
 		this.Source.Append(Text1);
 		this.GenerateExpression(Node1);
 		this.Source.Append(Text2);
@@ -168,9 +168,9 @@ public abstract class LibBunSourceGenerator extends LibBunGenerator {
 		this.Source.Append(Text4);
 	}
 
-	protected abstract void GenerateStatementEnd(BNode Node);
+	protected abstract void GenerateStatementEnd(AstNode Node);
 
-	@Override protected void GenerateStatement(BNode Node) {
+	@Override protected void GenerateStatement(AstNode Node) {
 		this.Source.AppendNewLine();
 		if(Node instanceof BunCastNode && Node.Type == BType.VoidType) {
 			Node = Node.AST[BunCastNode._Expr];
@@ -212,9 +212,9 @@ public abstract class LibBunSourceGenerator extends LibBunGenerator {
 	@Override public void VisitSyntaxSugarNode(SyntaxSugarNode Node) {
 		@Var DesugarNode DeNode = Node.PerformDesugar(this.TypeChecker);
 		this.GenerateExpression(DeNode.AST[0]);
-		if(DeNode.GetAstSize() > 1) {
+		if(DeNode.size() > 1) {
 			@Var int i = 1;
-			while(i < DeNode.GetAstSize()) {
+			while(i < DeNode.size()) {
 				this.GenerateStatement(DeNode.AST[i]);
 				i = i + 1;
 			}
@@ -234,11 +234,23 @@ public abstract class LibBunSourceGenerator extends LibBunGenerator {
 
 	// Generator Utils
 
+	protected void GenerateListNode(String openToken, AstNode vargNode, int startIndex, String commaToken, String closeToken) {
+		this.Source.Append(openToken);
+		for(int i = startIndex; i < vargNode.size(); i++) {
+			@Var AstNode ParamNode = vargNode.get(i);
+			if (i > 0) {
+				this.Source.Append(commaToken);
+			}
+			this.GenerateExpression(ParamNode);
+		}
+		this.Source.Append(closeToken);
+	}
+
 	protected void GenerateListNode(String OpenToken, AbstractListNode VargNode, String CommaToken, String CloseToken) {
 		this.Source.Append(OpenToken);
 		@Var int i = 0;
 		while(i < VargNode.GetListSize()) {
-			@Var BNode ParamNode = VargNode.GetListAt(i);
+			@Var AstNode ParamNode = VargNode.GetListAt(i);
 			if (i > 0) {
 				this.Source.Append(CommaToken);
 			}
@@ -247,6 +259,7 @@ public abstract class LibBunSourceGenerator extends LibBunGenerator {
 		}
 		this.Source.Append(CloseToken);
 	}
+
 
 	protected void GenerateWrapperCall(String OpenToken, BunFunctionNode FuncNode, String CommaToken, String CloseToken) {
 		this.Source.Append(OpenToken);

@@ -1,6 +1,6 @@
 package libbun.util;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.parser.classic.BTokenContext;
 
 public abstract class BMatchFunction extends BFunction {
@@ -10,6 +10,6 @@ public abstract class BMatchFunction extends BFunction {
 	protected BMatchFunction() {
 		super(0, null);
 	}
-	public abstract BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode);
+	public abstract AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode);
 }
 

@@ -24,24 +24,38 @@
 
 package libbun.ast.literal;
 
-import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
+import libbun.ast.BunNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.BunModelVisitor;
 import libbun.util.Var;
 
-public final class BunMapNode extends AbstractListNode {
-	public BunMapNode(BNode ParentNode) {
+public final class BunMapNode extends BunNode {
+	public BunMapNode(AstNode ParentNode) {
 		super(ParentNode, 0);
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunMapNode(ParentNode));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {
-		this.bunfyAST(builder, "(map", this.vargStartIndex, ")");
+		this.bunfyAST(builder, "(map", 0, ")");
 	}
-	public final BunMapEntryNode GetMapEntryNode(int Index) {
-		@Var BNode Node = this.GetListAt(Index);
+
+	public final int GetListSize() {
+		return this.size() - 0;
+	}
+
+	public final AstNode GetListAt(int Index) {
+		return this.AST[Index];
+	}
+
+	public final void SetListAt(int Index, AstNode Node) {
+		this.SetNode(Index, Node);
+	}
+
+	public final BunMapEntryNode getMapEntryNode(int Index) {
+		@Var AstNode Node = this.AST[Index];
 		if(Node instanceof BunMapEntryNode) {
 			return (BunMapEntryNode)Node;
 		}
@@ -50,4 +64,9 @@ public final class BunMapNode extends AbstractListNode {
 	@Override public void Accept(LibBunVisitor Visitor) {
 		Visitor.VisitMapLiteralNode(this);
 	}
+	@Override
+	public void acceptBunModel(BunModelVisitor visitor) {
+		visitor.visitMapNode(this);
+	}
+
 }

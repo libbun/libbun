@@ -4,31 +4,31 @@ import libbun.util.BField;
 import libbun.util.LibBunSystem;
 import libbun.util.Var;
 
-public abstract class AbstractListNode extends BNode {
+public abstract class AbstractListNode extends AstNode {
 	@BField public int vargStartIndex;
-	public AbstractListNode(BNode ParentNode, int Size) {
+	public AbstractListNode(AstNode ParentNode, int Size) {
 		super(ParentNode, Size);
 		this.vargStartIndex = Size;
 	}
 
 	public final int GetListSize() {
-		return this.GetAstSize() - this.vargStartIndex;
+		return this.size() - this.vargStartIndex;
 	}
 
-	public final BNode GetListAt(int Index) {
+	public final AstNode GetListAt(int Index) {
 		return this.AST[this.vargStartIndex + Index];
 	}
 
-	public final void SetListAt(int Index, BNode Node) {
+	public final void SetListAt(int Index, AstNode Node) {
 		this.SetNode(Index + this.vargStartIndex, Node);
 	}
 
-	public final void InsertListAt(int Index, BNode Node) {
+	public final void InsertListAt(int Index, AstNode Node) {
 		if(this.AST == null || Index < 0 || this.AST.length == Index) {
-			this.Append(Node);
+			this.appendNode(Node);
 		} else {
-			@Var BNode[] newAST = LibBunSystem._NewNodeArray(this.AST.length + 1);
-			@Var BNode[] oldAST = this.AST;
+			@Var AstNode[] newAST = LibBunSystem._NewNodeArray(this.AST.length + 1);
+			@Var AstNode[] oldAST = this.AST;
 			Index = this.vargStartIndex + Index;
 			this.AST = newAST;
 			LibBunSystem._ArrayCopy(oldAST, 0, newAST, 0, Index);
@@ -37,9 +37,9 @@ public abstract class AbstractListNode extends BNode {
 		}
 	}
 
-	public final BNode RemoveListAt(int Index) {
-		@Var BNode Removed = this.GetListAt(Index);
-		@Var BNode[] newAST = LibBunSystem._NewNodeArray(this.AST.length - 1);
+	public final AstNode RemoveListAt(int Index) {
+		@Var AstNode Removed = this.GetListAt(Index);
+		@Var AstNode[] newAST = LibBunSystem._NewNodeArray(this.AST.length - 1);
 		@Var int RemovedIndex = this.vargStartIndex + Index;
 		LibBunSystem._ArrayCopy(this.AST, 0, newAST, 0, RemovedIndex);
 		LibBunSystem._ArrayCopy(this.AST, RemovedIndex + 1, newAST, RemovedIndex, this.AST.length - (RemovedIndex + 1));
@@ -54,7 +54,7 @@ public abstract class AbstractListNode extends BNode {
 				this.AST = null;
 			}
 			else {
-				@Var BNode[] newAST = LibBunSystem._NewNodeArray(newsize);
+				@Var AstNode[] newAST = LibBunSystem._NewNodeArray(newsize);
 				LibBunSystem._ArrayCopy(this.AST, 0, newAST, 0, newsize);
 				this.AST = newAST;
 			}

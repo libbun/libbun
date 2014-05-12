@@ -6,9 +6,9 @@ import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BType;
 
 
-public abstract class SyntaxSugarNode extends BNode {
+public abstract class SyntaxSugarNode extends AstNode {
 
-	public SyntaxSugarNode(BNode ParentNode, int Size) {
+	public SyntaxSugarNode(AstNode ParentNode, int Size) {
 		super(ParentNode, Size);
 	}
 

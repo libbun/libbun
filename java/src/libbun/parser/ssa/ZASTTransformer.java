@@ -1,7 +1,7 @@
 package libbun.parser.ssa;
 
 import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.GroupNode;
@@ -39,19 +39,19 @@ import libbun.parser.classic.LibBunVisitor;
 import libbun.util.Var;
 
 public class ZASTTransformer extends LibBunVisitor {
-	private BNode TransformedValue;
+	private AstNode TransformedValue;
 	public ZASTTransformer() {
 		this.TransformedValue = null;
 	}
 
-	protected void VisitBefore(BNode Node, int Index) {
+	protected void VisitBefore(AstNode Node, int Index) {
 	}
 
-	protected void VisitAfter(BNode Node, int Index) {
+	protected void VisitAfter(AstNode Node, int Index) {
 	}
 
-	protected void Transform(BNode Node, int Index) {
-		BNode LastTransformed = this.TransformedValue;
+	protected void Transform(AstNode Node, int Index) {
+		AstNode LastTransformed = this.TransformedValue;
 		this.TransformedValue = Node.AST[Index];
 		this.VisitBefore(Node, Index);
 		Node.AST[Index].Accept(this);
@@ -75,12 +75,12 @@ public class ZASTTransformer extends LibBunVisitor {
 
 	@Override
 	public void VisitArrayLiteralNode(BunArrayNode Node) {
-		this.GenerateListNode(Node);
+		//		this.GenerateListNode(Node);
 	}
 
 	@Override
 	public void VisitMapLiteralNode(BunMapNode Node) {
-		this.GenerateListNode(Node);
+		//		this.GenerateListNode(Node);
 	}
 
 	//	@Override
@@ -154,7 +154,7 @@ public class ZASTTransformer extends LibBunVisitor {
 	}
 
 	@Override
-	public void VisitblockNode(BlockNode Node) {
+	public void VisitBlockNode(BlockNode Node) {
 		this.GenerateListNode(Node);
 	}
 

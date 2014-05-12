@@ -2,9 +2,9 @@ package libbun.ast;
 
 import libbun.parser.classic.LibBunVisitor;
 
-public class PegNode extends BNode {
+public class PegNode extends AstNode {
 
-	public PegNode(BNode parentNode, int size) {
+	public PegNode(AstNode parentNode, int size) {
 		super(parentNode, size);
 	}
 

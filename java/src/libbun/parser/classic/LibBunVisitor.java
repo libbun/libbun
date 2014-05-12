@@ -87,7 +87,7 @@ public abstract class LibBunVisitor {
 	public abstract void VisitInstanceOfNode(BunInstanceOfNode Node);
 	public abstract void VisitBinaryNode(BinaryOperatorNode Node);
 
-	public abstract void VisitblockNode(BlockNode Node);
+	public abstract void VisitBlockNode(BlockNode Node);
 	public abstract void VisitVarblockNode(BunVarBlockNode Node);
 	public abstract void VisitIfNode(BunIfNode Node);
 	public abstract void VisitReturnNode(BunReturnNode Node);

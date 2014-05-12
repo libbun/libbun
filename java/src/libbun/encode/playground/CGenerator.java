@@ -25,7 +25,7 @@
 
 package libbun.encode.playground;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
@@ -103,7 +103,7 @@ public class CGenerator extends LibBunSourceGenerator {
 		this.LoadInlineLibrary("playground.c", "//");
 	}
 
-	@Override protected void GenerateExpression(BNode Node) {
+	@Override protected void GenerateExpression(AstNode Node) {
 		if(Node.IsUntyped() &&
 				!Node.IsErrorNode() &&
 				!(Node instanceof BunFuncNameNode) &&
@@ -274,7 +274,7 @@ public class CGenerator extends LibBunSourceGenerator {
 		//		if(Node.GetListSize() > 0) {
 		//			this.Source.Append(", ");
 		//		}
-		this.GenerateListNode("{", Node, ",", "}");
+		this.GenerateListNode("{", Node, 0, ",", "}");
 	}
 
 	@Override public void VisitMapLiteralNode(BunMapNode Node) {
@@ -299,7 +299,7 @@ public class CGenerator extends LibBunSourceGenerator {
 		this.Source.Append("{");
 		@Var int i = 0;
 		while(i < Node.GetListSize()) {
-			@Var BunMapEntryNode Entry = Node.GetMapEntryNode(i);
+			@Var BunMapEntryNode Entry = Node.getMapEntryNode(i);
 			this.GenerateExpression("{", Entry.KeyNode(), ", ", Entry.ValueNode(), "}, ");
 			i = i + 1;
 		}
@@ -332,7 +332,7 @@ public class CGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitGetNameNode(GetNameNode Node) {
-		@Var BNode ResolvedNode = Node.ResolvedNode;
+		@Var AstNode ResolvedNode = Node.ResolvedNode;
 		//		if(ResolvedNode == null && !this.LangInfo.AllowUndefinedSymbol) {
 		//			LibBunLogger._LogError(Node.SourceToken, "undefined symbol: " + Node.GivenName);
 		//		}
@@ -366,7 +366,7 @@ public class CGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitGetIndexNode(GetIndexNode Node) {
-		BType ThisType = Node.GetAstType(GetIndexNode._Recv);
+		BType ThisType = Node.getTypeAt(GetIndexNode._Recv);
 		if(ThisType.IsMapType()) {
 
 		}
@@ -433,7 +433,7 @@ public class CGenerator extends LibBunSourceGenerator {
 		this.GenerateBinaryNode(Node, Node.GetOperator());
 	}
 
-	@Override protected void GenerateStatementEnd(BNode Node) {
+	@Override protected void GenerateStatementEnd(AstNode Node) {
 		if(Node instanceof BunIfNode || Node instanceof BunWhileNode || Node instanceof BunTryNode || Node instanceof BunFunctionNode || Node instanceof BunClassNode) {
 			return;
 		}
@@ -445,14 +445,14 @@ public class CGenerator extends LibBunSourceGenerator {
 	protected void GenerateStmtListNode(BlockNode Node) {
 		@Var int i = 0;
 		while (i < Node.GetListSize()) {
-			@Var BNode SubNode = Node.GetListAt(i);
+			@Var AstNode SubNode = Node.GetListAt(i);
 			this.GenerateStatement(SubNode);
 			i = i + 1;
 		}
 		this.GenerateStatementEnd(Node);
 	}
 
-	@Override public void VisitblockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(BlockNode Node) {
 		this.Source.AppendWhiteSpace();
 		this.Source.OpenIndent("{");
 		this.GenerateStmtListNode(Node);
@@ -489,7 +489,7 @@ public class CGenerator extends LibBunSourceGenerator {
 	@Override public void VisitWhileNode(BunWhileNode Node) {
 		this.GenerateExpression("while (", Node.CondNode(), ")");
 		if(Node.HasNextNode()) {
-			Node.blockNode().Append(Node.NextNode());
+			Node.blockNode().appendNode(Node.NextNode());
 		}
 		this.GenerateExpression(Node.blockNode());
 	}
@@ -599,10 +599,10 @@ public class CGenerator extends LibBunSourceGenerator {
 		else {
 			this.Source.Append("static ");
 			if(Node.DeclType().IsFuncType()) {
-				this.GenerateFuncTypeName(Node.GetAstType(BunLetVarNode._InitValue), Node.GetUniqueName(this));
+				this.GenerateFuncTypeName(Node.getTypeAt(BunLetVarNode._InitValue), Node.GetUniqueName(this));
 			}
 			else {
-				this.GenerateTypeName(Node.GetAstType(BunLetVarNode._InitValue));
+				this.GenerateTypeName(Node.getTypeAt(BunLetVarNode._InitValue));
 				this.Source.Append(" ");
 				this.Source.Append(Node.GetUniqueName(this));
 			}

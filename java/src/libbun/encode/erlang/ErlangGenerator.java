@@ -2,7 +2,7 @@
 package libbun.encode.erlang;
 
 import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
@@ -66,7 +66,7 @@ public class ErlangGenerator extends OldSourceGenerator {
 		@Var int i = 0;
 		@Var int size = blockNode.GetListSize();
 		while (i < size) {
-			@Var BNode SubNode = blockNode.GetListAt(i);
+			@Var AstNode SubNode = blockNode.GetListAt(i);
 			this.Source.AppendNewLine();
 			this.GenerateExpression(SubNode);
 			if (i == size - 1) {
@@ -79,15 +79,15 @@ public class ErlangGenerator extends OldSourceGenerator {
 		}
 	}
 
-	@Override public void VisitblockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(BlockNode Node) {
 		this.Source.OpenIndent();
 		this.GenerateStmtListNode(Node, ".");
 		this.Source.CloseIndent();
 	}
-	public void VisitblockNode(BlockNode Node, String last) {
+	public void VisitBlockNode(BlockNode Node, String last) {
 		this.VarMgr.PushScope();
 		this.Source.OpenIndent();
-		this.VisitblockNode(Node);
+		this.VisitBlockNode(Node);
 		this.Source.AppendLineFeed();
 		this.Source.AppendNewLine("__Arguments__ = " + this.VarMgr.GenVarTuple(VarFlag.Assigned | VarFlag.DefinedByParentScope, false));
 		this.Source.Append(last);
@@ -344,13 +344,13 @@ public class ErlangGenerator extends OldSourceGenerator {
 		this.GenerateExpression(Node.RightNode());
 	}
 
-	public void AppendGuardAndBlock(BNode Node) {
+	public void AppendGuardAndBlock(AstNode Node) {
 		if (Node instanceof BunIfNode) {
 			BunIfNode IfNode = (BunIfNode)Node;
 			this.Source.AppendNewLine();
 			this.GenerateExpression(IfNode.CondNode());
 			this.Source.Append(" ->");
-			this.VisitblockNode((BlockNode)IfNode.ThenNode(), ";");
+			this.VisitBlockNode((BlockNode)IfNode.ThenNode(), ";");
 			this.Source.AppendLineFeed();
 			if (IfNode.HasElseNode()) {
 				this.AppendGuardAndBlock(IfNode.ElseNode());
@@ -360,7 +360,7 @@ public class ErlangGenerator extends OldSourceGenerator {
 		} else {
 			this.Source.AppendNewLine("true ->");
 			if (Node != null) {
-				this.VisitblockNode((BlockNode)Node, "");
+				this.VisitBlockNode((BlockNode)Node, "");
 			} else {
 				this.Source.OpenIndent(null);
 				this.Source.AppendNewLine(this.VarMgr.GenVarTuple(VarFlag.AssignedByChildScope, false));
@@ -400,7 +400,7 @@ public class ErlangGenerator extends OldSourceGenerator {
 		//Generate WhileBlock
 		this.VarMgr.FilterStart();
 		this.VarMgr.ChangeFilterFlag(VarFlag.None);
-		this.VisitblockNode(Node.blockNode(), ",");
+		this.VisitBlockNode(Node.blockNode(), ",");
 		this.Source.AppendLineFeed();
 		this.Source.OpenIndent();
 		this.Source.AppendNewLine(WhileNodeName + "(" + WhileNodeName + ", __Arguments__);");
@@ -598,7 +598,7 @@ public class ErlangGenerator extends OldSourceGenerator {
 		this.Source.Append(OpenToken);
 		@Var int i = 0;
 		while(i < VargNode.GetListSize()) {
-			@Var BNode ParamNode = VargNode.GetListAt(i);
+			@Var AstNode ParamNode = VargNode.GetListAt(i);
 			if (i > 0) {
 				this.Source.Append(DelimToken);
 			}

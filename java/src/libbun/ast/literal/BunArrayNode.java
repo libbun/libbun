@@ -24,26 +24,27 @@
 
 package libbun.ast.literal;
 
-import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
+import libbun.ast.BunNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.parser.common.BunVisitor2;
+import libbun.parser.common.BunModelVisitor;
 
-public final class BunArrayNode extends AbstractListNode {
-	public BunArrayNode(BNode ParentNode) {
+public final class BunArrayNode extends BunNode {
+	public BunArrayNode(AstNode ParentNode) {
 		super(ParentNode, 0);
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunArrayNode(ParentNode));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {
-		this.bunfyAST(builder, "(array", this.vargStartIndex, ")");
+		this.bunfyAST(builder, "(array", 0, ")");
 	}
 	@Override public void Accept(LibBunVisitor Visitor) {
 		Visitor.VisitArrayLiteralNode(this);
 	}
-	public void accept2(BunVisitor2 visitor) {
+	@Override
+	public void acceptBunModel(BunModelVisitor visitor) {
 		visitor.visitArrayNode(this);
 	}
 

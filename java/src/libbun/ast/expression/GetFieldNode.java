@@ -24,7 +24,7 @@
 
 package libbun.ast.expression;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.literal.BunTypeNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
@@ -37,16 +37,16 @@ public class GetFieldNode extends MutableNode {
 
 	@BField public String  GivenName = null;
 
-	protected GetFieldNode(BNode ParentNode, BNode RecvNode, int Size) {  //
+	protected GetFieldNode(AstNode ParentNode, AstNode RecvNode, int Size) {  //
 		super(ParentNode, Size);
 		this.SetNullableNode(GetFieldNode._Recv, RecvNode);
 	}
 
-	public GetFieldNode(BNode ParentNode, BNode RecvNode) {
+	public GetFieldNode(AstNode ParentNode, AstNode RecvNode) {
 		this(ParentNode, RecvNode, 2);
 	}
 
-	public GetFieldNode(BNode ParentNode) {
+	public GetFieldNode(AstNode ParentNode) {
 		super(ParentNode, 2);
 	}
 
@@ -54,7 +54,7 @@ public class GetFieldNode extends MutableNode {
 		this.bunfyAST(builder, "(field", 0, ")");
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		@Var GetFieldNode NewNode = new GetFieldNode(ParentNode, null);
 		if(TypedClone) {
 			NewNode.IsImmutable = this.IsImmutable;
@@ -63,7 +63,7 @@ public class GetFieldNode extends MutableNode {
 		return this.dupField(TypedClone, NewNode);
 	}
 
-	public final BNode RecvNode() {
+	public final AstNode RecvNode() {
 		return this.AST[GetFieldNode._Recv ];
 	}
 

@@ -36,23 +36,23 @@ import libbun.util.Var;
 public class BlockNode extends AbstractListNode {
 	@BField public SymbolTable NullableGamma;
 
-	public BlockNode(BNode ParentNode, @Nullable SymbolTable Gamma) {
+	public BlockNode(AstNode ParentNode, @Nullable SymbolTable Gamma) {
 		super(ParentNode, 0);
 		this.NullableGamma = Gamma;
 	}
 
-	protected BlockNode(BNode ParentNode, @Nullable SymbolTable Gamma, int Init) {  // call by ZVarNode
+	protected BlockNode(AstNode ParentNode, @Nullable SymbolTable Gamma, int Init) {  // call by ZVarNode
 		super(ParentNode, Init);
 		this.NullableGamma = Gamma;
 	}
 
-	public BlockNode(BNode ParentNode, @Nullable SymbolTable Gamma, BunLetVarNode VarNode) {
+	public BlockNode(AstNode ParentNode, @Nullable SymbolTable Gamma, BunLetVarNode VarNode) {
 		super(ParentNode, 1);
 		this.NullableGamma = Gamma;
 		this.SetNode(0, VarNode);
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BlockNode(ParentNode, this.NullableGamma));
 	}
 
@@ -77,15 +77,15 @@ public class BlockNode extends AbstractListNode {
 	}
 
 	@Override public void Accept(LibBunVisitor Visitor) {
-		Visitor.VisitblockNode(this);
+		Visitor.VisitBlockNode(this);
 	}
 
-	public final void ReplaceWith(BNode OldNode, BNode NewNode) {
+	public final void ReplaceWith(AstNode OldNode, AstNode NewNode) {
 		@Var int i = 0;
-		while(i < this.GetAstSize()) {
+		while(i < this.size()) {
 			if(this.AST[i] == OldNode) {
 				this.AST[i] = NewNode;
-				this.SetChild(NewNode, BNode._EnforcedParent);
+				this.SetChild(NewNode, AstNode._EnforcedParent);
 				if(NewNode.HasUntypedNode()) {
 					this.HasUntyped = true;
 				}

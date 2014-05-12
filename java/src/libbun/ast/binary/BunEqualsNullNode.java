@@ -1,10 +1,10 @@
 package libbun.ast.binary;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 
 public class BunEqualsNullNode extends BunEqualsNode {
 	/* Expr == null */
-	public BunEqualsNullNode(BNode ParentNode) {
+	public BunEqualsNullNode(AstNode ParentNode) {
 		super(ParentNode);
 	}
 }

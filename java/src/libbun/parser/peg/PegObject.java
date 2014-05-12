@@ -1,6 +1,6 @@
 package libbun.parser.peg;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.PegNode;
 import libbun.ast.binary.BinaryOperatorNode;
 import libbun.common.CommonArray;
@@ -40,8 +40,8 @@ public abstract class PegObject {
 		this.semanticAction = f;
 	}
 
-	public final BNode eval(BunSource source, BNode parentNode) {
-		BNode node = null;
+	public final AstNode eval(BunSource source, AstNode parentNode) {
+		AstNode node = null;
 		if(this.semanticAction != null) {
 			node = this.semanticAction.Invoke(source, parentNode, this);
 		}
@@ -66,12 +66,12 @@ public abstract class PegObject {
 		return 0;
 	}
 
-	public final BNode get(BunSource source, BNode parentNode, int index) {
+	public final AstNode get(BunSource source, AstNode parentNode, int index) {
 		PegObject po = this.elementList.ArrayValues[index];
 		return po.eval(source, parentNode);
 	}
 
-	public BNode copySubTo(BunSource source, BNode node) {
+	public AstNode copySubTo(BunSource source, AstNode node) {
 		node.expandAstToSize(this.size());
 		for(int i = 0; i < this.size(); i++) {
 			node.AST[i] = this.get(source, node, i);
@@ -82,7 +82,7 @@ public abstract class PegObject {
 		return node;
 	}
 
-	public BNode copyBinaryAsRightAssoc(BunSource source, BinaryOperatorNode node) {
+	public AstNode copyBinaryAsRightAssoc(BunSource source, BinaryOperatorNode node) {
 		node.expandAstToSize(2);
 		node.AST[0] = this.get(source, node, 0);
 		return node.SetRightBinaryNode(this.get(source, node, 1));

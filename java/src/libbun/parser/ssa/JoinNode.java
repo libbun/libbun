@@ -1,6 +1,6 @@
 package libbun.parser.ssa;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.LocalDefinedNode;
 import libbun.common.CommonArray;
 import libbun.util.Var;
@@ -8,7 +8,7 @@ import libbun.util.Var;
 public class JoinNode extends LocalDefinedNode {
 	private final CommonArray<PHINode> PHIs;
 
-	public JoinNode(BNode Parent) {
+	public JoinNode(AstNode Parent) {
 		super(null, 0);
 		Parent.SetChild(this, true);
 		this.PHIs = new CommonArray<PHINode>(new PHINode[0]);
@@ -18,7 +18,7 @@ public class JoinNode extends LocalDefinedNode {
 		this.PHIs.add(Node);
 	}
 
-	public final int size() {
+	public final int getPhiSize() {
 		return this.PHIs.size();
 	}
 
@@ -28,7 +28,7 @@ public class JoinNode extends LocalDefinedNode {
 
 	public PHINode FindPHINode(Variable Var) {
 		@Var int i = 0;
-		while(i < this.size()) {
+		while(i < this.getPhiSize()) {
 			PHINode Node = this.ListAt(i);
 			if(Node.IsSameVariable(Var)) {
 				return Node;

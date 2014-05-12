@@ -1,9 +1,9 @@
 package libbun.ast.binary;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 
 public class BunNotEqualsNullNode extends BunNotEqualsNode {
-	public BunNotEqualsNullNode(BNode ParentNode) {
+	public BunNotEqualsNullNode(AstNode ParentNode) {
 		super(ParentNode);
 	}
 }

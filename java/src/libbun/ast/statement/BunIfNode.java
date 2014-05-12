@@ -24,30 +24,30 @@
 
 package libbun.ast.statement;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 
-public final class BunIfNode extends BNode {
+public final class BunIfNode extends AstNode {
 	public final static int _Cond = 0;
 	public final static int _Then = 1;
 	public final static int _Else = 2;
 
-	public BunIfNode(BNode ParentNode) {
+	public BunIfNode(AstNode ParentNode) {
 		super(ParentNode, 3);
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunIfNode(ParentNode));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {
 		this.bunfyAST(builder, "(if", 0, ")");
 	}
 
-	public final BNode CondNode() {
+	public final AstNode CondNode() {
 		return this.AST[BunIfNode._Cond ];
 	}
 
-	public final BNode ThenNode() {
+	public final AstNode ThenNode() {
 		return this.AST[BunIfNode._Then ];
 	}
 
@@ -55,7 +55,7 @@ public final class BunIfNode extends BNode {
 		return this.AST[BunIfNode._Else ] != null;
 	}
 
-	public final BNode ElseNode() {
+	public final AstNode ElseNode() {
 		return this.AST[BunIfNode._Else ];
 	}
 

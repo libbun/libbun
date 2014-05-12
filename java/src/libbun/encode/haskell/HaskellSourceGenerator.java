@@ -27,7 +27,7 @@ package libbun.encode.haskell;
 
 import java.util.ArrayList;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
@@ -95,7 +95,7 @@ public class HaskellSourceGenerator extends OldSourceGenerator {
 	}
 
 	@Override
-	public void VisitblockNode(BlockNode Node) {
+	public void VisitBlockNode(BlockNode Node) {
 		@Var int count = 0;
 
 		this.Indent(this.Source);
@@ -104,7 +104,7 @@ public class HaskellSourceGenerator extends OldSourceGenerator {
 
 		@Var int limit = Node.GetListSize();
 		for (@Var int i = 0; i < limit; i++) {
-			BNode SubNode = Node.GetListAt(i);
+			AstNode SubNode = Node.GetListAt(i);
 			this.Source.AppendLineFeed();
 			this.Source.AppendNewLine();
 
@@ -302,8 +302,8 @@ public class HaskellSourceGenerator extends OldSourceGenerator {
 		this.Source.AppendLineFeed();
 
 		// XXX Is this correct node type ?
-		BNode LoopNode = new GetNameNode(Node, null, "__loop");
-		Node.blockNode().SetNode(BNode._AppendIndex, LoopNode);
+		AstNode LoopNode = new GetNameNode(Node, null, "__loop");
+		Node.blockNode().SetNode(AstNode._AppendIndex, LoopNode);
 		Node.blockNode().Accept(this);
 
 		this.Source.AppendNewLine();

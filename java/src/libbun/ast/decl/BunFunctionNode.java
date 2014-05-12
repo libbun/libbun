@@ -24,7 +24,7 @@
 
 package libbun.ast.decl;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.common.CommonArray;
 import libbun.common.CommonStringBuilder;
@@ -44,11 +44,11 @@ public class BunFunctionNode extends DefSymbolNode {
 
 	public BType ReturnType = null;
 
-	public BunFunctionNode(BNode ParentNode, int symbolFlag) {
+	public BunFunctionNode(AstNode ParentNode, int symbolFlag) {
 		super(ParentNode, 5, symbolFlag);
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		@Var BunFunctionNode NewNode = new BunFunctionNode(ParentNode, this.symbolFlag);
 		NewNode.GivenType = this.GivenType;
 		NewNode.GivenName = this.GivenName;
@@ -99,7 +99,7 @@ public class BunFunctionNode extends DefSymbolNode {
 	}
 
 	public final BlockNode blockNode() {
-		@Var BNode blockNode = this.AST[BunFunctionNode._Block];
+		@Var AstNode blockNode = this.AST[BunFunctionNode._Block];
 		if(blockNode instanceof BlockNode) {
 			return (BlockNode)blockNode;
 		}
@@ -113,13 +113,13 @@ public class BunFunctionNode extends DefSymbolNode {
 
 	public final int getParamSize() {
 		if(this.AST[BunFunctionNode._Params] != null) {
-			return this.AST[BunFunctionNode._Params].GetAstSize();
+			return this.AST[BunFunctionNode._Params].size();
 		}
 		return 0;
 	}
 
 	public final BunLetVarNode GetParamNode(int Index) {
-		@Var BNode Node = this.AST[BunFunctionNode._Params].AST[Index];
+		@Var AstNode Node = this.AST[BunFunctionNode._Params].AST[Index];
 		if(Node instanceof BunLetVarNode) {
 			return (BunLetVarNode)Node;
 		}
@@ -127,7 +127,7 @@ public class BunFunctionNode extends DefSymbolNode {
 	}
 
 	public final BlockNode ParamNode() {
-		@Var BNode blockNode = this.AST[BunFunctionNode._Params];
+		@Var AstNode blockNode = this.AST[BunFunctionNode._Params];
 		if(blockNode instanceof BlockNode) {
 			return (BlockNode)blockNode;
 		}

@@ -1,12 +1,12 @@
 package libbun.parser.ssa;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 
 class Variable {
-	public BNode  Node;
+	public AstNode  Node;
 	public String Name;
 	public int    Index;
-	public Variable(String Name, int Index, BNode Node) {
+	public Variable(String Name, int Index, AstNode Node) {
 		this.Node = Node;
 		this.Index = Index;
 		this.Name = Name;

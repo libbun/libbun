@@ -1,6 +1,6 @@
 package libbun.ast.sugar;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.ast.binary.BunAddNode;
@@ -11,13 +11,13 @@ import libbun.util.Var;
 
 public class StringInterpolationNode extends SyntaxSugarNode {
 
-	public StringInterpolationNode(BNode ParentNode) {
+	public StringInterpolationNode(AstNode ParentNode) {
 		super(ParentNode,0);
 		this.Type = BType.StringType;
 	}
 
 	public final String GetStringLiteralAt(int Index) {
-		@Var BNode LiteralNode = this.AST[Index];
+		@Var AstNode LiteralNode = this.AST[Index];
 		if(LiteralNode instanceof BunStringNode) {
 			return ((BunStringNode)LiteralNode).StringValue;
 		}
@@ -25,7 +25,7 @@ public class StringInterpolationNode extends SyntaxSugarNode {
 	}
 
 	public final void SetStringLiteralAt(int Index, String Text) {
-		@Var BNode LiteralNode = this.AST[Index];
+		@Var AstNode LiteralNode = this.AST[Index];
 		if(LiteralNode instanceof BunStringNode) {
 			((BunStringNode)LiteralNode).StringValue = Text;
 		}
@@ -34,7 +34,7 @@ public class StringInterpolationNode extends SyntaxSugarNode {
 
 	@Override public void PerformTyping(LibBunTypeChecker TypeChecker, BType ContextType) {
 		@Var int i = 0;
-		while(i < this.GetAstSize()) {
+		while(i < this.size()) {
 			if(i % 2 == 0) {
 				assert(this.AST[i] instanceof BunStringNode);
 				TypeChecker.CheckTypeAt(this, i, BType.StringType);
@@ -48,16 +48,16 @@ public class StringInterpolationNode extends SyntaxSugarNode {
 	}
 
 	@Override public DesugarNode PerformDesugar(LibBunTypeChecker TypeChecker) {
-		@Var BNode LeftNode = this.CreateStringConcat(TypeChecker, this.AST[0], this.AST[1]);
+		@Var AstNode LeftNode = this.CreateStringConcat(TypeChecker, this.AST[0], this.AST[1]);
 		@Var int i = 2;
-		while(i < this.GetAstSize()) {
+		while(i < this.size()) {
 			LeftNode = this.CreateStringConcat(TypeChecker, LeftNode, this.AST[i]);
 			i = i + 1;
 		}
 		return new DesugarNode(this, LeftNode);
 	}
 
-	private BNode CreateStringConcat(LibBunTypeChecker TypeChecker, BNode LeftNode, BNode RightNode) {
+	private AstNode CreateStringConcat(LibBunTypeChecker TypeChecker, AstNode LeftNode, AstNode RightNode) {
 		@Var BunAddNode BinaryNode = new BunAddNode(null);
 		BinaryNode.SetLeftNode(this.EnforceStringTypedNode(TypeChecker, LeftNode));
 		BinaryNode.SetRightNode(this.EnforceStringTypedNode(TypeChecker, RightNode));
@@ -65,7 +65,7 @@ public class StringInterpolationNode extends SyntaxSugarNode {
 		return BinaryNode;
 	}
 
-	private BNode EnforceStringTypedNode(LibBunTypeChecker TypeChecker, BNode Node) {
+	private AstNode EnforceStringTypedNode(LibBunTypeChecker TypeChecker, AstNode Node) {
 		if(!Node.Type.IsStringType()) {
 			Node = TypeChecker.EnforceNodeType(Node, BType.StringType);
 		}
@@ -73,8 +73,8 @@ public class StringInterpolationNode extends SyntaxSugarNode {
 	}
 
 	public final static StringInterpolationNode _ToStringInterpolationNode(BunAddNode Node) {
-		@Var BNode LeftNode = _ToImpl(Node.LeftNode());
-		@Var BNode RightNode = _ToImpl(Node.RightNode());
+		@Var AstNode LeftNode = _ToImpl(Node.LeftNode());
+		@Var AstNode RightNode = _ToImpl(Node.RightNode());
 		//		System.out.println("LeftNode " + LeftNode);
 		//		System.out.println("RightNode " + RightNode);
 		if(LeftNode instanceof BunStringNode) {
@@ -84,13 +84,13 @@ public class StringInterpolationNode extends SyntaxSugarNode {
 				return ((StringInterpolationNode)RightNode);
 			}
 			@Var StringInterpolationNode InterNode = new StringInterpolationNode(Node.ParentNode);
-			InterNode.Append(LeftStringNode);
+			InterNode.appendNode(LeftStringNode);
 			if(RightNode instanceof BunStringNode) {
 				LeftStringNode.StringValue = LeftStringNode.StringValue + ((BunStringNode)RightNode).StringValue;
 			}
 			else {
-				InterNode.Append(RightNode);
-				InterNode.Append(new BunStringNode(null, null, ""));
+				InterNode.appendNode(RightNode);
+				InterNode.appendNode(new BunStringNode(null, null, ""));
 			}
 			return InterNode; //"ab" + n
 		}
@@ -100,9 +100,9 @@ public class StringInterpolationNode extends SyntaxSugarNode {
 		}
 		else {
 			LeftInterNode = new StringInterpolationNode(Node.ParentNode);
-			LeftInterNode.Append(new BunStringNode(null, null, ""));
-			LeftInterNode.Append(LeftNode);
-			LeftInterNode.Append(new BunStringNode(null, null, ""));
+			LeftInterNode.appendNode(new BunStringNode(null, null, ""));
+			LeftInterNode.appendNode(LeftNode);
+			LeftInterNode.appendNode(new BunStringNode(null, null, ""));
 		}
 		if(RightNode instanceof StringInterpolationNode) {
 			LeftInterNode.Merge((StringInterpolationNode)RightNode);
@@ -112,12 +112,12 @@ public class StringInterpolationNode extends SyntaxSugarNode {
 			LeftInterNode.AppendLastText(((BunStringNode)RightNode).StringValue);
 			return LeftInterNode;
 		}
-		LeftInterNode.Append(RightNode);
-		LeftInterNode.Append(new BunStringNode(null, null, ""));
+		LeftInterNode.appendNode(RightNode);
+		LeftInterNode.appendNode(new BunStringNode(null, null, ""));
 		return LeftInterNode; //"ab" + n
 	}
 
-	private final static BNode _ToImpl(BNode Node) {
+	private final static AstNode _ToImpl(AstNode Node) {
 		if(Node.Type.IsStringType()) {
 			if(Node instanceof BunAddNode) {
 				return _ToStringInterpolationNode((BunAddNode)Node);
@@ -131,15 +131,15 @@ public class StringInterpolationNode extends SyntaxSugarNode {
 	}
 
 	private void AppendLastText(String Text) {
-		@Var int LastIndex = this.GetAstSize()-1;
+		@Var int LastIndex = this.size()-1;
 		this.SetStringLiteralAt(LastIndex, this.GetStringLiteralAt(LastIndex)+Text);
 	}
 
 	private void Merge(StringInterpolationNode RightNode) {
 		this.AppendLastText(RightNode.GetStringLiteralAt(0));
 		@Var int i = 1;
-		while(i < RightNode.GetAstSize()) {
-			this.Append(RightNode.AST[i]);
+		while(i < RightNode.size()) {
+			this.appendNode(RightNode.AST[i]);
 			i = i + 1;
 		}
 	}

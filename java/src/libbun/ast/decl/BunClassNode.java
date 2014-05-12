@@ -25,7 +25,7 @@
 package libbun.ast.decl;
 
 import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BClassType;
 import libbun.type.BType;
@@ -40,11 +40,11 @@ public final class BunClassNode extends AbstractListNode {
 	@BField public BClassType ClassType = null;
 	@BField public boolean IsExport = false;
 
-	public BunClassNode(BNode ParentNode) {
+	public BunClassNode(AstNode ParentNode) {
 		super(ParentNode, 2);
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		@Var BunClassNode NewNode = new BunClassNode(ParentNode);
 		NewNode.GivenName = this.GivenName;
 		NewNode.ClassType = this.ClassType;
@@ -69,7 +69,7 @@ public final class BunClassNode extends AbstractListNode {
 	}
 
 	public final BunLetVarNode GetFieldNode(int Index) {
-		@Var BNode Node = this.GetListAt(Index);
+		@Var AstNode Node = this.GetListAt(Index);
 		if(Node instanceof BunLetVarNode) {
 			return (BunLetVarNode)Node;
 		}

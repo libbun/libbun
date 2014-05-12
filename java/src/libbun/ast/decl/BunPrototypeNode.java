@@ -1,6 +1,6 @@
 package libbun.ast.decl;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.parser.classic.LibBunGamma;
 import libbun.type.BFuncType;
 import libbun.util.BField;
@@ -14,7 +14,7 @@ public class BunPrototypeNode extends TopLevelNode {
 		this.SetNode(BunPrototypeNode._FuncInfo, FunctionNode);
 		this.FunctionNode = FunctionNode;
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return null; // FIXME
 	}
 

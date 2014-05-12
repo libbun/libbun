@@ -24,7 +24,7 @@
 
 
 package libbun.parser.classic;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.encode.LibBunGenerator;
@@ -69,7 +69,7 @@ public final class LibBunGamma extends SymbolTable {
 		@Var SymbolTable table = this;
 		while(table != null) {
 			if(table.symbolTable != null) {
-				@Var BNode EntryNode = table.symbolTable.GetOrNull(Name);
+				@Var AstNode EntryNode = table.symbolTable.GetOrNull(Name);
 				if(EntryNode != null) {
 					NameIndex = NameIndex + 1;
 				}
@@ -84,7 +84,7 @@ public final class LibBunGamma extends SymbolTable {
 	}
 
 	public final BunLetVarNode GetLocalVariable(String Name) {
-		@Var BNode EntryNode = this.GetSymbol(Name);
+		@Var AstNode EntryNode = this.GetSymbol(Name);
 		//System.out.println("var " + VarName + ", entry=" + Entry + ", Gamma=" + this);
 		if(EntryNode instanceof BunLetVarNode) {
 			return (BunLetVarNode)EntryNode;

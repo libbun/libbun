@@ -1,7 +1,7 @@
 package libbun.ast.expression;
 
 import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.type.BFuncType;
@@ -9,13 +9,13 @@ import libbun.type.BFuncType;
 public class ApplyNode extends AbstractListNode {
 	public String    funcName;
 	public BFuncType funcType;
-	public ApplyNode(BNode ParentNode, String funcName, BFuncType funcType) {
+	public ApplyNode(AstNode ParentNode, String funcName, BFuncType funcType) {
 		super(ParentNode, 0);
 		this.funcName = funcName;
 		this.funcType = funcType;
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new ApplyNode(ParentNode, this.funcName, this.funcType));
 	}
 

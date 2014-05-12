@@ -1,6 +1,6 @@
 package libbun.lang.bun.shell;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 //import libbun.ast.expression.FuncCallNode;
@@ -20,12 +20,12 @@ public class ArgumentNode extends SyntaxSugarNode {
 
 	@BField public final int ArgType;
 
-	public ArgumentNode(BNode ParentNode, int ArgType) {
+	public ArgumentNode(AstNode ParentNode, int ArgType) {
 		super(ParentNode, 1);
 		this.ArgType = ArgType;
 	}
 
-	public ArgumentNode(BNode ParentNode, String Value) {
+	public ArgumentNode(AstNode ParentNode, String Value) {
 		this(ParentNode, _Normal);
 		this.SetNode(_Expr, new BunStringNode(this, null, Value));
 	}

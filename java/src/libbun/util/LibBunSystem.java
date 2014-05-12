@@ -37,7 +37,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.common.CommonArray;
 import libbun.common.CommonMap;
 import libbun.common.CommonStringBuilder;
@@ -540,7 +540,7 @@ public class LibBunSystem {
 		return TokenFunc.Invoke(SourceContext);
 	}
 
-	public final static BNode _ApplyMatchFunc(BMatchFunction MatchFunc, BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	public final static AstNode _ApplyMatchFunc(BMatchFunction MatchFunc, AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		return MatchFunc.Invoke(ParentNode, TokenContext, LeftNode);
 	}
 
@@ -653,8 +653,8 @@ public class LibBunSystem {
 		return new BType[Size];
 	}
 
-	public final static BNode[] _NewNodeArray(int Size) {
-		return new BNode[Size];
+	public final static AstNode[] _NewNodeArray(int Size) {
+		return new AstNode[Size];
 	}
 
 	public final static void _ArrayCopy(Object src, int sIndex, Object dst, int dIndex, int length) {

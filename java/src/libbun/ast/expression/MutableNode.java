@@ -1,10 +1,10 @@
 package libbun.ast.expression;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 
-public abstract class MutableNode extends BNode {
+public abstract class MutableNode extends AstNode {
 	public boolean IsImmutable = false;
-	public MutableNode(BNode ParentNode, int Size) {
+	public MutableNode(AstNode ParentNode, int Size) {
 		super(ParentNode, Size);
 	}
 }

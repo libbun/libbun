@@ -1,6 +1,6 @@
 package libbun.parser.ssa;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.BunVarBlockNode;
@@ -9,7 +9,7 @@ import libbun.encode.LibBunGenerator;
 import libbun.type.BType;
 
 public class NodeLib {
-	static public boolean IsVariableNode(BNode Node) {
+	static public boolean IsVariableNode(AstNode Node) {
 		if(Node instanceof BunLetVarNode) {
 			return true;
 		}
@@ -25,7 +25,7 @@ public class NodeLib {
 		return false;
 	}
 
-	static public BType GetType(BNode Node) {
+	static public BType GetType(AstNode Node) {
 		if(Node instanceof BunLetVarNode) {
 			BunLetVarNode LNode = (BunLetVarNode) Node;
 			return LNode.DeclType();
@@ -45,7 +45,7 @@ public class NodeLib {
 		return BType.VarType;
 	}
 
-	static public String GetVarName(BNode Node, LibBunGenerator Generator) {
+	static public String GetVarName(AstNode Node, LibBunGenerator Generator) {
 		if(Node instanceof BunLetVarNode) {
 			BunLetVarNode LNode = (BunLetVarNode) Node;
 			return LNode.GetGivenName();
@@ -65,7 +65,7 @@ public class NodeLib {
 		return null;
 	}
 
-	static public int GetVarIndex(BNode Node) {
+	static public int GetVarIndex(AstNode Node) {
 		if(Node instanceof BunLetVarNode) {
 			return 0;
 		}

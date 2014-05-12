@@ -24,7 +24,7 @@
 
 package libbun.ast.literal;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunVisitor;
@@ -34,7 +34,7 @@ import libbun.util.BField;
 
 public final class BunBooleanNode extends LiteralNode {
 	@BField public boolean	BooleanValue;
-	public BunBooleanNode(BNode ParentNode, BunToken Token, boolean Value) {
+	public BunBooleanNode(AstNode ParentNode, BunToken Token, boolean Value) {
 		super(ParentNode, Token);
 		this.Type = BType.BooleanType;
 		this.BooleanValue = Value;
@@ -42,7 +42,7 @@ public final class BunBooleanNode extends LiteralNode {
 	public BunBooleanNode(boolean Value) {
 		this(null, null, Value);
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunBooleanNode(ParentNode, this.SourceToken, this.BooleanValue));
 	}
 

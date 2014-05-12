@@ -1,17 +1,17 @@
 package libbun.ast.literal;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.parser.common.BunVisitor2;
+import libbun.parser.common.BunModelVisitor;
 import libbun.type.BType;
 
-public class BunFalseNode extends BNode {
-	public BunFalseNode(BNode ParentNode) {
+public class BunFalseNode extends AstNode {
+	public BunFalseNode(AstNode ParentNode) {
 		super(ParentNode,0);
 		this.Type = BType.BooleanType;
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunFalseNode(ParentNode));
 	}
 
@@ -26,7 +26,7 @@ public class BunFalseNode extends BNode {
 	@Override public final void Accept(LibBunVisitor Visitor) {
 	}
 
-	public void accept2(BunVisitor2 visitor) {
+	public void accept2(BunModelVisitor visitor) {
 		visitor.visitFalseNode(this);
 	}
 

@@ -1,17 +1,17 @@
 package libbun.ast.literal;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.parser.common.BunVisitor2;
+import libbun.parser.common.BunModelVisitor;
 
 
 public class DefaultValueNode extends BunValueNode {
-	public DefaultValueNode(BNode ParentNode) {
+	public DefaultValueNode(AstNode ParentNode) {
 		super(ParentNode);
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new DefaultValueNode(ParentNode));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {
@@ -23,7 +23,7 @@ public class DefaultValueNode extends BunValueNode {
 		}
 	}
 	@Override
-	public void accept2(BunVisitor2 visitor) {
+	public void acceptBunModel(BunModelVisitor visitor) {
 		visitor.visitDefaultValueNode(this);
 	}
 

@@ -1,6 +1,6 @@
 package libbun.ast.sugar;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
@@ -16,11 +16,11 @@ import libbun.util.Var;
 
 public class BunContinueNode extends SyntaxSugarNode {
 
-	public BunContinueNode(BNode ParentNode) {
+	public BunContinueNode(AstNode ParentNode) {
 		super(ParentNode, 0);
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunContinueNode(ParentNode));
 	}
 
@@ -59,10 +59,10 @@ public class BunContinueNode extends SyntaxSugarNode {
 				"    Sugar::While;"   +
 				"  }\n"           +
 				"}";
-		@Var BNode NewNode = this.ParentNode.ParseExpression(SugarCode);
+		@Var AstNode NewNode = this.ParentNode.ParseExpression(SugarCode);
 		NewNode.ReplaceNode("Sugar::While", WhileNode);
 
-		@Var BNode[] Nodes = null;
+		@Var AstNode[] Nodes = null;
 		if(WhileNode.HasNextNode()) {
 			Nodes = LibBunSystem._NewNodeArray(3);
 			Nodes[0] = new AssignNode("_continue_", new BunBooleanNode(true));
@@ -80,7 +80,7 @@ public class BunContinueNode extends SyntaxSugarNode {
 
 
 	private BunWhileNode LookupWhileNode() {
-		@Var BNode Node = this;
+		@Var AstNode Node = this;
 		while(Node != null) {
 			if(Node instanceof BunWhileNode) {
 				return (BunWhileNode)Node;
@@ -90,10 +90,10 @@ public class BunContinueNode extends SyntaxSugarNode {
 		return null;
 	}
 
-	private DesugarNode ReplaceContinue(BNode Node, BunContinueNode FirstNode, BNode[] NodeList, DesugarNode FirstDesugarNode) {
+	private DesugarNode ReplaceContinue(AstNode Node, BunContinueNode FirstNode, AstNode[] NodeList, DesugarNode FirstDesugarNode) {
 		@Var int i = 0;
-		while(i < Node.GetAstSize()) {
-			@Var BNode SubNode = Node.AST[i];
+		while(i < Node.size()) {
+			@Var AstNode SubNode = Node.AST[i];
 			if(SubNode instanceof BunContinueNode) {
 				@Var DesugarNode DesugarNode = new DesugarNode(SubNode, NodeList);
 				if(SubNode == FirstNode) {

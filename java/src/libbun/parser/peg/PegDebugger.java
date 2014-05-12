@@ -2,7 +2,7 @@ package libbun.parser.peg;
 
 import java.io.IOException;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.parser.classic.LibBunConst;
 import libbun.parser.common.BunSource;
 import libbun.parser.common.BunToken;
@@ -36,7 +36,7 @@ public class PegDebugger {
 				System.out.println("hit: " + context.memoHit + ", miss: " + context.memoMiss + ", object=" + context.objectCount + ", error=" + context.errorCount);
 				System.out.println("backtrackCount: " + context.backtrackCount + ", backtrackLength: " + context.backtrackSize);
 
-				BNode bnode = po.eval(source, null);
+				AstNode bnode = po.eval(source, null);
 				System.out.println("bun: " + bnode);
 				System.out.println("bunfy: " + bnode.bunfy());
 				linenum = linenum + 1;

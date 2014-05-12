@@ -25,7 +25,7 @@
 package libbun.parser.classic;
 
 import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.ast.binary.BinaryOperatorNode;
@@ -65,18 +65,18 @@ public abstract class LibBunTypeChecker extends TypeChecker {
 	}
 
 	@Override
-	public final void TypeNode(BNode Node, BType Type) {
+	public final void TypeNode(AstNode Node, BType Type) {
 		this.VarScope.TypeNode(Node, Type);
 	}
 
 	public final void ReturnBinaryTypeNode(BinaryOperatorNode Node, BType Type) {
-		if(!Node.GetAstType(BinaryOperatorNode._Left).IsVarType() && !Node.GetAstType(BinaryOperatorNode._Right).IsVarType()) {
+		if(!Node.getTypeAt(BinaryOperatorNode._Left).IsVarType() && !Node.getTypeAt(BinaryOperatorNode._Right).IsVarType()) {
 			@Var String Op = Node.GetOperator();
-			@Var BFunc Func = this.Generator.GetDefinedFunc(Op, Node.GetAstType(BinaryOperatorNode._Left), 2);
+			@Var BFunc Func = this.Generator.GetDefinedFunc(Op, Node.getTypeAt(BinaryOperatorNode._Left), 2);
 			if(Func instanceof BFormFunc) {
 				@Var ApplyMacroNode NewNode = new ApplyMacroNode(Node.ParentNode, Node.SourceToken, (BFormFunc)Func);
-				NewNode.Append(Node.LeftNode());
-				NewNode.Append(Node.RightNode());
+				NewNode.appendNode(Node.LeftNode());
+				NewNode.appendNode(Node.RightNode());
 				this.ReturnTypeNode(NewNode, Type);
 				return;
 			}
@@ -85,21 +85,21 @@ public abstract class LibBunTypeChecker extends TypeChecker {
 	}
 
 	@Override
-	public final BNode EnforceNodeType(BNode Node, BType EnforcedType) {
+	public final AstNode EnforceNodeType(AstNode Node, BType EnforcedType) {
 		@Var BFunc Func = this.Generator.LookupConverterFunc(Node.Type, EnforcedType);
 		if(Func == null && EnforcedType.IsStringType()) {
 			Func = this.Generator.LookupFunc("toString", Node.Type, 1);
 		}
 		if(Func != null) {
 			@Var AbstractListNode FuncNode = this.CreateDefinedFuncCallNode(Node.ParentNode, null, Func);
-			FuncNode.Append(Node);
+			FuncNode.appendNode(Node);
 			return this.TypeListNodeAsFuncCall(FuncNode, Func.GetFuncType());
 		}
 		return this.CreateStupidCastNode(EnforcedType, Node);
 	}
 
 	@Override
-	public final void InferType(BType contextType, BNode bnode) {
+	public final void InferType(BType contextType, AstNode bnode) {
 		this.VarScope.InferType(contextType, bnode);
 	}
 
@@ -252,12 +252,12 @@ public abstract class LibBunTypeChecker extends TypeChecker {
 
 	@Override public void VisitDesugarNode(DesugarNode Node) {
 		@Var int i = 0;
-		while(i < Node.GetAstSize() - 1 ) {
+		while(i < Node.size() - 1 ) {
 			this.CheckTypeAt(Node, i, BType.VoidType);
 			i = i + 1;
 		}
 		this.CheckTypeAt(Node, i, BType.VarType);  // i == Node.GetAstSize() - 1
-		this.ReturnTypeNode(Node, Node.GetAstType(i));
+		this.ReturnTypeNode(Node, Node.getTypeAt(i));
 	}
 
 
@@ -316,7 +316,7 @@ public abstract class LibBunTypeChecker extends TypeChecker {
 	//	}
 
 	@Override
-	public FuncCallNode CreateFuncCallNode(BNode ParentNode, BunToken sourceToken, String FuncName, BFuncType FuncType) {
+	public FuncCallNode CreateFuncCallNode(AstNode ParentNode, BunToken sourceToken, String FuncName, BFuncType FuncType) {
 		@Var FuncCallNode FuncNode = new FuncCallNode(ParentNode, new BunFuncNameNode(null, sourceToken, FuncName, FuncType));
 		FuncNode.Type = FuncType.GetReturnType();
 		return FuncNode;

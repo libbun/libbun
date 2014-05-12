@@ -1,6 +1,6 @@
 package libbun.lang.lisp;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.parser.classic.LibBunTypeChecker;
@@ -8,7 +8,7 @@ import libbun.type.BType;
 
 public class SExpressionNode extends SyntaxSugarNode {
 
-	public SExpressionNode(BNode ParentNode) {
+	public SExpressionNode(AstNode ParentNode) {
 		super(ParentNode, 0);
 	}
 

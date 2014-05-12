@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Stack;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.binary.BunAddNode;
 import libbun.ast.literal.BunStringNode;
 import libbun.common.CommonArray;
@@ -38,11 +38,11 @@ public class ShellUtils {
 		return false;
 	}
 
-	public static BNode _ToNode(BNode ParentNode, BTokenContext TokenContext, CommonArray<BNode> NodeList) {
-		BNode Node = new BunStringNode(ParentNode, null, "");
+	public static AstNode _ToNode(AstNode ParentNode, BTokenContext TokenContext, CommonArray<AstNode> NodeList) {
+		AstNode Node = new BunStringNode(ParentNode, null, "");
 		int size = NodeList.size();
 		for(int i = 0; i < size; i++) {
-			BNode CurrentNode = CommonArray.GetIndex(NodeList, i);
+			AstNode CurrentNode = CommonArray.GetIndex(NodeList, i);
 			BunAddNode BinaryNode = new BunAddNode(ParentNode);
 			BinaryNode.SetLeftNode(Node);
 			BinaryNode.SetRightNode(CurrentNode);

@@ -24,7 +24,7 @@
 
 package libbun.ast.error;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.literal.ConstNode;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.parser.common.BunToken;
@@ -33,15 +33,15 @@ import libbun.util.BIgnored;
 
 public class ErrorNode extends ConstNode {
 	@BField public String ErrorMessage;
-	public ErrorNode(BNode ParentNode, BunToken SourceToken, String ErrorMessage) {
+	public ErrorNode(AstNode ParentNode, BunToken SourceToken, String ErrorMessage) {
 		super(ParentNode, SourceToken);
 		this.ErrorMessage = ErrorMessage;
 	}
-	public ErrorNode(BNode Node, String ErrorMessage) {
+	public ErrorNode(AstNode Node, String ErrorMessage) {
 		super(Node.ParentNode, Node.SourceToken);
 		this.ErrorMessage = ErrorMessage;
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new ErrorNode(ParentNode, null, this.ErrorMessage));
 	}
 	@Override public final void Accept(LibBunVisitor Visitor) {

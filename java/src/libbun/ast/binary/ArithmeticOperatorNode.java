@@ -1,10 +1,10 @@
 package libbun.ast.binary;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 
 public abstract class ArithmeticOperatorNode extends BinaryOperatorNode {
 
-	public ArithmeticOperatorNode(BNode ParentNode, int Precedence) {
+	public ArithmeticOperatorNode(AstNode ParentNode, int Precedence) {
 		super(ParentNode, Precedence);
 	}
 

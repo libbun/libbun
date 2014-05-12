@@ -26,11 +26,11 @@ package libbun.ast;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.util.BField;
 
-public abstract class BunAnnotationNode extends BNode {
+public abstract class BunAnnotationNode extends AstNode {
 	//@Field public ZenMap<Object> Annotation;
-	@BField public BNode AnnotatedNode = null;
+	@BField public AstNode AnnotatedNode = null;
 
-	public BunAnnotationNode(BNode ParentNode) {
+	public BunAnnotationNode(AstNode ParentNode) {
 		super(ParentNode, 0);
 	}
 

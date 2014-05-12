@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
@@ -552,7 +552,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 	}
 
 	@Override public void VisitArrayLiteralNode(BunArrayNode Node) {
-		@Var int ArraySize = Node.GetListSize();
+		@Var int ArraySize = Node.size();
 		@Var BType ElementType = ((BGenericType)Node.Type).ParamType;
 		@Var String ExtFuncName;
 		if(ElementType.IsIntType()) {
@@ -583,7 +583,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 				if (i > 0) {
 					sb.append(", ");
 				}
-				@Var BNode SubNode = Node.GetListAt(i);
+				@Var AstNode SubNode = Node.get(i);
 				sb.append(this.GetTypeExpr(SubNode.Type));
 				sb.append(" ");
 				this.GenerateExpression(SubNode);
@@ -637,7 +637,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 		this.CurrentScope.TerminateBlock();
 	}
 
-	@Override public void VisitblockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(BlockNode Node) {
 		this.GenerateStmtListNode(Node);
 	}
 
@@ -938,7 +938,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 	}
 
 	@Override public void VisitGetNameNode(GetNameNode Node) {
-		if(Node.ResolvedNode.IsTopLevel()/* global Let */) {
+		if(Node.ResolvedNode.isTopLevel()/* global Let */) {
 			if(this.IsUserDefinedGlobalSymbol(Node.GetUniqueName(this))) {
 				@Var String TempVar = this.CurrentScope.CreateTempLocalSymbol();
 				this.Source.AppendNewLine(TempVar);
@@ -1053,7 +1053,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 			@Var LLVMScope PushedScope = this.CurrentScope;
 			this.CurrentScope = new LLVMScope();
 
-			@Var BNode InitNode = Node.InitValueNode();
+			@Var AstNode InitNode = Node.InitValueNode();
 			if((InitNode instanceof BunFunctionNode)) {
 			}
 			else if((InitNode instanceof BunArrayNode) || (InitNode instanceof BunMapNode) || (InitNode instanceof BunStringNode)) {
@@ -1460,7 +1460,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 	}
 
 
-	@Override protected void GenerateExpression(BNode Node) {
+	@Override protected void GenerateExpression(AstNode Node) {
 		Node.Accept(this);
 		/* if(this.IsNeededSurroud(Node)) {
 			this.GenerateExpression("", Node, "");
@@ -1473,7 +1473,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 	@Override public void GenerateStmtListNode(BlockNode blockNode) {
 		@Var int i = 0;
 		while (i < blockNode.GetListSize()) {
-			@Var BNode SubNode = blockNode.GetListAt(i);
+			@Var AstNode SubNode = blockNode.GetListAt(i);
 			this.GenerateExpression(SubNode);
 			i = i + 1;
 		}
@@ -1536,7 +1536,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 		sb.append(OpenToken);
 		@Var int i = 0;
 		while(i < VargNode.GetListSize()) {
-			@Var BNode ParamNode = VargNode.GetListAt(i);
+			@Var AstNode ParamNode = VargNode.GetListAt(i);
 			if (i > 0) {
 				sb.append(DelimToken);
 			}
@@ -1607,7 +1607,7 @@ public class LLVMSourceGenerator extends OldSourceGenerator {
 		}
 	}
 
-	private void GetObjectElementPointer(BNode RecvNode, String FieldName) {
+	private void GetObjectElementPointer(AstNode RecvNode, String FieldName) {
 		this.GenerateExpression(RecvNode);
 		@Var String Recv = this.CurrentScope.PopValue();
 		this.GetObjectElementOffset(RecvNode.Type, FieldName);

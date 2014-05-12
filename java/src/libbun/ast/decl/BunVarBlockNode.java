@@ -23,7 +23,7 @@
 // **************************************************************************
 
 package libbun.ast.decl;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.parser.classic.BNodeUtils;
 import libbun.parser.classic.LibBunVisitor;
@@ -32,12 +32,12 @@ import libbun.util.Var;
 public class BunVarBlockNode extends BlockNode {
 	public static final int _VarDecl = 0;
 
-	public BunVarBlockNode(BNode ParentNode, BunLetVarNode VarNode) {
+	public BunVarBlockNode(AstNode ParentNode, BunLetVarNode VarNode) {
 		super(ParentNode, null, 1);
 		this.SetNullableNode(BunVarBlockNode._VarDecl, VarNode);
 	}
 
-	public BunVarBlockNode(BNode ParentNode, BunLetVarNode VarNode, BlockNode ParentblockNode) {
+	public BunVarBlockNode(AstNode ParentNode, BunLetVarNode VarNode, BlockNode ParentblockNode) {
 		super(ParentNode, null, 1);
 		this.SetNode(BunVarBlockNode._VarDecl, VarNode);
 		@Var int Index = BNodeUtils._AstListIndexOf(ParentblockNode, VarNode);
@@ -48,12 +48,12 @@ public class BunVarBlockNode extends BlockNode {
 		ParentblockNode.SetListAt(Index, this);
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunVarBlockNode(ParentNode, null));
 	}
 
 	public final BunLetVarNode VarDeclNode() {
-		@Var BNode VarNode = this.AST[BunVarBlockNode._VarDecl];
+		@Var AstNode VarNode = this.AST[BunVarBlockNode._VarDecl];
 		if(VarNode instanceof BunLetVarNode) {
 			return (BunLetVarNode)VarNode;
 		}

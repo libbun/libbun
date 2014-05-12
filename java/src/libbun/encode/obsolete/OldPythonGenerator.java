@@ -25,7 +25,7 @@
 
 package libbun.encode.obsolete;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.binary.BunInstanceOfNode;
 import libbun.ast.decl.BunClassNode;
@@ -103,7 +103,7 @@ public class OldPythonGenerator extends OldSourceGenerator {
 	public void GenerateStmtListNode(BlockNode blockNode) {
 		@Var int i = 0;
 		while (i < blockNode.GetListSize()) {
-			BNode SubNode = blockNode.GetListAt(i);
+			AstNode SubNode = blockNode.GetListAt(i);
 			this.GenerateStatement(SubNode);
 			i = i + 1;
 		}
@@ -112,7 +112,7 @@ public class OldPythonGenerator extends OldSourceGenerator {
 		}
 	}
 
-	@Override public void VisitblockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(BlockNode Node) {
 		this.Source.OpenIndent(":");
 		this.GenerateStmtListNode(Node);
 		this.Source.CloseIndent("");
@@ -138,7 +138,7 @@ public class OldPythonGenerator extends OldSourceGenerator {
 	}
 
 	@Override public void VisitGetIndexNode(GetIndexNode Node) {
-		@Var BType RecvType = Node.GetAstType(GetIndexNode._Recv);
+		@Var BType RecvType = Node.getTypeAt(GetIndexNode._Recv);
 		if(RecvType.IsMapType()) {
 			this.ImportLibrary("@mapget");
 			this.GenerateExpression("libbun_mapget(", Node.RecvNode(), ", ");
@@ -168,7 +168,7 @@ public class OldPythonGenerator extends OldSourceGenerator {
 		this.GenerateExpression(Node.CondNode());
 		this.GenerateExpression(Node.ThenNode());
 		if (Node.HasElseNode()) {
-			BNode ElseNode = Node.ElseNode();
+			AstNode ElseNode = Node.ElseNode();
 			if(ElseNode instanceof BunIfNode) {
 				this.Source.AppendNewLine("el");
 			}

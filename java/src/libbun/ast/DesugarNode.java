@@ -8,17 +8,17 @@ import libbun.util.Var;
 
 public class DesugarNode extends SyntaxSugarNode {
 	//	public final static int _NewNode = 0;
-	@BField public BNode OriginalNode;
+	@BField public AstNode OriginalNode;
 
-	public DesugarNode(BNode OriginalNode, BNode DesugardNode) {
+	public DesugarNode(AstNode OriginalNode, AstNode DesugardNode) {
 		super(OriginalNode.ParentNode, 1);
 		this.OriginalNode = OriginalNode;
-		this.SetChild(OriginalNode, BNode._EnforcedParent);
+		this.SetChild(OriginalNode, AstNode._EnforcedParent);
 		this.SetNode(0, DesugardNode);
 		this.Type = OriginalNode.Type;
 	}
 
-	public DesugarNode(BNode OriginalNode, BNode[] DesugarNodes) {
+	public DesugarNode(AstNode OriginalNode, AstNode[] DesugarNodes) {
 		super(OriginalNode.ParentNode, DesugarNodes.length);
 		this.OriginalNode = OriginalNode;
 		@Var int i = 0;
@@ -29,12 +29,12 @@ public class DesugarNode extends SyntaxSugarNode {
 		this.Type = OriginalNode.Type;
 	}
 
-	private DesugarNode(BNode ParentNode, BNode OriginalNode, int Size) {
+	private DesugarNode(AstNode ParentNode, AstNode OriginalNode, int Size) {
 		super(ParentNode, Size);
 		this.OriginalNode = OriginalNode;
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		if(TypedClone) {
 			return this.dupField(TypedClone, new DesugarNode(ParentNode, this.OriginalNode.dup(TypedClone, ParentNode), this.AST.length));
 		}
@@ -48,13 +48,13 @@ public class DesugarNode extends SyntaxSugarNode {
 	}
 
 	public final boolean IsExpression() {
-		return this.GetAstSize() == 1;
+		return this.size() == 1;
 	}
 
 	@Override public void PerformTyping(LibBunTypeChecker TypeChecker, BType ContextType) {
-		if(this.GetAstSize() != 1) {
+		if(this.size() != 1) {
 			@Var int i = 0;
-			while(i < this.GetAstSize()) {
+			while(i < this.size()) {
 				TypeChecker.CheckTypeAt(this, i, BType.VoidType);
 				i = i + 1;
 			}

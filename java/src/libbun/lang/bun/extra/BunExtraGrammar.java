@@ -1,6 +1,6 @@
 package libbun.lang.bun.extra;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.ContainerNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
@@ -26,17 +26,17 @@ import libbun.util.Var;
 
 // continue
 class ContinuePatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode ContinueNode = new BunContinueNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode ContinueNode = new BunContinueNode(ParentNode);
 		ContinueNode = TokenContext.MatchToken(ContinueNode, "continue", BTokenContext._Required);
 		return ContinueNode;
 	}
 }
 
 class ForPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode InitStmtNode = null;
-		@Var BNode WhileNode = new BunWhileNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode InitStmtNode = null;
+		@Var AstNode WhileNode = new BunWhileNode(ParentNode);
 		WhileNode = TokenContext.MatchToken(WhileNode, "for", BTokenContext._Required);
 		WhileNode = TokenContext.MatchToken(WhileNode, "(", BTokenContext._Required);
 		if(!TokenContext.IsToken(";")) {
@@ -56,8 +56,8 @@ class ForPatternFunction extends BMatchFunction {
 }
 
 class ForInPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode ForNode = new BunForInNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode ForNode = new BunForInNode(ParentNode);
 		ForNode = TokenContext.MatchToken(ForNode, "for", BTokenContext._Required);
 		ForNode = TokenContext.MatchToken(ForNode, "(", BTokenContext._Required);
 		ForNode = TokenContext.MatchPattern(ForNode, BunForInNode._Var, "$Expression$", BTokenContext._Required, BTokenContext._AllowSkipIndent);
@@ -70,8 +70,8 @@ class ForInPatternFunction extends BMatchFunction {
 }
 
 class DoWhilePatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode WhileNode = new BunDoWhileNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode WhileNode = new BunDoWhileNode(ParentNode);
 		WhileNode = TokenContext.MatchToken(WhileNode, "do", BTokenContext._Required);
 		WhileNode = TokenContext.MatchPattern(WhileNode, BunDoWhileNode._Block, "$Block$", BTokenContext._Required);
 		if(TokenContext.MatchNewLineToken("while")) {
@@ -88,69 +88,69 @@ class DoWhilePatternFunction extends BMatchFunction {
 }
 
 class SelfAddPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		return BunExtraGrammar.DesugarSelfAssignment(ParentNode, TokenContext, LeftNode, new BunAddNode(null));
 	}
 }
 
 class SelfSubPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		return BunExtraGrammar.DesugarSelfAssignment(ParentNode, TokenContext, LeftNode, new BunSubNode(null));
 	}
 }
 
 class SelfMulPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		return BunExtraGrammar.DesugarSelfAssignment(ParentNode, TokenContext, LeftNode, new BunMulNode(null));
 	}
 }
 
 class SelfDivPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		return BunExtraGrammar.DesugarSelfAssignment(ParentNode, TokenContext, LeftNode, new BunDivNode(null));
 	}
 }
 
 class SelfModPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		return BunExtraGrammar.DesugarSelfAssignment(ParentNode, TokenContext, LeftNode, new BunModNode(null));
 	}
 }
 
 class SelfBitwiseAndPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		return BunExtraGrammar.DesugarSelfAssignment(ParentNode, TokenContext, LeftNode, new BunBitwiseAndNode(null));
 	}
 }
 
 class SelfBitwiseOrPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		return BunExtraGrammar.DesugarSelfAssignment(ParentNode, TokenContext, LeftNode, new BunBitwiseOrNode(null));
 	}
 }
 
 class SelfBitwiseXorPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		return BunExtraGrammar.DesugarSelfAssignment(ParentNode, TokenContext, LeftNode, new BunBitwiseXorNode(null));
 	}
 }
 
 class SelfRightShiftPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		return BunExtraGrammar.DesugarSelfAssignment(ParentNode, TokenContext, LeftNode, new BunRightShiftNode(null));
 	}
 }
 
 class SelfLeftShiftPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		return BunExtraGrammar.DesugarSelfAssignment(ParentNode, TokenContext, LeftNode, new BunLeftShiftNode(null));
 	}
 }
 
 // ++i
 class IncPrefixPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode AssignNode = new AssignNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode AssignNode = new AssignNode(ParentNode);
 		AssignNode = TokenContext.MatchToken(AssignNode, "++", BTokenContext._Required);
 		AssignNode = TokenContext.MatchPattern(AssignNode, BinaryOperatorNode._Left, "$RightExpression$", BTokenContext._Required);
 		if(!AssignNode.IsErrorNode()) {
@@ -165,9 +165,9 @@ class IncPrefixPatternFunction extends BMatchFunction {
 
 // i++
 class IncSuffixPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		//System.out.println("LeftNode: " + LeftNode);
-		@Var BNode AssignNode = new AssignNode(ParentNode);
+		@Var AstNode AssignNode = new AssignNode(ParentNode);
 		AssignNode = TokenContext.MatchToken(AssignNode, "++", BTokenContext._Required);
 		if(!AssignNode.IsErrorNode()) {
 			AssignNode.SetNode(BinaryOperatorNode._Left, LeftNode);
@@ -183,8 +183,8 @@ class IncSuffixPatternFunction extends BMatchFunction {
 
 //--i
 class DecPrefixPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
-		@Var BNode AssignNode = new AssignNode(ParentNode);
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
+		@Var AstNode AssignNode = new AssignNode(ParentNode);
 		AssignNode = TokenContext.MatchToken(AssignNode, "--", BTokenContext._Required);
 		AssignNode = TokenContext.MatchPattern(AssignNode, BinaryOperatorNode._Left, "$RightExpression$", BTokenContext._Required);
 		if(!AssignNode.IsErrorNode()) {
@@ -199,9 +199,9 @@ class DecPrefixPatternFunction extends BMatchFunction {
 
 //i--
 class DecSuffixPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		//System.out.println("LeftNode: " + LeftNode);
-		@Var BNode AssignNode = new AssignNode(ParentNode);
+		@Var AstNode AssignNode = new AssignNode(ParentNode);
 		AssignNode = TokenContext.MatchToken(AssignNode, "--", BTokenContext._Required);
 		if(!AssignNode.IsErrorNode()) {
 			AssignNode.SetNode(BinaryOperatorNode._Left, LeftNode);
@@ -264,12 +264,12 @@ public class BunExtraGrammar {
 
 	}
 
-	public final static BNode DesugarSelfAssignment(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode, BinaryOperatorNode BinaryNode) {
+	public final static AstNode DesugarSelfAssignment(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode, BinaryOperatorNode BinaryNode) {
 		TokenContext.SkipToken();
 		if(TokenContext.IsToken("=")) {
 			@Var AssignNode AssignNode = new AssignNode(ParentNode);
 			AssignNode.SetLeftNode(LeftNode);
-			@Var BNode RightNode = BinaryNode.SetParsedNode(AssignNode, LeftNode, "=", TokenContext);
+			@Var AstNode RightNode = BinaryNode.SetParsedNode(AssignNode, LeftNode, "=", TokenContext);
 			AssignNode.SetRightNode(RightNode);
 			AssignNode.SourceToken = RightNode.SourceToken;
 			return AssignNode;

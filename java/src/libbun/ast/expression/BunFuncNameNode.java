@@ -1,6 +1,6 @@
 package libbun.ast.expression;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.LocalDefinedNode;
 import libbun.parser.common.BunToken;
 import libbun.type.BFunc;
@@ -13,7 +13,7 @@ public class BunFuncNameNode extends LocalDefinedNode {
 	@BField public final BType RecvType;
 	@BField public final int FuncParamSize;
 
-	public BunFuncNameNode(BNode ParentNode, BunToken SourceToken, String FuncName, BFuncType FuncType) {
+	public BunFuncNameNode(AstNode ParentNode, BunToken SourceToken, String FuncName, BFuncType FuncType) {
 		super(ParentNode, 0);
 		this.SourceToken = SourceToken;
 		this.FuncName = FuncName;
@@ -22,7 +22,7 @@ public class BunFuncNameNode extends LocalDefinedNode {
 		this.Type = FuncType;
 	}
 
-	public BunFuncNameNode(BNode ParentNode, BunToken sourceToken, String FuncName, BType RecvType, int FuncParamSize) {
+	public BunFuncNameNode(AstNode ParentNode, BunToken sourceToken, String FuncName, BType RecvType, int FuncParamSize) {
 		super(ParentNode, 0);
 		this.SourceToken = sourceToken;
 		this.FuncName = FuncName;
@@ -30,7 +30,7 @@ public class BunFuncNameNode extends LocalDefinedNode {
 		this.FuncParamSize = FuncParamSize;
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		if(TypedClone) {
 			return this;
 		}

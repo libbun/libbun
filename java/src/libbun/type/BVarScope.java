@@ -1,6 +1,6 @@
 package libbun.type;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.common.CommonArray;
 import libbun.parser.classic.LibBunTypeChecker;
@@ -26,7 +26,7 @@ public final class BVarScope {
 		}
 	}
 
-	public void TypeNode(BNode Node, BType Type) {
+	public void TypeNode(AstNode Node, BType Type) {
 		if(Type instanceof BVarType) {
 			if(!Type.IsVarType()) {
 				Type = Type.GetRealType();
@@ -51,7 +51,7 @@ public final class BVarScope {
 		this.UnresolvedSymbolCount = this.UnresolvedSymbolCount + 1;
 	}
 
-	public final void InferType(BType ContextType, BNode Node) {
+	public final void InferType(BType ContextType, AstNode Node) {
 		//System.out.println("@@ infering .. ContextType=" + ContextType + " Node.Type = " + Node.Type + ", at " + Node);
 		if(Node.IsUntyped()) {
 			this.VarNodeCount = this.VarNodeCount + 1;

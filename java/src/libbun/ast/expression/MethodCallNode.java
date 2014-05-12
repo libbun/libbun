@@ -25,7 +25,7 @@
 package libbun.ast.expression;
 
 import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunTypeChecker;
 import libbun.parser.classic.LibBunVisitor;
@@ -41,13 +41,13 @@ public final class MethodCallNode extends AbstractListNode {
 
 	@BField public String  GivenName = null;
 
-	public MethodCallNode(BNode ParentNode, BNode RecvNode, String MethodName) {
+	public MethodCallNode(AstNode ParentNode, AstNode RecvNode, String MethodName) {
 		super(ParentNode, 2);
 		this.SetNullableNode(MethodCallNode._Recv, RecvNode);
 		this.GivenName = MethodName;
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new MethodCallNode(ParentNode, null, this.GivenName));
 	}
 
@@ -55,7 +55,7 @@ public final class MethodCallNode extends AbstractListNode {
 		this.bunfyAST(builder, "(methodcall", 0, ")");
 	}
 
-	public final BNode RecvNode() {
+	public final AstNode RecvNode() {
 		return this.AST[MethodCallNode._Recv ];
 	}
 
@@ -81,25 +81,25 @@ public final class MethodCallNode extends AbstractListNode {
 		@Var FuncCallNode FuncNode = new FuncCallNode(this.ParentNode, Getter);
 		FuncNode.SourceToken = this.SourceToken;
 		if(FuncType.GetFuncParamSize() == this.GetListSize() + 1) {
-			FuncNode.Append(this.RecvNode());
+			FuncNode.appendNode(this.RecvNode());
 		}
 		@Var int i = 0;
 		while(i < this.GetListSize()) {
-			FuncNode.Append(this.GetListAt(i));
+			FuncNode.appendNode(this.GetListAt(i));
 			i = i + 1;
 		}
 		return FuncNode;
 	}
 
-	public final AbstractListNode ToFuncCallNode(LibBunTypeChecker Gamma, BFunc Func, @Nullable BNode RecvNode) {
-		@Var AbstractListNode FuncNode = Gamma.CreateDefinedFuncCallNode(this.ParentNode, this.GetAstToken(MethodCallNode._NameInfo), Func);
-		FuncNode.SourceToken = this.GetAstToken(MethodCallNode._NameInfo);
+	public final AbstractListNode ToFuncCallNode(LibBunTypeChecker Gamma, BFunc Func, @Nullable AstNode RecvNode) {
+		@Var AbstractListNode FuncNode = Gamma.CreateDefinedFuncCallNode(this.ParentNode, this.getTokenAt(MethodCallNode._NameInfo), Func);
+		FuncNode.SourceToken = this.getTokenAt(MethodCallNode._NameInfo);
 		if(RecvNode != null) {
-			FuncNode.Append(RecvNode);
+			FuncNode.appendNode(RecvNode);
 		}
 		@Var int i = 0;
 		while(i < this.GetListSize()) {
-			FuncNode.Append(this.GetListAt(i));
+			FuncNode.appendNode(this.GetListAt(i));
 			i = i + 1;
 		}
 		return FuncNode;

@@ -26,10 +26,10 @@ package libbun.ast;
 
 
 public final class EmptyNode extends LocalDefinedNode {
-	public EmptyNode(BNode ParentNode) {
+	public EmptyNode(AstNode ParentNode) {
 		super(ParentNode, 0);
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new EmptyNode(ParentNode));
 	}
 

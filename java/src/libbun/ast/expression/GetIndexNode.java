@@ -24,7 +24,7 @@
 
 package libbun.ast.expression;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.util.Var;
@@ -34,12 +34,12 @@ public final class GetIndexNode extends MutableNode {
 	public final static int _Recv = 0;
 	public final static int _Index = 1;
 
-	public GetIndexNode(BNode ParentNode, BNode RecvNode) {
+	public GetIndexNode(AstNode ParentNode, AstNode RecvNode) {
 		super(ParentNode, 2);
 		this.SetNullableNode(GetIndexNode._Recv, RecvNode);
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		@Var GetIndexNode NewNode = new GetIndexNode(ParentNode, null);
 		if(TypedClone) {
 			NewNode.IsImmutable = this.IsImmutable;
@@ -51,10 +51,10 @@ public final class GetIndexNode extends MutableNode {
 		this.bunfyAST(builder, "(get", 0, ")");
 	}
 
-	public final BNode RecvNode() {
+	public final AstNode RecvNode() {
 		return this.AST[GetIndexNode._Recv ];
 	}
-	public final BNode IndexNode() {
+	public final AstNode IndexNode() {
 		return this.AST[GetIndexNode._Index ];
 	}
 	@Override public void Accept(LibBunVisitor Visitor) {

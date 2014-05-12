@@ -1,6 +1,6 @@
 package libbun.ast.decl;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.literal.ConstNode;
 import libbun.common.CommonStringBuilder;
 import libbun.encode.LibBunGenerator;
@@ -17,13 +17,13 @@ public class BunLetVarNode extends DefSymbolNode {
 
 	@BField public int     NameIndex = 0;
 
-	public BunLetVarNode(BNode ParentNode, int symbolFlag, @Nullable BType GivenType, @Nullable String GivenName) {
+	public BunLetVarNode(AstNode ParentNode, int symbolFlag, @Nullable BType GivenType, @Nullable String GivenName) {
 		super(ParentNode, 3, symbolFlag);
 		this.GivenType = GivenType;
 		this.GivenName = GivenName;
 	}
 
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		@Var BunLetVarNode NewNode = new BunLetVarNode(ParentNode, this.symbolFlag, this.GivenType, this.GivenName);
 		NewNode.NameIndex = this.NameIndex;
 		return this.dupField(TypedClone, NewNode);

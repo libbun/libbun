@@ -1,7 +1,7 @@
 package libbun.parser.classic;
 
 import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.statement.BunBreakNode;
@@ -12,7 +12,7 @@ import libbun.util.Var;
 
 public class BNodeUtils {
 
-	public final static boolean _IsBlockBreak(BNode Node) {
+	public final static boolean _IsBlockBreak(AstNode Node) {
 		if(Node instanceof BunReturnNode || Node instanceof BunThrowNode || Node instanceof BunBreakNode) {
 			return true;
 		}
@@ -20,7 +20,7 @@ public class BNodeUtils {
 		return false;
 	}
 
-	public final static boolean _HasFunctionBreak(BNode Node) {
+	public final static boolean _HasFunctionBreak(AstNode Node) {
 		if(Node instanceof BunReturnNode || Node instanceof BunThrowNode) {
 			return true;
 		}
@@ -35,7 +35,7 @@ public class BNodeUtils {
 			@Var BlockNode blockNode = (BlockNode)Node;
 			@Var int i = 0;
 			while(i < blockNode.GetListSize()) {
-				@Var BNode StmtNode = blockNode.GetListAt(i);
+				@Var AstNode StmtNode = blockNode.GetListAt(i);
 				//System.out.println("i="+i +", "+ StmtNode.getClass().getSimpleName());
 				if(BNodeUtils._HasFunctionBreak(StmtNode)) {
 					return true;
@@ -52,7 +52,7 @@ public class BNodeUtils {
 	public final static BunReturnNode _CheckIfSingleReturnNode(BunFunctionNode Node) {
 		@Var BlockNode blockNode = Node.blockNode();
 		if(blockNode.GetListSize() == 1) {
-			@Var BNode ReturnNode= blockNode.AST[0];
+			@Var AstNode ReturnNode= blockNode.AST[0];
 			if(ReturnNode instanceof BunReturnNode) {
 				return (BunReturnNode)ReturnNode;
 			}
@@ -61,7 +61,7 @@ public class BNodeUtils {
 	}
 
 
-	public final static int _AstListIndexOf(AbstractListNode LNode, BNode ChildNode) {
+	public final static int _AstListIndexOf(AbstractListNode LNode, AstNode ChildNode) {
 		@Var int i = 0;
 		while(i < LNode.GetListSize()) {
 			if(LNode.GetListAt(i) == ChildNode) {
@@ -75,7 +75,7 @@ public class BNodeUtils {
 	public final static void _CopyAstList(AbstractListNode SourceListNode, int FromIndex, AbstractListNode DestListNode) {
 		@Var int i = FromIndex;
 		while(i < SourceListNode.GetListSize()) {
-			DestListNode.Append(SourceListNode.GetListAt(i));
+			DestListNode.appendNode(SourceListNode.GetListAt(i));
 			i = i + 1;
 		}
 	}

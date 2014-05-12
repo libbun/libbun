@@ -1,10 +1,10 @@
 package libbun.parser.common;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 
 public abstract class BunParserContext {
 
 	public abstract boolean hasNode();
-	public abstract BNode parseNode(BNode parentNode, String key);
+	public abstract AstNode parseNode(AstNode parentNode, String key);
 
 }

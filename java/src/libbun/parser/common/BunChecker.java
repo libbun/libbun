@@ -24,12 +24,12 @@
 
 package libbun.parser.common;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.parser.classic.BunVisitor;
 
 public abstract class BunChecker extends BunVisitor {
 
-	public abstract BNode startCheck(BNode bnode);
+	public abstract AstNode startCheck(AstNode bnode);
 
 }
 

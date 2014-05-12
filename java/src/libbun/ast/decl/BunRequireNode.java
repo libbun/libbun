@@ -1,6 +1,6 @@
 package libbun.ast.decl;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunGamma;
 import libbun.parser.common.BunLogger;
@@ -11,10 +11,10 @@ import libbun.util.Var;
 public class BunRequireNode extends TopLevelNode {
 	public final static int _Path = 0;
 
-	public BunRequireNode(BNode ParentNode) {
+	public BunRequireNode(AstNode ParentNode) {
 		super(ParentNode, 1);
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunRequireNode(ParentNode));
 	}
 	@Override public void bunfy(CommonStringBuilder builder) {

@@ -25,7 +25,7 @@
 package libbun.encode;
 
 import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
@@ -216,7 +216,7 @@ public abstract class LibBunGenerator extends BunVisitor {
 
 	//
 
-	public final BPrototype SetPrototype(BNode Node, String FuncName, BFuncType FuncType) {
+	public final BPrototype SetPrototype(AstNode Node, String FuncName, BFuncType FuncType) {
 		@Var BFunc Func = this.GetDefinedFunc(FuncName, FuncType);
 		if(Func != null) {
 			if(!FuncType.Equals(Func.GetFuncType())) {
@@ -304,7 +304,7 @@ public abstract class LibBunGenerator extends BunVisitor {
 	// Naming
 
 
-	public final void VisitUndefinedNode(BNode Node) {
+	public final void VisitUndefinedNode(AstNode Node) {
 		@Var ErrorNode ErrorNode = new ErrorNode(Node.ParentNode, Node.SourceToken, "undefined node:" + Node.toString());
 		this.VisitErrorNode(ErrorNode);
 	}
@@ -313,16 +313,16 @@ public abstract class LibBunGenerator extends BunVisitor {
 		this.VisitNullNode(new BunNullNode(Node.ParentNode));
 	}
 
-	protected boolean LocallyGenerated(BNode Node) {
+	protected boolean LocallyGenerated(AstNode Node) {
 		return false;
 	}
 
 	@Override public final void VisitDesugarNode(DesugarNode Node) {
 		if(!this.LocallyGenerated(Node.OriginalNode)) {
 			this.GenerateExpression(Node.AST[0]);
-			if(Node.GetAstSize() > 1) {
+			if(Node.size() > 1) {
 				@Var int i = 1;
-				while(i < Node.GetAstSize()) {
+				while(i < Node.size()) {
 					this.GenerateStatement(Node.AST[i]);
 					i = i + 1;
 				}
@@ -334,21 +334,21 @@ public abstract class LibBunGenerator extends BunVisitor {
 		this.VisitDesugarNode(Node.PerformDesugar(this.TypeChecker));
 	}
 
-	@ZenMethod protected void GenerateExpression(BNode Node) {
+	@ZenMethod protected void GenerateExpression(AstNode Node) {
 		Node.Accept(this);
 	}
 
-	@ZenMethod protected void GenerateStatement(BNode Node) {
+	@ZenMethod protected void GenerateStatement(AstNode Node) {
 		Node.Accept(this);
 	}
 
-	private void PreProcess(BNode Node) {
+	private void PreProcess(AstNode Node) {
 		if(this.TypeChecker != null) {
 			Node = this.TypeChecker.CheckType(Node, BType.VoidType);
 		}
 	}
 
-	private boolean GenerateTopLevelStatement(BNode Node) {
+	private boolean GenerateTopLevelStatement(AstNode Node) {
 		this.TopLevelSymbol = null;
 		if(Node instanceof BunFunctionNode || Node instanceof BunClassNode || Node instanceof BunLetVarNode) {
 			//Node.Type = BType.VoidType;
@@ -361,7 +361,7 @@ public abstract class LibBunGenerator extends BunVisitor {
 		}
 		//System.out.println("Node: " + Node);
 		if(!this.LangInfo.AllowTopLevelScript) {
-			@Var BNode FuncNode = null;
+			@Var AstNode FuncNode = null;
 			if(Node.Type.IsVoidType()) {
 				FuncNode = Node.ParseExpression("function () { Bun::X; }");
 			}
@@ -385,7 +385,7 @@ public abstract class LibBunGenerator extends BunVisitor {
 		TokenContext.SkipEmptyStatement();
 		TokenContext.SetParseFlag(BTokenContext._AllowSkipIndent);
 		while(TokenContext.HasNext()) {
-			@Var BNode StmtNode = TokenContext.ParsePattern(TopblockNode, "$Statement$", BTokenContext._Required);
+			@Var AstNode StmtNode = TokenContext.ParsePattern(TopblockNode, "$Statement$", BTokenContext._Required);
 			if(StmtNode.IsErrorNode()) {
 				@Var boolean SkipLine = false;
 				while(TokenContext.HasNext()) {
@@ -401,7 +401,7 @@ public abstract class LibBunGenerator extends BunVisitor {
 			}
 			this.PreProcess(StmtNode);
 			if(!(StmtNode instanceof TopLevelNode)) {
-				TopblockNode.Append(StmtNode);
+				TopblockNode.appendNode(StmtNode);
 			}
 			TokenContext.SkipEmptyStatement();
 			TokenContext.Vacume();
@@ -409,7 +409,7 @@ public abstract class LibBunGenerator extends BunVisitor {
 		this.Logger.OutputErrorsToStdErr();
 		@Var int i = 0;
 		while(i < TopblockNode.GetListSize()) {
-			@Var BNode StmtNode = TopblockNode.GetListAt(i);
+			@Var AstNode StmtNode = TopblockNode.GetListAt(i);
 			if(!this.GenerateTopLevelStatement(StmtNode)) {
 				AllPassed = false;
 			}

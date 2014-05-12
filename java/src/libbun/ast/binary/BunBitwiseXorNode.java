@@ -1,15 +1,15 @@
 package libbun.ast.binary;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.lang.bun.BunPrecedence;
 import libbun.parser.classic.BunVisitor;
 import libbun.parser.classic.LibBunVisitor;
 
 public class BunBitwiseXorNode extends BitwiseOperatorNode {
-	public BunBitwiseXorNode(BNode ParentNode) {
+	public BunBitwiseXorNode(AstNode ParentNode) {
 		super(ParentNode, BunPrecedence._CStyleBITXOR);
 	}
-	@Override public BNode dup(boolean TypedClone, BNode ParentNode) {
+	@Override public AstNode dup(boolean TypedClone, AstNode ParentNode) {
 		return this.dupField(TypedClone, new BunBitwiseXorNode(ParentNode));
 	}
 	@Override public final String GetOperator() {

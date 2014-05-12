@@ -24,10 +24,10 @@
 
 package libbun.ast.binary;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 
 public abstract class ComparatorNode extends BinaryOperatorNode {
-	public ComparatorNode(BNode ParentNode, int Precedence) {
+	public ComparatorNode(AstNode ParentNode, int Precedence) {
 		super(ParentNode, Precedence);
 	}
 }

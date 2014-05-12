@@ -1,7 +1,7 @@
 package libbun.lang.bun.regexp;
 
 import libbun.ast.AbstractListNode;
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.ast.error.ErrorNode;
@@ -28,7 +28,7 @@ class BackSlashTokenFunction extends BTokenFunction {
 }
 
 class RegExpPatternFunction extends BMatchFunction {
-	@Override public BNode Invoke(BNode ParentNode, BTokenContext TokenContext, BNode LeftNode) {
+	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken BeginToken = TokenContext.GetToken(BTokenContext._MoveNext);
 		while(TokenContext.HasNext()) {
 			@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
@@ -49,7 +49,7 @@ class BunRegExpNode extends SyntaxSugarNode {
 
 	@BField public final String PatternValue;
 	@BField public String PatternOption = "";
-	public BunRegExpNode(BNode ParentNode, BToken RegExpToken) {
+	public BunRegExpNode(AstNode ParentNode, BToken RegExpToken) {
 		super(ParentNode, 0);
 		this.SourceToken = RegExpToken;
 		this.PatternValue = LibBunSystem._UnquoteString(RegExpToken.GetText());
@@ -64,8 +64,8 @@ class BunRegExpNode extends SyntaxSugarNode {
 		@Var BFormFunc Func = TypeChecker.Generator.GetFormFunc("Bun::NewRegExp", BType.StringType, 2);
 		if(Func != null) {
 			@Var AbstractListNode FuncNode = TypeChecker.CreateDefinedFuncCallNode(this.ParentNode, this.SourceToken, Func);
-			FuncNode.Append(new BunStringNode(FuncNode, null, this.PatternValue));
-			FuncNode.Append(new BunStringNode(FuncNode, null, this.PatternOption));
+			FuncNode.appendNode(new BunStringNode(FuncNode, null, this.PatternValue));
+			FuncNode.appendNode(new BunStringNode(FuncNode, null, this.PatternOption));
 			return new DesugarNode(this, FuncNode);
 		}
 		//System.out.println("debug: " + this.PatternValue);

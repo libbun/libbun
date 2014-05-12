@@ -24,7 +24,7 @@
 
 package libbun.encode.playground;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
@@ -126,12 +126,12 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	@Override public void VisitArrayLiteralNode(BunArrayNode Node) {
 		//		this.Source.Append("(let ((a (make-array 8 :adjustable T :fill-pointer 0 :initial-element 'e)))");
 		this.Source.Append("(let ((a (make-array ");
-		this.Source.AppendInt(Node.GetListSize());
+		this.Source.AppendInt(Node.size());
 		this.Source.Append(" :initial-element ", this.InitArrayValue(Node));
 		this.Source.Append(" :adjustable T :fill-pointer 0)))");
 		@Var int i = 0;
-		while(i < Node.GetListSize()) {
-			this.GenerateExpression(" (vector-push ", Node.GetListAt(i), " a)");
+		while(i < Node.size()) {
+			this.GenerateExpression(" (vector-push ", Node.get(i), " a)");
 			i = i + 1;
 		}
 		this.Source.Append(" a)");
@@ -153,7 +153,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 		this.Source.Append("(setf");
 		@Var int i = 0;
 		while(i < Node.GetListSize()) {
-			@Var BunMapEntryNode Entry = Node.GetMapEntryNode(i);
+			@Var BunMapEntryNode Entry = Node.getMapEntryNode(i);
 			this.GenerateExpression(" (gethash ", Entry.KeyNode(), " m)", Entry.ValueNode(), "");
 			i = i + 1;
 		}
@@ -359,7 +359,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	}
 
 
-	@Override protected void GenerateStatementEnd(BNode Node) {
+	@Override protected void GenerateStatementEnd(AstNode Node) {
 	}
 
 	protected void GenerateStmtListNode(BlockNode blockNode) {
@@ -374,7 +374,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 			this.Source.OpenIndent("(progn");
 			@Var int i = 0;
 			while (i < blockNode.GetListSize()) {
-				@Var BNode SubNode = blockNode.GetListAt(i);
+				@Var AstNode SubNode = blockNode.GetListAt(i);
 				this.GenerateStatement(SubNode);
 				i = i + 1;
 			}
@@ -382,7 +382,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 		}
 	}
 
-	@Override public void VisitblockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(BlockNode Node) {
 		this.GenerateStmtListNode(Node);
 	}
 
@@ -415,7 +415,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 		this.GenerateExpression(Node.CondNode());
 		this.Source.AppendNewLine("do");
 		if(Node.HasNextNode()) {
-			Node.blockNode().Append(Node.NextNode());
+			Node.blockNode().appendNode(Node.NextNode());
 		}
 		this.GenerateExpression(Node.blockNode());
 		this.Source.Append(")");
@@ -438,7 +438,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 		this.Source.Append(")");
 	}
 
-	private BunFunctionNode LookupFunctionNode(BNode Node) {
+	private BunFunctionNode LookupFunctionNode(AstNode Node) {
 		while(Node != null) {
 			if(Node instanceof BunFunctionNode) {
 				return (BunFunctionNode)Node;

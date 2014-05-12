@@ -1,6 +1,6 @@
 package libbun.encode.playground;
 
-import libbun.ast.BNode;
+import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
 import libbun.ast.binary.AssignNode;
@@ -143,7 +143,7 @@ public class JavaGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitArrayLiteralNode(BunArrayNode Node) {
-		if(Node.GetListSize() == 0) {
+		if(Node.size() == 0) {
 			this.Source.Append("new ", this.GetJavaTypeName(Node.Type, false), "()");
 		}
 		else {
@@ -151,7 +151,7 @@ public class JavaGenerator extends LibBunSourceGenerator {
 			this.ImportLibrary("java.util.Arrays");
 			this.Source.Append("new ", this.GetJavaTypeName(Node.Type, false), "(");
 			this.Source.Append("Arrays.asList(new ", this.GetJavaTypeName(ParamType, true), "[]");
-			this.GenerateListNode("{", Node, ", ", "}))");
+			this.GenerateListNode("{", Node, 0, ", ", "}))");
 		}
 	}
 
@@ -161,7 +161,7 @@ public class JavaGenerator extends LibBunSourceGenerator {
 			@Var int i = 0;
 			this.Source.OpenIndent(" {{");
 			while(i < Node.GetListSize()) {
-				@Var BunMapEntryNode Entry = Node.GetMapEntryNode(i);
+				@Var BunMapEntryNode Entry = Node.getMapEntryNode(i);
 				this.Source.AppendNewLine("put");
 				this.GenerateExpression("(", Entry.KeyNode(), ", ", Entry.ValueNode(), ");");
 				i = i + 1;
@@ -189,7 +189,7 @@ public class JavaGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitAssignNode(AssignNode Node) {
-		@Var BNode LeftNode = Node.LeftNode();
+		@Var AstNode LeftNode = Node.LeftNode();
 		if(LeftNode instanceof GetIndexNode) {
 			this.GenerateAssignIndex((GetIndexNode)LeftNode, Node.RightNode());
 		}
@@ -201,7 +201,7 @@ public class JavaGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitGetIndexNode(GetIndexNode Node) {
-		@Var BType RecvType = Node.GetAstType(GetIndexNode._Recv);
+		@Var BType RecvType = Node.getTypeAt(GetIndexNode._Recv);
 		if(RecvType.IsStringType()) {
 			this.GenerateExpression("String.valueOf((", Node.RecvNode(), ")");
 			this.GenerateExpression(".charAt(", Node.IndexNode(), "))");
@@ -215,8 +215,8 @@ public class JavaGenerator extends LibBunSourceGenerator {
 		}
 	}
 
-	private void GenerateAssignIndex(GetIndexNode Node, BNode ExprNode) {
-		@Var BType RecvType = Node.GetAstType(GetIndexNode._Recv);
+	private void GenerateAssignIndex(GetIndexNode Node, AstNode ExprNode) {
+		@Var BType RecvType = Node.getTypeAt(GetIndexNode._Recv);
 		this.GenerateExpression(Node.RecvNode());
 		if(RecvType.IsMapType()) {
 			this.Source.Append(".put(");
@@ -374,7 +374,7 @@ public class JavaGenerator extends LibBunSourceGenerator {
 
 
 	@Override
-	protected void GenerateStatementEnd(BNode Node) {
+	protected void GenerateStatementEnd(AstNode Node) {
 		if(Node instanceof BunIfNode || Node instanceof BunWhileNode || Node instanceof BunTryNode || Node instanceof BunFunctionNode || Node instanceof BunClassNode) {
 			return;
 		}
@@ -386,13 +386,13 @@ public class JavaGenerator extends LibBunSourceGenerator {
 	protected void GenerateStmtListNode(BlockNode Node) {
 		@Var int i = 0;
 		while (i < Node.GetListSize()) {
-			@Var BNode SubNode = Node.GetListAt(i);
+			@Var AstNode SubNode = Node.GetListAt(i);
 			this.GenerateStatement(SubNode);
 			i = i + 1;
 		}
 	}
 
-	@Override public void VisitblockNode(BlockNode Node) {
+	@Override public void VisitBlockNode(BlockNode Node) {
 		this.Source.AppendWhiteSpace();
 		this.Source.OpenIndent("{");
 		this.GenerateStmtListNode(Node);
@@ -424,7 +424,7 @@ public class JavaGenerator extends LibBunSourceGenerator {
 	@Override public void VisitWhileNode(BunWhileNode Node) {
 		this.GenerateExpression("while (", Node.CondNode(), ")");
 		if(Node.HasNextNode()) {
-			Node.blockNode().Append(Node.NextNode());
+			Node.blockNode().appendNode(Node.NextNode());
 		}
 		this.GenerateExpression(Node.blockNode());
 	}
@@ -459,7 +459,7 @@ public class JavaGenerator extends LibBunSourceGenerator {
 
 	/**********************************************************************/
 
-	@Override protected void GenerateExpression(BNode Node) {
+	@Override protected void GenerateExpression(AstNode Node) {
 		//this.Source.Append("/*untyped*/");
 		Node.Accept(this);
 	}
@@ -560,7 +560,7 @@ public class JavaGenerator extends LibBunSourceGenerator {
 			//		this.CurrentBuilder = this.InsertNewSourceBuilder();
 			this.Source.AppendNewLine("final class ", ClassName, "");
 			this.Source.OpenIndent(" {");
-			this.GenerateClassField("static", Node.GetAstType(BunLetVarNode._InitValue), "_");
+			this.GenerateClassField("static", Node.getTypeAt(BunLetVarNode._InitValue), "_");
 			this.GenerateExpression(" = ", Node.InitValueNode(), ";");
 			this.Source.CloseIndent("}");
 			Node.GivenName = ClassName+"._";
