@@ -24,7 +24,6 @@
 
 package libbun.encode;
 
-import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.DesugarNode;
@@ -291,12 +290,12 @@ public abstract class LibBunGenerator extends BunVisitor {
 		return BType.VarType;     // undefined
 	}
 
-	@ZenMethod public BFuncType GetConstructorFuncType(BType ClassType, AbstractListNode List) {
+	@ZenMethod public BFuncType GetConstructorFuncType(BType ClassType, AstNode List, int startIndex) {
 		//return null;              // undefined and undefined error
 		return BFuncType._FuncType;    // undefined and no error
 	}
 
-	@ZenMethod public BFuncType GetMethodFuncType(BType RecvType, String MethodName, AbstractListNode List) {
+	@ZenMethod public BFuncType GetMethodFuncType(BType RecvType, String MethodName, AstNode List, int startIndex) {
 		//return null;              // undefined and undefined error
 		return BFuncType._FuncType;     // undefined and no error
 	}

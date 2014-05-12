@@ -184,6 +184,13 @@ public abstract class AstNode {
 		}
 	}
 
+	public final void swap(int i, int j) {
+		AstNode node = this.AST[i];
+		this.AST[i] = this.AST[j];
+		this.AST[j] = node;
+	}
+
+
 	public final AstNode SetChild(AstNode Node, boolean EnforcedParent) {
 		assert(this != Node);
 		if(EnforcedParent || Node.ParentNode == null) {

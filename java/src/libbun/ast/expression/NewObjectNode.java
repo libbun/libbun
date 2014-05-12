@@ -26,15 +26,17 @@ package libbun.ast.expression;
 
 import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
+import libbun.ast.BunNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunTypeChecker;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.BunModelVisitor;
 import libbun.type.BFunc;
 import libbun.type.BType;
 import libbun.util.BField;
 import libbun.util.Var;
 
-public final class NewObjectNode extends AbstractListNode {
+public final class NewObjectNode extends BunNode {
 	public static final int _TypeInfo = 0;
 
 	@BField public BType GivenType = null;
@@ -50,7 +52,7 @@ public final class NewObjectNode extends AbstractListNode {
 	@Override public void bunfy(CommonStringBuilder builder) {
 		builder.Append("(new ");
 		this.ClassType().bunfy(builder);
-		this.bunfyAST(builder, "", this.vargStartIndex, ")");
+		this.bunfyAST(builder, "", 1, ")");
 	}
 
 	public final BType ClassType() {
@@ -72,13 +74,19 @@ public final class NewObjectNode extends AbstractListNode {
 	public final AbstractListNode ToFuncCallNode(LibBunTypeChecker Gamma, BFunc Func) {
 		@Var AbstractListNode FuncNode = Gamma.CreateDefinedFuncCallNode(this.ParentNode, this.SourceToken, Func);
 		FuncNode.appendNode(this);
-		@Var int i = 0;
-		while(i < this.GetListSize()) {
-			FuncNode.appendNode(this.GetListAt(i));
+		@Var int i = 1;
+		while(i < this.size()) {  // checked
+			FuncNode.appendNode(this.get(i));  // checked
 			i = i + 1;
 		}
 		this.Type = this.ClassType();
-		this.ClearListToSize(0);
+		this.resizeAst(0);
 		return FuncNode;
+	}
+
+	@Override
+	public void acceptBunModel(BunModelVisitor visitor) {
+		// TODO Auto-generated method stub
+
 	}
 }

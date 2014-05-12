@@ -56,13 +56,13 @@ import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
 import libbun.ast.literal.BunArrayNode;
-import libbun.ast.literal.CodeNode;
 import libbun.ast.literal.BunFalseNode;
 import libbun.ast.literal.BunFloatNode;
 import libbun.ast.literal.BunIntNode;
 import libbun.ast.literal.BunNullNode;
 import libbun.ast.literal.BunStringNode;
 import libbun.ast.literal.BunTrueNode;
+import libbun.ast.literal.CodeNode;
 import libbun.ast.statement.BunBreakNode;
 import libbun.ast.statement.BunIfNode;
 import libbun.ast.statement.BunReturnNode;
@@ -199,7 +199,9 @@ class FloatFunction extends SemanticFunction {
 class SymbolFunction extends SemanticFunction {
 	@Override public AstNode Invoke(BunSource source, AstNode parentNode, PegObject po) {
 		@Var BunToken token = po.getToken();
-		return new GetNameNode(parentNode, token, token.GetText());
+		@Var GetNameNode NameNode = new GetNameNode(parentNode, token.GetText());
+		NameNode.SourceToken = token;
+		return NameNode;
 	}
 }
 

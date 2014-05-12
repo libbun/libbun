@@ -150,7 +150,7 @@ public class SSACGenerator extends OldSourceGenerator {
 
 	@Override public void VisitNewObjectNode(NewObjectNode Node) {
 		this.Source.Append("_New"+this.NameClass(Node.Type));
-		this.GenerateListNode("(", Node, ")");
+		this.GenerateListNode("(", Node, 1, ", ", ")");
 	}
 
 	@Override public void VisitGetIndexNode(GetIndexNode Node) {

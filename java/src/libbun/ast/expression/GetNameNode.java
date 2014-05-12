@@ -29,7 +29,7 @@ import libbun.ast.decl.BunLetVarNode;
 import libbun.common.CommonStringBuilder;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.parser.common.BunToken;
+import libbun.parser.common.BunModelVisitor;
 import libbun.parser.common.SymbolTable;
 import libbun.util.BField;
 import libbun.util.Nullable;
@@ -40,14 +40,13 @@ public class GetNameNode extends MutableNode {
 	@BField @Nullable public BunLetVarNode ResolvedNode = null;
 	@BField public int     VarIndex = 0;
 
-	public GetNameNode(AstNode ParentNode, BunToken sourceToken, String GivenName) {
+	public GetNameNode(AstNode ParentNode, String GivenName) {
 		super(ParentNode, 0);
-		this.SourceToken = sourceToken;
 		this.GivenName = GivenName;
 	}
 
 	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
-		@Var GetNameNode NewNode = new GetNameNode(ParentNode, this.SourceToken, this.GivenName);
+		@Var GetNameNode NewNode = new GetNameNode(ParentNode, this.GivenName);
 		if(typedClone) {
 			NewNode.IsImmutable = this.IsImmutable;
 			NewNode.ResolvedNode = this.ResolvedNode;
@@ -72,6 +71,12 @@ public class GetNameNode extends MutableNode {
 		Visitor.VisitGetNameNode(this);
 	}
 
+	@Override
+	public void acceptBunModel(BunModelVisitor visitor) {
+		visitor.visitGetNameNode(this);
+	}
+
+
 	public final String getSimpleName() {
 		return this.GivenName;
 	}
@@ -86,6 +91,7 @@ public class GetNameNode extends MutableNode {
 		}
 		return this.GivenName;
 	}
+
 
 
 }

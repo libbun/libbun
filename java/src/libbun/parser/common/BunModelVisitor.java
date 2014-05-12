@@ -14,7 +14,7 @@ import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.error.ErrorNode2;
 import libbun.ast.error.VerboseNode;
 import libbun.ast.expression.ApplyMacroNode;
-import libbun.ast.expression.ApplyNode;
+import libbun.ast.expression.ApplyFuncNode;
 import libbun.ast.expression.FuncCallNode;
 import libbun.ast.expression.GetFieldNode;
 import libbun.ast.expression.GetIndexNode;
@@ -61,7 +61,7 @@ public abstract class BunModelVisitor {
 	public abstract void visitNewObjectNode(NewObjectNode node);
 	public abstract void visitMethodCallNode(MethodCallNode node);
 	public abstract void visitFuncCallNode(FuncCallNode node);
-	public abstract void visitApplyNode(ApplyNode node);
+	public abstract void visitApplyFuncNode(ApplyFuncNode node);
 	public abstract void visitApplyMacroNode(ApplyMacroNode FuncNode);
 
 	//public abstract void visitAsmNode(BunAsmNode node);

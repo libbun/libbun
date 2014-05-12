@@ -302,7 +302,7 @@ public class HaskellSourceGenerator extends OldSourceGenerator {
 		this.Source.AppendLineFeed();
 
 		// XXX Is this correct node type ?
-		AstNode LoopNode = new GetNameNode(Node, null, "__loop");
+		AstNode LoopNode = new GetNameNode(Node, "__loop");
 		Node.blockNode().SetNode(AstNode._AppendIndex, LoopNode);
 		Node.blockNode().Accept(this);
 

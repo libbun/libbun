@@ -131,7 +131,7 @@ public class ErlangGenerator extends OldSourceGenerator {
 	@Override public void VisitNewObjectNode(NewObjectNode Node) {
 		this.Source.Append("#");
 		this.Source.Append(this.ToErlangTypeName(Node.Type.ShortName));
-		this.GenerateListNode("{", Node, "}");
+		this.GenerateListNode("{", Node, 1, ", ", "}");
 	}
 
 	// @Override public void VisitGroupNode(ZGroupNode Node) {

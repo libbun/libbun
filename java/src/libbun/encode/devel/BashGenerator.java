@@ -248,7 +248,7 @@ public class BashGenerator extends LibBunSourceGenerator {
 
 	@Override public void VisitNewObjectNode(NewObjectNode Node) {
 		this.GenerateTypeName(Node.Type);
-		this.GenerateListNode("(", Node, ",", ")");
+		this.GenerateListNode("(", Node, 1, ",", ")");
 	}
 
 	protected final void GenerateFuncName(BunFuncNameNode Node) {

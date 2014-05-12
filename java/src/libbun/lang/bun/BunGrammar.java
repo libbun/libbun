@@ -64,7 +64,6 @@ import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
 import libbun.ast.literal.BunArrayNode;
-import libbun.ast.literal.CodeNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.literal.BunFloatNode;
 import libbun.ast.literal.BunIntNode;
@@ -73,6 +72,7 @@ import libbun.ast.literal.BunMapNode;
 import libbun.ast.literal.BunNullNode;
 import libbun.ast.literal.BunStringNode;
 import libbun.ast.literal.BunTypeNode;
+import libbun.ast.literal.CodeNode;
 import libbun.ast.statement.BunBreakNode;
 import libbun.ast.statement.BunIfNode;
 import libbun.ast.statement.BunReturnNode;
@@ -799,28 +799,18 @@ class AnnotationPatternFunction extends BMatchFunction {
 class SymbolExpressionPatternFunction extends BMatchFunction {
 	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken NameToken = TokenContext.GetToken(BTokenContext._MoveNext);
-		//		if(TokenContext.IsToken("=")) {
-		//			return new ErrorNode(ParentNode, TokenContext.GetToken(), "assignment is not en expression");
-		//		}
-		//		else {
-		return new GetNameNode(ParentNode, NameToken, NameToken.GetText());
-		//		}
+		@Var GetNameNode NameNode = new GetNameNode(ParentNode, NameToken.GetText());
+		NameNode.SourceToken = NameToken;
+		return NameNode;
 	}
 }
 
 class SymbolStatementPatternFunction extends BMatchFunction {
 	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken NameToken = TokenContext.GetToken(BTokenContext._MoveNext);
-		@Var GetNameNode NameNode = new GetNameNode(ParentNode, NameToken, NameToken.GetText());
-		//		if(TokenContext.IsToken("=")) {
-		//			@Var BNode AssignedNode = new SetNameNode(ParentNode, NameNode);
-		//			AssignedNode = TokenContext.MatchToken(AssignedNode, "=", BTokenContext._Required);
-		//			AssignedNode = TokenContext.MatchPattern(AssignedNode, SetNameNode._Expr, "$Expression$", BTokenContext._Required);
-		//			return AssignedNode;
-		//		}
-		//		else {
+		@Var GetNameNode NameNode = new GetNameNode(ParentNode, NameToken.GetText());
+		NameNode.SourceToken = NameToken;
 		return NameNode;
-		//		}
 	}
 }
 
@@ -948,7 +938,9 @@ class NamePatternFunction extends BMatchFunction {
 	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken Token = TokenContext.GetToken(BTokenContext._MoveNext);
 		if(LibBunSystem._IsSymbol(Token.GetChar())) {
-			return new GetNameNode(ParentNode, Token, Token.GetText());
+			@Var GetNameNode NameNode = new GetNameNode(ParentNode, Token.GetText());
+			NameNode.SourceToken = Token;
+			return NameNode;
 		}
 		return new ErrorNode(ParentNode, Token, "illegal name: \'" + Token.GetText() + "\'");
 	}
@@ -1095,7 +1087,9 @@ class LongNamePatternFunction extends BMatchFunction {
 	@Override public AstNode Invoke(AstNode ParentNode, BTokenContext TokenContext, AstNode LeftNode) {
 		@Var BToken NameToken = TokenContext.ParseLargeToken();
 		//		System.out.println("'"+ NameToken.GetText() + "'");
-		return new GetNameNode(ParentNode, NameToken, NameToken.GetText());
+		@Var GetNameNode NameNode = new GetNameNode(ParentNode, NameToken.GetText());
+		NameNode.SourceToken = NameToken;
+		return NameNode;
 	}
 }
 

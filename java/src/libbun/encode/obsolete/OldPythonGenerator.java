@@ -130,7 +130,7 @@ public class OldPythonGenerator extends OldSourceGenerator {
 
 	@Override public void VisitNewObjectNode(NewObjectNode Node) {
 		this.Source.Append(this.NameClass(Node.Type));
-		this.GenerateListNode("(", Node, ")");
+		this.GenerateListNode("(", Node, 1, ", ", ")");
 	}
 
 	@Override public void VisitCastNode(BunCastNode Node) {

@@ -11,7 +11,7 @@ public class AssignNode extends BinaryOperatorNode {
 	}
 	public AssignNode(String Name, AstNode RightNode) {
 		super(null, BunPrecedence._CStyleAssign);
-		this.SetLeftNode(new GetNameNode(null, null, Name));
+		this.SetLeftNode(new GetNameNode(null, Name));
 		this.SetRightNode(RightNode);
 	}
 	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {

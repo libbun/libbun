@@ -95,7 +95,7 @@ public class CommandNode extends SyntaxSugarNode {
 			ArrayNode.appendNode(SubArrayNode);
 			CurrentNode = CurrentNode.PipedNextNode;
 		}
-		@Var FuncCallNode Node = new FuncCallNode(this.ParentNode, new GetNameNode(this.ParentNode, null, FuncName));
+		@Var FuncCallNode Node = new FuncCallNode(this.ParentNode, new GetNameNode(this.ParentNode, FuncName));
 		Node.appendNode(ArrayNode);
 		return new DesugarNode(this, Node);
 	}

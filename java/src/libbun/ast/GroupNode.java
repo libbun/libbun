@@ -26,8 +26,9 @@ package libbun.ast;
 
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.BunModelVisitor;
 
-public final class GroupNode extends AstNode {
+public final class GroupNode extends BunNode {
 	public final static int _Expr = 0;
 	public GroupNode(AstNode ParentNode) {
 		super(ParentNode, 1);
@@ -47,6 +48,11 @@ public final class GroupNode extends AstNode {
 	}
 	public final AstNode ExprNode() {
 		return this.AST[GroupNode._Expr];
+	}
+	@Override
+	public void acceptBunModel(BunModelVisitor visitor) {
+		visitor.visitGroupNode(this);
+
 	}
 
 

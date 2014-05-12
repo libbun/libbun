@@ -308,7 +308,7 @@ public class CGenerator extends LibBunSourceGenerator {
 
 	@Override public void VisitNewObjectNode(NewObjectNode Node) {
 		this.Source.Append("_New"+this.NameClass(Node.Type));
-		this.GenerateListNode("(", Node, ",", ")");
+		this.GenerateListNode("(", Node, 1, ",", ")");
 	}
 
 	private void GenerateFuncName(BunFuncNameNode Node) {

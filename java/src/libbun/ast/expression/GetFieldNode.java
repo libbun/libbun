@@ -28,12 +28,13 @@ import libbun.ast.AstNode;
 import libbun.ast.literal.BunTypeNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.BunModelVisitor;
 import libbun.util.BField;
 import libbun.util.Var;
 
 public class GetFieldNode extends MutableNode {
-	public final static int _Recv = 0;
-	public static final int _NameInfo = 1;
+	public static final int _NameInfo = 0;
+	public final static int _Recv     = 1;
 
 	@BField public String  GivenName = null;
 
@@ -51,7 +52,9 @@ public class GetFieldNode extends MutableNode {
 	}
 
 	@Override public void bunfy(CommonStringBuilder builder) {
+		this.swap(0, 1);
 		this.bunfyAST(builder, "(field", 0, ")");
+		this.swap(0, 1);
 	}
 
 	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
@@ -74,6 +77,11 @@ public class GetFieldNode extends MutableNode {
 		return this.GivenName;
 	}
 
+	@Override
+	public void acceptBunModel(BunModelVisitor visitor) {
+		visitor.visitGetFieldNode(this);
+	}
+
 	@Override public void Accept(LibBunVisitor Visitor) {
 		Visitor.VisitGetFieldNode(this);
 	}
@@ -81,4 +89,5 @@ public class GetFieldNode extends MutableNode {
 	public final boolean IsStaticField() {
 		return this.RecvNode() instanceof BunTypeNode;
 	}
+
 }

@@ -262,6 +262,14 @@ public abstract class TypeChecker extends BunChecker {
 	}
 
 
+	public final void TypeCheckNodeList(int startIndex, AstNode List) {
+		@Var int i = startIndex;
+		while(i < List.size()) {
+			this.CheckTypeAt(List, i, BType.VarType);
+			i = i + 1;
+		}
+	}
+
 	public final void TypeCheckNodeList(AbstractListNode List) {
 		@Var int i = 0;
 		while(i < List.GetListSize()) {

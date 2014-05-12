@@ -27,6 +27,7 @@ package libbun.ast.expression;
 import libbun.ast.AstNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.BunModelVisitor;
 import libbun.util.Var;
 
 //E.g., $Recv[$Index]
@@ -59,6 +60,11 @@ public final class GetIndexNode extends MutableNode {
 	}
 	@Override public void Accept(LibBunVisitor Visitor) {
 		Visitor.VisitGetIndexNode(this);
+	}
+
+	@Override
+	public void acceptBunModel(BunModelVisitor visitor) {
+		visitor.visitGetIndexNode(this);
 	}
 
 }

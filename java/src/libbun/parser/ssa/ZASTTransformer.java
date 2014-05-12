@@ -24,8 +24,8 @@ import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
 import libbun.ast.literal.BunArrayNode;
-import libbun.ast.literal.CodeNode;
 import libbun.ast.literal.BunMapNode;
+import libbun.ast.literal.CodeNode;
 import libbun.ast.literal.LiteralNode;
 import libbun.ast.statement.BunBreakNode;
 import libbun.ast.statement.BunIfNode;
@@ -90,7 +90,7 @@ public class ZASTTransformer extends LibBunVisitor {
 
 	@Override
 	public void VisitNewObjectNode(NewObjectNode Node) {
-		this.GenerateListNode(Node);
+		//this.GenerateListNode(Node);
 	}
 
 	@Override

@@ -58,7 +58,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Stack;
 
-import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
@@ -99,7 +98,6 @@ import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
 import libbun.ast.literal.BunArrayNode;
-import libbun.ast.literal.CodeNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.literal.BunFloatNode;
 import libbun.ast.literal.BunIntNode;
@@ -108,6 +106,7 @@ import libbun.ast.literal.BunMapNode;
 import libbun.ast.literal.BunNullNode;
 import libbun.ast.literal.BunStringNode;
 import libbun.ast.literal.BunTypeNode;
+import libbun.ast.literal.CodeNode;
 import libbun.ast.literal.LiteralNode;
 import libbun.ast.statement.BunBreakNode;
 import libbun.ast.statement.BunIfNode;
@@ -289,8 +288,8 @@ public class AsmJavaGenerator extends LibBunGenerator {
 		return BType.VarType;     // undefined
 	}
 
-	private boolean MatchParam(Class<?>[] jParams, AbstractListNode ParamList) {
-		if(jParams.length != ParamList.GetListSize()) {
+	private boolean MatchParam(Class<?>[] jParams, AstNode ParamList, int startIndex) {
+		if(jParams.length != ParamList.size()-startIndex) {
 			return false;
 		}
 		for(int j = 0; j < jParams.length; j++) {
@@ -298,8 +297,8 @@ public class AsmJavaGenerator extends LibBunGenerator {
 				continue; // accepting all types
 			}
 			@Var BType jParamType = JavaTypeTable.GetBunType(jParams[j]);
-			@Var BType ParamType = ParamList.GetListAt(j).Type;
-			if(jParamType == ParamType || jParamType.Accept(ParamList.GetListAt(j).Type)) {
+			@Var BType ParamType = ParamList.get(j+startIndex).Type;
+			if(jParamType == ParamType || jParamType.Accept(ParamList.get(j+startIndex).Type)) {
 				continue;
 			}
 			if(jParamType.IsFloatType() && ParamType.IsIntType()) {
@@ -313,7 +312,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 		return true;
 	}
 
-	protected Constructor<?> GetConstructor(BType RecvType, AbstractListNode ParamList) {
+	protected Constructor<?> GetConstructor(BType RecvType, AstNode ParamList, int startIndex) {
 		Class<?> NativeClass = this.GetJavaClass(RecvType);
 		if(NativeClass != null) {
 			try {
@@ -323,7 +322,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 					if(!Modifier.isPublic(jMethod.getModifiers())) {
 						continue;
 					}
-					if(this.MatchParam(jMethod.getParameterTypes(), ParamList)) {
+					if(this.MatchParam(jMethod.getParameterTypes(), ParamList, startIndex)) {
 						return jMethod;
 					}
 				}
@@ -333,7 +332,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 		return null;
 	}
 
-	protected Method GetMethod(BType RecvType, String MethodName, AbstractListNode ParamList) {
+	protected Method GetMethod(BType RecvType, String MethodName, AstNode ParamList, int startIndex) {
 		Class<?> NativeClass = this.GetJavaClass(RecvType);
 		if(NativeClass != null) {
 			try {
@@ -346,7 +345,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 					if(!Modifier.isPublic(jMethod.getModifiers())) {
 						continue;
 					}
-					if(this.MatchParam(jMethod.getParameterTypes(), ParamList)) {
+					if(this.MatchParam(jMethod.getParameterTypes(), ParamList, startIndex)) {
 						return jMethod;
 					}
 				}
@@ -356,9 +355,9 @@ public class AsmJavaGenerator extends LibBunGenerator {
 		return null;
 	}
 
-	@Override public BFuncType GetMethodFuncType(BType RecvType, String MethodName, AbstractListNode ParamList) {
+	@Override public BFuncType GetMethodFuncType(BType RecvType, String MethodName, AstNode ParamList, int startIndex) {
 		if(MethodName == null) {
-			Constructor<?> jMethod = this.GetConstructor(RecvType, ParamList);
+			Constructor<?> jMethod = this.GetConstructor(RecvType, ParamList, startIndex);
 			if(jMethod != null) {
 				@Var Class<?>[] ParamTypes = jMethod.getParameterTypes();
 				@Var CommonArray<BType> TypeList = new CommonArray<BType>(new BType[ParamTypes.length + 2]);
@@ -374,7 +373,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 			}
 		}
 		else {
-			Method jMethod = this.GetMethod(RecvType, MethodName, ParamList);
+			Method jMethod = this.GetMethod(RecvType, MethodName, ParamList, startIndex);
 			if(jMethod != null) {
 				return JavaTypeTable.ConvertToFuncType(jMethod);
 			}
@@ -459,11 +458,11 @@ public class AsmJavaGenerator extends LibBunGenerator {
 		String ClassName = Type.getInternalName(this.GetJavaClass(Node.Type));
 		this.AsmBuilder.visitTypeInsn(NEW, ClassName);
 		this.AsmBuilder.visitInsn(DUP);
-		Constructor<?> jMethod = this.GetConstructor(Node.Type, Node);
+		Constructor<?> jMethod = this.GetConstructor(Node.Type, Node, 1);
 		if(jMethod != null) {
 			Class<?>[] P = jMethod.getParameterTypes();
-			for(int i = 0; i < P.length; i++) {
-				this.AsmBuilder.PushNode(P[i], Node.GetListAt(i));
+			for(int i = 1; i < P.length; i++) {
+				this.AsmBuilder.PushNode(P[i], Node.get(i));
 			}
 			this.AsmBuilder.SetLineNumber(Node);
 			this.AsmBuilder.visitMethodInsn(INVOKESPECIAL, ClassName, "<init>", Type.getConstructorDescriptor(jMethod));
@@ -620,7 +619,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 
 	@Override public void VisitMethodCallNode(MethodCallNode Node) {
 		this.AsmBuilder.SetLineNumber(Node);
-		Method jMethod = this.GetMethod(Node.RecvNode().Type, Node.MethodName(), Node);
+		Method jMethod = this.GetMethod(Node.RecvNode().Type, Node.MethodName(), Node, 2);
 		if(jMethod != null) {
 			if(!Modifier.isStatic(jMethod.getModifiers())) {
 				this.AsmBuilder.PushNode(null, Node.RecvNode());

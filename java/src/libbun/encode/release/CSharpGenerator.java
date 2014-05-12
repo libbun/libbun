@@ -181,7 +181,7 @@ public class CSharpGenerator extends LibBunSourceGenerator {
 
 	@Override public void VisitNewObjectNode(NewObjectNode Node) {
 		this.Source.Append("new " + this.NameClass(Node.Type));
-		this.GenerateListNode("(", Node, ", ", ")");
+		this.GenerateListNode("(", Node, 1, ", ", ")");
 	}
 
 	@Override public void VisitGetIndexNode(GetIndexNode Node) {

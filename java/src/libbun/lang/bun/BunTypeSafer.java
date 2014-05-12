@@ -67,7 +67,6 @@ import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.MutableNode;
 import libbun.ast.expression.NewObjectNode;
 import libbun.ast.literal.BunArrayNode;
-import libbun.ast.literal.CodeNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.literal.BunFloatNode;
 import libbun.ast.literal.BunIntNode;
@@ -75,6 +74,7 @@ import libbun.ast.literal.BunMapEntryNode;
 import libbun.ast.literal.BunMapNode;
 import libbun.ast.literal.BunNullNode;
 import libbun.ast.literal.BunStringNode;
+import libbun.ast.literal.CodeNode;
 import libbun.ast.literal.DefaultValueNode;
 import libbun.ast.literal.LiteralNode;
 import libbun.ast.statement.BunBreakNode;
@@ -371,18 +371,15 @@ public class BunTypeSafer extends LibBunTypeChecker {
 		this.ReturnTypeNode(Node, BType.VarType);
 	}
 
-	private void VisitListAsNativeMethod(AstNode Node, BType RecvType, String MethodName, AbstractListNode List) {
-		@Var BFuncType FuncType = this.Generator.GetMethodFuncType(RecvType, MethodName, List);
+	private void VisitListAsNativeMethod(AstNode Node, BType RecvType, String MethodName, AstNode List, int startIndex) {
+		@Var BFuncType FuncType = this.Generator.GetMethodFuncType(RecvType, MethodName, List, startIndex);
 		if(FuncType != null) {
 			if(!FuncType.IsVarType()) {
-				@Var int i = 0;
+				@Var int i = startIndex;
 				//@Var int StaticShift = FuncType.GetParamSize() - List.GetListSize();
-				@Var int StaticShift = FuncType.GetFuncParamSize() - List.GetListSize();
-				while(i < List.GetListSize()) {
-					@Var AstNode SubNode = List.GetListAt(i);
-					SubNode = this.CheckType(SubNode, FuncType.GetFuncParamType(i+StaticShift));
-					List.SetListAt(i, SubNode);
-					i = i + 1;
+				@Var int StaticShift = FuncType.GetFuncParamSize() - List.size();
+				while(i < List.size()) {
+					this.CheckTypeAt(List, i, FuncType.GetFuncParamType(i+StaticShift));
 				}
 			}
 			this.ReturnTypeNode(Node, FuncType.GetReturnType());
@@ -417,7 +414,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 				this.ReturnNode(this.TypeListNodeAsFuncCall(FuncCallNode, Func.GetFuncType()));
 				return;
 			}
-			this.VisitListAsNativeMethod(Node, Node.getTypeAt(MethodCallNode._Recv), Node.MethodName(), Node);
+			this.VisitListAsNativeMethod(Node, Node.getTypeAt(MethodCallNode._Recv), Node.MethodName(), Node, 2);
 			return;
 		}
 		this.TypeCheckNodeList(Node);
@@ -445,7 +442,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 	@Override public void VisitNewObjectNode(NewObjectNode Node) {
 		@Var LibBunGamma Gamma = Node.GetGamma();
 		@Var BType ContextType = this.GetContextType();
-		this.TypeCheckNodeList(Node);
+		this.TypeCheckNodeList(1, Node);
 		if(Node.ClassType().IsVarType()) {
 			if(ContextType.IsVarType()) {
 				this.ReturnTypeNode(Node, BType.VarType);
@@ -453,7 +450,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 			}
 			Node.GivenType = ContextType;
 		}
-		@Var int FuncParamSize = Node.GetListSize() + 1;
+		@Var int FuncParamSize = Node.size();
 		@Var BFunc Func = this.LookupFunc(Gamma, Node.ClassType().GetName(), Node.ClassType(), FuncParamSize);
 		if(Func != null) {
 			@Var AbstractListNode FuncCall = Node.ToFuncCallNode(Gamma.Generator.TypeChecker, Func);
@@ -464,7 +461,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 			this.ReturnTypeNode(Node, Node.ClassType());
 		}
 		else {
-			this.VisitListAsNativeMethod(Node, Node.ClassType(), null, Node);
+			this.VisitListAsNativeMethod(Node, Node.ClassType(), null, Node, 1);
 		}
 	}
 

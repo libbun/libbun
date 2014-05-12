@@ -35,7 +35,7 @@ public class BunFuncNameNode extends LocalDefinedNode {
 			return this;
 		}
 		else {
-			return this.dupField(typedClone, new GetNameNode(ParentNode, null, this.FuncName));
+			return this.dupField(typedClone, new GetNameNode(ParentNode, this.FuncName));
 		}
 	}
 
