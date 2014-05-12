@@ -24,7 +24,6 @@
 
 package libbun.ast.expression;
 
-import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
 import libbun.ast.BunNode;
 import libbun.common.CommonStringBuilder;
@@ -71,8 +70,8 @@ public final class NewObjectNode extends BunNode {
 		Visitor.VisitNewObjectNode(this);
 	}
 
-	public final AbstractListNode ToFuncCallNode(LibBunTypeChecker Gamma, BFunc Func) {
-		@Var AbstractListNode FuncNode = Gamma.CreateDefinedFuncCallNode(this.ParentNode, this.SourceToken, Func);
+	public final AstNode ToFuncCallNode(LibBunTypeChecker Gamma, BFunc Func) {
+		@Var AstNode FuncNode = Gamma.CreateDefinedFuncCallNode(this.ParentNode, this.SourceToken, Func);
 		FuncNode.appendNode(this);
 		@Var int i = 1;
 		while(i < this.size()) {  // checked

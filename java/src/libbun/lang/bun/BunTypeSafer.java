@@ -24,7 +24,6 @@
 
 package libbun.lang.bun;
 
-import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
 import libbun.ast.BlockNode;
 import libbun.ast.GroupNode;
@@ -410,7 +409,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 			@Var int FuncParamSize = Node.getFuncParamSize();
 			@Var BFunc Func = this.LookupFunc(Gamma, Node.MethodName(), Node.getTypeAt(MethodCallNode._Recv), FuncParamSize);
 			if(Func != null) {
-				@Var AbstractListNode FuncCallNode = Node.ToFuncCallNode(this, Func, RecvNode);
+				@Var AstNode FuncCallNode = Node.ToFuncCallNode(this, Func, RecvNode);
 				this.ReturnNode(this.TypeListNodeAsFuncCall(FuncCallNode, Func.GetFuncType()));
 				return;
 			}
@@ -453,7 +452,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 		@Var int FuncParamSize = Node.size();
 		@Var BFunc Func = this.LookupFunc(Gamma, Node.ClassType().GetName(), Node.ClassType(), FuncParamSize);
 		if(Func != null) {
-			@Var AbstractListNode FuncCall = Node.ToFuncCallNode(Gamma.Generator.TypeChecker, Func);
+			@Var AstNode FuncCall = Node.ToFuncCallNode(Gamma.Generator.TypeChecker, Func);
 			this.ReturnNode(this.TypeListNodeAsFuncCall(FuncCall, Func.GetFuncType()));
 			return;
 		}

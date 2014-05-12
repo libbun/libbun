@@ -280,22 +280,26 @@ public abstract class TypeChecker extends BunChecker {
 		}
 	}
 
-	public final AstNode TypeListNodeAsFuncCall(AbstractListNode FuncNode, BFuncType FuncType) {
-		@Var int i = 0;
+	public final AstNode TypeListNodeAsFuncCall(AstNode FuncNode, BFuncType FuncType) {
+		int startIndex = 0;
+		if(FuncNode instanceof FuncCallNode) {
+			startIndex = 1;
+		}
 		@Var BType[] Greek = BGreekType._NewGreekTypes(null);
 		//		if(FuncNode.GetListSize() != FuncType.GetFuncParamSize()) {
 		//			System.err.println(ZLogger._LogError(FuncNode.SourceToken, "mismatch " + FuncType + ", " + FuncNode.GetListSize()+": " + FuncNode));
 		//		}
-		while(i < FuncNode.GetListSize()) {
-			@Var AstNode SubNode = FuncNode.GetListAt(i);
-			@Var BType ParamType =  FuncType.GetFuncParamType(i);
+		@Var int i = startIndex;
+		while(i < FuncNode.size()) {
+			@Var AstNode SubNode = FuncNode.get(i);
+			@Var BType ParamType =  FuncType.GetFuncParamType(i - startIndex);
 			SubNode = this.TryType(SubNode, ParamType);
 			if(!SubNode.IsUntyped() || !ParamType.IsVarType()) {
 				if(!ParamType.AcceptValueType(SubNode.Type, false, Greek)) {
 					SubNode = this.CreateStupidCastNode(ParamType.GetGreekRealType(Greek), SubNode);
 				}
 			}
-			FuncNode.SetListAt(i, SubNode);
+			FuncNode.set(i, SubNode);
 			i = i + 1;
 		}
 		this.TypeNode(FuncNode, FuncType.GetReturnType().GetGreekRealType(Greek));
@@ -308,15 +312,15 @@ public abstract class TypeChecker extends BunChecker {
 		return FuncNode;
 	}
 
-	public final AbstractListNode CreateDefinedFuncCallNode(AstNode ParentNode, BunToken sourceToken, BFunc Func) {
-		@Var AbstractListNode FuncNode = null;
+	public final AstNode CreateDefinedFuncCallNode(AstNode ParentNode, BunToken sourceToken, BFunc Func) {
+		@Var AstNode FuncNode = null;
 		if(Func instanceof BFormFunc) {
 			FuncNode = new ApplyMacroNode(ParentNode, sourceToken, (BFormFunc)Func);
 		}
 		else {
 			FuncNode = this.CreateFuncCallNode(ParentNode, sourceToken, Func.FuncName, Func.GetFuncType());
 		}
-		//		FuncNode.Type = Func.GetFuncType().GetRealType();
+		//	FuncNode.Type = Func.GetFuncType().GetRealType();
 		return FuncNode;
 	}
 

@@ -229,7 +229,7 @@ public class ZASTTransformer extends LibBunVisitor {
 
 	@Override
 	public void visitApplyMacroNode(ApplyMacroNode Node) {
-		this.GenerateListNode(Node);
+		//this.GenerateListNode(Node);
 	}
 
 	@Override

@@ -24,7 +24,6 @@
 
 package libbun.ast.unary;
 
-import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunTypeChecker;
@@ -71,8 +70,8 @@ public class BunCastNode extends AstNode {
 		Visitor.VisitCastNode(this);
 	}
 
-	public final AbstractListNode ToFuncCallNode(LibBunTypeChecker TypeChecker, BFunc ConverterFunc) {
-		@Var AbstractListNode FuncNode = TypeChecker.CreateDefinedFuncCallNode(this.ParentNode, this.SourceToken, ConverterFunc);
+	public final AstNode ToFuncCallNode(LibBunTypeChecker TypeChecker, BFunc ConverterFunc) {
+		@Var AstNode FuncNode = TypeChecker.CreateDefinedFuncCallNode(this.ParentNode, this.SourceToken, ConverterFunc);
 		FuncNode.appendNode(this.ExprNode());
 		return FuncNode;
 	}

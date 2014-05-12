@@ -1,6 +1,5 @@
 package libbun.ast.sugar;
 
-import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
@@ -31,7 +30,7 @@ public class BunAssertNode extends SyntaxSugarNode {
 	@Override public DesugarNode PerformDesugar(LibBunTypeChecker TypeChecker) {
 		@Var BFormFunc Func = TypeChecker.Generator.GetFormFunc("assert", BType.BooleanType, 2);
 		if(Func != null) {
-			@Var AbstractListNode FuncNode = TypeChecker.CreateDefinedFuncCallNode(this.ParentNode, this.SourceToken, Func);
+			@Var AstNode FuncNode = TypeChecker.CreateDefinedFuncCallNode(this.ParentNode, this.SourceToken, Func);
 			FuncNode.appendNode(this.AST[BunAssertNode._Expr]);
 			FuncNode.appendNode(new BunStringNode(FuncNode, null, this.GetSourceLocation()));
 			return new DesugarNode(this, FuncNode);

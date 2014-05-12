@@ -24,7 +24,6 @@
 
 package libbun.parser.classic;
 
-import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
@@ -91,7 +90,7 @@ public abstract class LibBunTypeChecker extends TypeChecker {
 			Func = this.Generator.LookupFunc("toString", Node.Type, 1);
 		}
 		if(Func != null) {
-			@Var AbstractListNode FuncNode = this.CreateDefinedFuncCallNode(Node.ParentNode, null, Func);
+			@Var AstNode FuncNode = this.CreateDefinedFuncCallNode(Node.ParentNode, null, Func);
 			FuncNode.appendNode(Node);
 			return this.TypeListNodeAsFuncCall(FuncNode, Func.GetFuncType());
 		}

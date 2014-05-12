@@ -24,7 +24,6 @@
 
 package libbun.ast.expression;
 
-import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
 import libbun.ast.BunNode;
 import libbun.common.CommonStringBuilder;
@@ -102,8 +101,8 @@ public final class MethodCallNode extends BunNode {
 		return FuncNode;
 	}
 
-	public final AbstractListNode ToFuncCallNode(LibBunTypeChecker Gamma, BFunc Func, @Nullable AstNode RecvNode) {
-		@Var AbstractListNode FuncNode = Gamma.CreateDefinedFuncCallNode(this.ParentNode, this.getTokenAt(MethodCallNode._NameInfo), Func);
+	public final AstNode ToFuncCallNode(LibBunTypeChecker Gamma, BFunc Func, @Nullable AstNode RecvNode) {
+		@Var AstNode FuncNode = Gamma.CreateDefinedFuncCallNode(this.ParentNode, this.getTokenAt(MethodCallNode._NameInfo), Func);
 		FuncNode.SourceToken = this.getTokenAt(MethodCallNode._NameInfo);
 		if(RecvNode != null) {
 			FuncNode.appendNode(RecvNode);

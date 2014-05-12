@@ -1,6 +1,5 @@
 package libbun.lang.bun.regexp;
 
-import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.SyntaxSugarNode;
@@ -63,7 +62,7 @@ class BunRegExpNode extends SyntaxSugarNode {
 	@Override public DesugarNode PerformDesugar(LibBunTypeChecker TypeChecker) {
 		@Var BFormFunc Func = TypeChecker.Generator.GetFormFunc("Bun::NewRegExp", BType.StringType, 2);
 		if(Func != null) {
-			@Var AbstractListNode FuncNode = TypeChecker.CreateDefinedFuncCallNode(this.ParentNode, this.SourceToken, Func);
+			@Var AstNode FuncNode = TypeChecker.CreateDefinedFuncCallNode(this.ParentNode, this.SourceToken, Func);
 			FuncNode.appendNode(new BunStringNode(FuncNode, null, this.PatternValue));
 			FuncNode.appendNode(new BunStringNode(FuncNode, null, this.PatternOption));
 			return new DesugarNode(this, FuncNode);

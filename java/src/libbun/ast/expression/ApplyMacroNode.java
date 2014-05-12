@@ -1,14 +1,15 @@
 package libbun.ast.expression;
 
-import libbun.ast.AbstractListNode;
 import libbun.ast.AstNode;
+import libbun.ast.BunNode;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.BunModelVisitor;
 import libbun.parser.common.BunToken;
 import libbun.type.BFormFunc;
 import libbun.type.BFuncType;
 import libbun.util.BField;
 
-public class ApplyMacroNode extends AbstractListNode {
+public class ApplyMacroNode extends BunNode {
 
 	public String macroText = null;
 	public AstNode  origNode = null;
@@ -50,6 +51,11 @@ public class ApplyMacroNode extends AbstractListNode {
 
 	@Override public void Accept(LibBunVisitor Visitor) {
 		Visitor.visitApplyMacroNode(this);
+	}
+
+	@Override
+	public void acceptBunModel(BunModelVisitor visitor) {
+		visitor.visitApplyMacroNode(this);
 	}
 
 }

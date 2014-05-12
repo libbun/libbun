@@ -643,8 +643,8 @@ public class AsmJavaGenerator extends LibBunGenerator {
 	}
 
 	@Override public void visitApplyMacroNode(ApplyMacroNode Node) {
-		for(int i = 0; i < Node.GetListSize(); i++) {
-			this.AsmBuilder.PushNode(null, Node.GetListAt(i));
+		for(int i = 0; i < Node.size(); i++) {
+			this.AsmBuilder.PushNode(null, Node.get(i));
 		}
 		@Var String FormText = Node.FormFunc.FormText;
 		@Var int ClassEnd = FormText.indexOf(".");
