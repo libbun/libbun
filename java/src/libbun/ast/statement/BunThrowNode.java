@@ -25,24 +25,33 @@
 package libbun.ast.statement;
 
 import libbun.ast.AstNode;
+import libbun.ast.BunNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.BunModelVisitor;
 
-public final class BunThrowNode extends AstNode {
+public final class BunThrowNode extends BunNode {
 	public final static int _Expr = 0;
 	public BunThrowNode(AstNode ParentNode) {
 		super(ParentNode, 1);
 	}
 
-	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+	@Override
+	public AstNode dup(boolean typedClone, AstNode ParentNode) {
 		return this.dupField(typedClone, new BunThrowNode(ParentNode));
 	}
 
-	@Override public void bunfy(CommonStringBuilder builder) {
+	@Override
+	public void bunfy(CommonStringBuilder builder) {
 		this.bunfyAST(builder, "(throw", 0, ")");
 	}
+	@Override
+	public void acceptBunModel(BunModelVisitor visitor) {
+		visitor.visitThrowNode(this);
+	}
 
-	@Override public void Accept(LibBunVisitor Visitor) {
+	@Override
+	public void Accept(LibBunVisitor Visitor) {
 		Visitor.VisitThrowNode(this);
 	}
 	public final AstNode ExprNode() {

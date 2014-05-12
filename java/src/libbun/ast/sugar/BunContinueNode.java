@@ -50,7 +50,7 @@ public class BunContinueNode extends SyntaxSugarNode {
 		if(WhileNode == null) {
 			return new DesugarNode(this, new LegacyErrorNode(this.ParentNode, this.SourceToken, "continue must be inside the while statement"));
 		}
-		@Var LegacyBlockNode ParentblockNode = WhileNode.GetScopeblockNode();
+		@Var LegacyBlockNode ParentblockNode = WhileNode.GetScopeLegacyBlockNode();
 		//@Var String VarName = Typer.Generator.NameUniqueSymbol("continue");
 		@Var String SugarCode = ""     +
 				"var _continue_ = true in {\n" +

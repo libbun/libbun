@@ -26,6 +26,7 @@
 package libbun.ast;
 
 import libbun.ast.decl.BunFunctionNode;
+import libbun.ast.error.ErrorNode;
 import libbun.ast.error.LegacyErrorNode;
 import libbun.ast.expression.GetNameNode;
 import libbun.ast.literal.BunBooleanNode;
@@ -52,10 +53,10 @@ public abstract class AstNode {
 	public final static boolean _PreservedParent = false;
 
 	@BField public AstNode    ParentNode;
-	@BField public BunToken SourceToken;
+	@BField public BunToken   SourceToken;
 	@BField public AstNode    AST[] = null;
-	@BField public BType    Type = BType.VarType;
-	@BField public boolean  HasUntyped = true;
+	@BField public BType      Type = BType.VarType;
+	@BField public boolean    HasUntyped = true;
 
 	public AstNode(@Nullable AstNode ParentNode, int Size) {
 		assert(this != ParentNode);
@@ -115,6 +116,42 @@ public abstract class AstNode {
 		return builder.toString();
 	}
 
+	// AST[]
+
+	public final int size() {
+		if(this.AST == null) {
+			return 0;
+		}
+		return this.AST.length;
+	}
+
+	public final AstNode get(int index) {
+		return this.AST[index];
+	}
+
+	public final void set(int index, AstNode node) {
+		if(index == -1) {
+			this.appendNode(node);
+			return;
+		}
+		if(!(index < this.size())){
+			this.expandAstToSize(index+1);
+		}
+		this.AST[index] = node;
+		if(node != null) {
+			node.ParentNode = this;
+		}
+	}
+
+	public final void swap(int i, int j) {
+		AstNode node = this.AST[i];
+		this.AST[i] = this.AST[j];
+		this.AST[j] = node;
+	}
+
+
+
+
 
 
 
@@ -156,38 +193,6 @@ public abstract class AstNode {
 			Self = Self + "]";
 		}
 		return Self;
-	}
-
-
-	// AST[]
-
-	public final int size() {
-		if(this.AST == null) {
-			return 0;
-		}
-		return this.AST.length;
-	}
-
-	public final AstNode get(int index) {
-		return this.AST[index];
-	}
-
-	public final void set(int index, AstNode node) {
-		if(index == -1) {
-			this.appendNode(node);
-		}
-		else {
-			this.AST[index] = node;
-			if(node != null) {
-				node.ParentNode = this;
-			}
-		}
-	}
-
-	public final void swap(int i, int j) {
-		AstNode node = this.AST[i];
-		this.AST[i] = this.AST[j];
-		this.AST[j] = node;
 	}
 
 
@@ -248,6 +253,17 @@ public abstract class AstNode {
 			this.resizeAst(newSize);
 		}
 	}
+
+	public final void copyAstTo(int startIndex, AstNode destNode, int destIndex, int size) {
+		for(int i = 0; i < size; i++) {
+			destNode.AST[destIndex+i] = this.AST[startIndex+i];
+			if(destNode.AST[destIndex+i] != null) {
+				destNode.AST[destIndex+i].ParentNode = destNode;
+			}
+		}
+	}
+
+
 
 	private final void appendNode(AstNode Node, boolean EnforcedParent) {
 		if(this.AST == null) {
@@ -320,7 +336,7 @@ public abstract class AstNode {
 		return null;
 	}
 
-	@Nullable public final LegacyBlockNode GetScopeblockNode() {
+	@Nullable public final LegacyBlockNode GetScopeLegacyBlockNode() {
 		@Var int SafeCount = 0;
 		@Var AstNode Node = this;
 		while(Node != null) {
@@ -338,25 +354,11 @@ public abstract class AstNode {
 		return null;
 	}
 
-	public final SymbolTable getSymbolTable() {
-		@Var int SafeCount = 0;
-		@Var LegacyBlockNode blockNode = this.GetScopeblockNode();
-		while(blockNode.NullableGamma == null) {
-			@Var LegacyBlockNode ParentblockNode = blockNode.ParentNode.GetScopeblockNode();
-			blockNode = ParentblockNode;
-			if(LibBunSystem.DebugMode) {
-				SafeCount = SafeCount + 1;
-				assert(SafeCount < 100);
-			}
-		}
-		return blockNode.NullableGamma;
-	}
-
 	public final LibBunGamma GetGamma() {
 		@Var int SafeCount = 0;
-		@Var LegacyBlockNode blockNode = this.GetScopeblockNode();
+		@Var LegacyBlockNode blockNode = this.GetScopeLegacyBlockNode();
 		while(blockNode.NullableGamma == null) {
-			@Var LegacyBlockNode ParentblockNode = blockNode.ParentNode.GetScopeblockNode();
+			@Var LegacyBlockNode ParentblockNode = blockNode.ParentNode.GetScopeLegacyBlockNode();
 			blockNode = ParentblockNode;
 			if(LibBunSystem.DebugMode) {
 				SafeCount = SafeCount + 1;
@@ -366,9 +368,40 @@ public abstract class AstNode {
 		return (LibBunGamma)blockNode.NullableGamma;
 	}
 
+	@Nullable public final BlockNode getScopeBlockNode() {
+		@Var int SafeCount = 0;
+		@Var AstNode Node = this;
+		while(Node != null) {
+			if(Node instanceof BlockNode) {
+				return (BlockNode)Node;
+			}
+			assert(!(Node == Node.ParentNode));
+			//System.out.println("node: " + Node.getClass() + ", " + Node.hashCode() + ", " + SafeCount);
+			Node = Node.ParentNode;
+			if(LibBunSystem.DebugMode) {
+				SafeCount = SafeCount + 1;
+				assert(SafeCount < 100);
+			}
+		}
+		return null;
+	}
+
+	public final SymbolTable getSymbolTable() {
+		@Var int SafeCount = 0;
+		@Var BlockNode blockNode = this.getScopeBlockNode();
+		while(blockNode.NullableGamma == null) {
+			@Var BlockNode parentBlockNode = blockNode.ParentNode.getScopeBlockNode();
+			blockNode = parentBlockNode;
+			if(LibBunSystem.DebugMode) {
+				SafeCount = SafeCount + 1;
+				assert(SafeCount < 100);
+			}
+		}
+		return blockNode.NullableGamma;
+	}
 
 	public final boolean IsErrorNode() {
-		return (this instanceof LegacyErrorNode);
+		return (this instanceof ErrorNode || this instanceof LegacyErrorNode);
 	}
 
 	public abstract void Accept(LibBunVisitor Visitor);

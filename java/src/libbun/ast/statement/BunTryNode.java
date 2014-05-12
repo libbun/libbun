@@ -25,12 +25,14 @@
 package libbun.ast.statement;
 
 import libbun.ast.AstNode;
+import libbun.ast.BunNode;
 import libbun.ast.LegacyBlockNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.BunModelVisitor;
 import libbun.util.Var;
 
-public final class BunTryNode extends AstNode {
+public final class BunTryNode extends BunNode {
 	public final static int _Try      = 0;
 	public static final int _NameInfo = 1;
 	public final static int _Catch    = 2;
@@ -39,13 +41,17 @@ public final class BunTryNode extends AstNode {
 	public BunTryNode(AstNode ParentNode) {
 		super(ParentNode, 4);
 	}
-
-	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+	@Override
+	public AstNode dup(boolean typedClone, AstNode ParentNode) {
 		return this.dupField(typedClone, new BunTryNode(ParentNode));
 	}
-
-	@Override public void bunfy(CommonStringBuilder builder) {
+	@Override
+	public void bunfy(CommonStringBuilder builder) {
 		this.bunfyAST(builder, "(while", 0, ")");
+	}
+	@Override
+	public void acceptBunModel(BunModelVisitor visitor) {
+		visitor.visitTryNode(this);
 	}
 
 	public final LegacyBlockNode TryblockNode() {

@@ -30,6 +30,7 @@ import libbun.common.CommonArray;
 import libbun.common.CommonStringBuilder;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.BunModelVisitor;
 import libbun.type.BFuncType;
 import libbun.type.BType;
 import libbun.type.BTypePool;
@@ -63,6 +64,12 @@ public class BunFunctionNode extends DefSymbolNode {
 		this.ParamNode().bunfyAST(builder, " (", 0, ") ");
 		this.blockNode().bunfy(builder);
 		builder.Append(")");
+	}
+
+	@Override
+	public void acceptBunModel(BunModelVisitor visitor) {
+		visitor.visitFunctionNode(this);
+
 	}
 
 	public final BType ReturnType() {

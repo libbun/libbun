@@ -850,7 +850,7 @@ public class BunTypeSafer extends LibBunTypeChecker {
 		}
 		else {
 			@Var BType ContextType = this.GetContextType();
-			@Var AstNode blockNode = new BunVarBlockNode(Node.ParentNode, Node, Node.GetScopeblockNode());
+			@Var AstNode blockNode = new BunVarBlockNode(Node.ParentNode, Node, Node.GetScopeLegacyBlockNode());
 			blockNode = this.CheckType(blockNode, ContextType);
 			this.ReturnNode(blockNode);
 		}

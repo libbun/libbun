@@ -1,10 +1,13 @@
 package libbun.ast.decl;
 
 import libbun.ast.AstNode;
+import libbun.ast.BlockNode;
 import libbun.ast.literal.ConstNode;
+import libbun.ast.literal.DefaultValueNode;
 import libbun.common.CommonStringBuilder;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.BunModelVisitor;
 import libbun.type.BType;
 import libbun.util.BField;
 import libbun.util.Nullable;
@@ -14,6 +17,8 @@ public class BunLetVarNode extends DefSymbolNode {
 	public static final int _NameInfo = 0;    // SymbolNode
 	public static final int _TypeInfo = 1;    // TypeNode
 	public final static int _InitValue = 2;   // InitValue
+	public final static int _Block     = 3;   // Extentional Block
+
 
 	@BField public int     NameIndex = 0;
 
@@ -37,23 +42,6 @@ public class BunLetVarNode extends DefSymbolNode {
 		this.bunfyAST(builder, predicate, 0, ")");
 	}
 
-
-	//	public final BType DeclType() {
-	//		if(this.GivenType == null) {
-	//			if(this.AST[BunLetVarNode._TypeInfo] != null) {
-	//				this.GivenType = this.AST[BunLetVarNode._TypeInfo].Type;
-	//			}
-	//			else {
-	//				this.GivenType = BType.VarType;
-	//			}
-	//		}
-	//		return this.GivenType;
-	//	}
-	//
-	//	public final void SetDeclType(BType Type) {
-	//		this.GivenType = Type;
-	//	}
-
 	@Override
 	public final String GetUniqueName(LibBunGenerator Generator) {
 		@Var String Name = Generator.GetNonKeyword(this.GetGivenName());
@@ -67,12 +55,35 @@ public class BunLetVarNode extends DefSymbolNode {
 		Visitor.VisitLetNode(this);
 	}
 
+	public final AstNode InitValueNode() {
+		if(this.AST[BunLetVarNode._InitValue] == null) {
+			this.SetNode(BunLetVarNode._InitValue, new DefaultValueNode(this));
+		}
+		return this.AST[BunLetVarNode._InitValue];
+	}
+
 	public final boolean IsParamNode() {
 		return (this.ParentNode.ParentNode instanceof BunFunctionNode);
 	}
 
 	public final boolean IsConstValue() {
 		return this.InitValueNode() instanceof ConstNode;
+	}
+
+	public final BlockNode getBlockNode() {
+		if(BunLetVarNode._Block < this.size()) {
+			AstNode node = this.get(BunLetVarNode._Block);
+			if(node instanceof BlockNode) {
+				return (BlockNode)node;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void acceptBunModel(BunModelVisitor visitor) {
+		visitor.visitLetNode(this);
+
 	}
 
 }

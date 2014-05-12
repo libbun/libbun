@@ -1,9 +1,9 @@
 package libbun.parser.common;
 
 import libbun.ast.AstNode;
-import libbun.ast.LegacyBlockNode;
 import libbun.ast.DesugarNode;
 import libbun.ast.GroupNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.LocalDefinedNode;
 import libbun.ast.SyntaxSugarNode;
 import libbun.ast.binary.AssignNode;
@@ -42,7 +42,6 @@ import libbun.ast.expression.GetNameNode;
 import libbun.ast.expression.MethodCallNode;
 import libbun.ast.expression.NewObjectNode;
 import libbun.ast.literal.BunArrayNode;
-import libbun.ast.literal.CodeNode;
 import libbun.ast.literal.BunBooleanNode;
 import libbun.ast.literal.BunFalseNode;
 import libbun.ast.literal.BunFloatNode;
@@ -50,6 +49,7 @@ import libbun.ast.literal.BunIntNode;
 import libbun.ast.literal.BunMapNode;
 import libbun.ast.literal.BunNullNode;
 import libbun.ast.literal.BunStringNode;
+import libbun.ast.literal.CodeNode;
 import libbun.ast.literal.DefaultValueNode;
 import libbun.ast.literal.LiteralNode;
 import libbun.ast.statement.BunBreakNode;
@@ -329,10 +329,10 @@ public class TypeCheckerVisitor extends TypeChecker {
 		if(varNode instanceof BunLetVarNode) {
 			node.ResolvedNode = (BunLetVarNode)varNode;
 			varNode.Used();
-			if(varNode.InitValueNode() instanceof CodeNode) {
-				this.ReturnTypeNode(varNode.InitValueNode(), varNode.DeclType());
-				return;
-			}
+			//			if(varNode.InitValueNode() instanceof CodeNode) {
+			//				this.ReturnTypeNode(varNode.InitValueNode(), varNode.DeclType());
+			//				return;
+			//			}
 			this.ReturnTypeNode(node, varNode.DeclType());
 			return;
 		}
@@ -486,7 +486,7 @@ public class TypeCheckerVisitor extends TypeChecker {
 		}
 		else {
 			@Var BType ContextType = this.GetContextType();
-			@Var AstNode blockNode = new BunVarBlockNode(node.ParentNode, node, node.GetScopeblockNode());
+			@Var AstNode blockNode = new BunVarBlockNode(node.ParentNode, node, node.GetScopeLegacyBlockNode());
 			blockNode = this.CheckType(blockNode, ContextType);
 			this.ReturnNode(blockNode);
 		}

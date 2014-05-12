@@ -25,10 +25,12 @@
 package libbun.ast.statement;
 
 import libbun.ast.AstNode;
+import libbun.ast.BunNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
+import libbun.parser.common.BunModelVisitor;
 
-public final class BunIfNode extends AstNode {
+public final class BunIfNode extends BunNode {
 	public final static int _Cond = 0;
 	public final static int _Then = 1;
 	public final static int _Else = 2;
@@ -36,11 +38,17 @@ public final class BunIfNode extends AstNode {
 	public BunIfNode(AstNode ParentNode) {
 		super(ParentNode, 3);
 	}
-	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+	@Override
+	public AstNode dup(boolean typedClone, AstNode ParentNode) {
 		return this.dupField(typedClone, new BunIfNode(ParentNode));
 	}
-	@Override public void bunfy(CommonStringBuilder builder) {
+	@Override
+	public void bunfy(CommonStringBuilder builder) {
 		this.bunfyAST(builder, "(if", 0, ")");
+	}
+	@Override
+	public void acceptBunModel(BunModelVisitor visitor) {
+		visitor.visitIfNode(this);
 	}
 
 	public final AstNode CondNode() {

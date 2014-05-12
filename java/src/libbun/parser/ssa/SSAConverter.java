@@ -242,7 +242,7 @@ public class SSAConverter extends ZASTTransformer {
 	 * }              | }
 	 */
 	private void RemoveJoinNode(AstNode TargetNode, JoinNode JNode) {
-		@Var LegacyBlockNode Parent = TargetNode.GetScopeblockNode();
+		@Var LegacyBlockNode Parent = TargetNode.GetScopeLegacyBlockNode();
 		@Var int Index = 0;
 		assert(Parent != null);
 		while(Index < Parent.GetListSize()) {

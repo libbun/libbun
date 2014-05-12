@@ -11,8 +11,6 @@ public abstract class BunNode extends AstNode {
 
 	@Override
 	public void Accept(LibBunVisitor Visitor) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public abstract void acceptBunModel(BunModelVisitor visitor);

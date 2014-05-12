@@ -25,13 +25,14 @@
 package libbun.ast.statement;
 
 import libbun.ast.AstNode;
+import libbun.ast.BunNode;
 import libbun.ast.LegacyBlockNode;
 import libbun.common.CommonStringBuilder;
 import libbun.parser.classic.LibBunVisitor;
-import libbun.type.BType;
+import libbun.parser.common.BunModelVisitor;
 import libbun.util.Var;
 
-public final class BunWhileNode extends AstNode {
+public final class BunWhileNode extends BunNode {
 	public final static int _Cond  = 0;
 	public final static int _Block = 1;
 	public final static int _Next  = 2;   // optional iteration statement
@@ -40,21 +41,19 @@ public final class BunWhileNode extends AstNode {
 		super(ParentNode, 3);
 	}
 
-	@Override public AstNode dup(boolean typedClone, AstNode ParentNode) {
+	@Override
+	public AstNode dup(boolean typedClone, AstNode ParentNode) {
 		return this.dupField(typedClone, new BunWhileNode(ParentNode));
 	}
 
-	@Override public void bunfy(CommonStringBuilder builder) {
+	@Override
+	public void bunfy(CommonStringBuilder builder) {
 		this.bunfyAST(builder, "(while", 0, ")");
 	}
-
-	public BunWhileNode(AstNode CondNode, LegacyBlockNode blockNode) {
-		super(null, 3);
-		this.SetNode(BunWhileNode._Cond, CondNode);
-		this.SetNode(BunWhileNode._Block, blockNode);
-		this.Type = BType.VoidType;
+	@Override
+	public void acceptBunModel(BunModelVisitor visitor) {
+		visitor.visitWhileNode(this);
 	}
-
 	@Override public void Accept(LibBunVisitor Visitor) {
 		Visitor.VisitWhileNode(this);
 	}
