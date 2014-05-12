@@ -4,7 +4,7 @@ import libbun.ast.AbstractListNode;
 import libbun.ast.BNode;
 import libbun.ast.error.ErrorNode;
 import libbun.ast.error.TypeErrorNode;
-import libbun.ast.expression.BunFormNode;
+import libbun.ast.expression.ApplyMacroNode;
 import libbun.ast.expression.BunFuncNameNode;
 import libbun.ast.expression.FuncCallNode;
 import libbun.ast.unary.BunCastNode;
@@ -14,6 +14,7 @@ import libbun.type.BFuncType;
 import libbun.type.BGreekType;
 import libbun.type.BType;
 import libbun.util.LibBunSystem;
+import libbun.util.Nullable;
 import libbun.util.Var;
 
 public abstract class TypeChecker extends BunChecker {
@@ -150,11 +151,27 @@ public abstract class TypeChecker extends BunChecker {
 		this.ReturnNode(Node);
 	}
 
+	public final void returnNodeAsFuncType(String name, BNode bnode, int startIndex, BType t0, BType t1) {
+		this.ReturnNode(this.checkTypeAsFuncType(name, bnode, startIndex, t0, t1));
+	}
+
+	public final void returnNodeAsFuncType(String name, BNode bnode, int startIndex, BType t0) {
+		this.ReturnNode(this.checkTypeAsFuncType(name, bnode, startIndex, t0, BType.VarType));
+	}
+
+	public final void returnNodeAsFuncType(String name, BNode bnode, int startIndex) {
+		this.ReturnNode(this.checkTypeAsFuncType(name, bnode, startIndex, BType.VarType, BType.VarType));
+	}
+
 	public final void ReturnErrorNode(BNode Node, BunToken ErrorToken, String Message) {
 		if(ErrorToken == null) {
 			ErrorToken = Node.SourceToken;
 		}
 		this.ReturnNode(new ErrorNode(Node.ParentNode, ErrorToken, Message));
+	}
+
+	public final void ReturnErrorNode(BNode Node, String Message) {
+		this.ReturnNode(new ErrorNode(Node.ParentNode, Node.SourceToken, Message));
 	}
 
 	public final void ReturnTypeErrorNode(String Message, BNode ErrorNode) {
@@ -184,6 +201,66 @@ public abstract class TypeChecker extends BunChecker {
 		//		}
 		return this.CreateStupidCastNode(EnforcedType, Node);
 	}
+
+	protected BNode checkTypeAsFuncType(String name, BNode bnode, int startIndex, BType t0, BType t1) {
+		t0 = this.typecheckat(bnode, startIndex, t0);
+		t1 = this.typecheckat(bnode, startIndex+1, t1);
+		SymbolTable table = bnode.getSymbolTable();
+		BFuncType funcType = this.lookupFuncType(table, name, t0, t1, bnode.GetAstSize() - startIndex);
+		bnode = this.checkTypeByFuncType(bnode, startIndex, funcType);
+		if(funcType != null) {
+			String macroText = this.lookupMacroText(table, name, t0, t1, bnode.GetAstSize() - startIndex);
+			if(macroText != null) {
+				bnode = new ApplyMacroNode(macroText, bnode, startIndex);
+			}
+		}
+		return bnode;
+	}
+
+	private BType typecheckat(BNode bnode, int startIndex, BType t0) {
+		if(startIndex < bnode.GetAstSize()) {
+			this.CheckTypeAt(bnode, startIndex, t0);
+			if(t0.IsVarType()) {
+				return bnode.GetAstType(startIndex);
+			}
+			return t0;
+		}
+		return BType.VoidType;
+	}
+
+	protected BFuncType lookupFuncType(SymbolTable table, String name, BType t0, BType t1, int paramSize) {
+		return null;
+	}
+
+	protected String lookupMacroText(SymbolTable table, String name, BType t0, BType t1, int paramSize) {
+		return null;
+	}
+
+	protected BNode checkTypeByFuncType(BNode bnode, int startIndex, @Nullable BFuncType funcType) {
+		int i = startIndex;
+		if(funcType == null) {
+			for(;i < bnode.GetAstSize(); i++) {
+				this.CheckTypeAt(bnode, i, BType.VarType);
+			}
+			this.TypeNode(bnode, BType.VarType);
+			return bnode;
+		}
+		@Var BType[] Greek = BGreekType._NewGreekTypes(null);
+		for(;i < bnode.GetAstSize(); i++) {
+			@Var BType paramType =  funcType.GetFuncParamType(i-startIndex);
+			@Var BNode SubNode = bnode.AST[i];
+			SubNode = this.TryType(SubNode, paramType);
+			if(!SubNode.IsUntyped() || !paramType.IsVarType()) {
+				if(!paramType.AcceptValueType(SubNode.Type, false, Greek)) {
+					SubNode = this.CreateStupidCastNode(paramType.GetGreekRealType(Greek), SubNode);
+				}
+			}
+			bnode.SetNode(i, SubNode);
+		}
+		this.TypeNode(bnode, funcType.GetReturnType().GetGreekRealType(Greek));
+		return bnode;
+	}
+
 
 	public final void TypeCheckNodeList(AbstractListNode List) {
 		@Var int i = 0;
@@ -226,7 +303,7 @@ public abstract class TypeChecker extends BunChecker {
 	public final AbstractListNode CreateDefinedFuncCallNode(BNode ParentNode, BunToken sourceToken, BFunc Func) {
 		@Var AbstractListNode FuncNode = null;
 		if(Func instanceof BFormFunc) {
-			FuncNode = new BunFormNode(ParentNode, sourceToken, (BFormFunc)Func);
+			FuncNode = new ApplyMacroNode(ParentNode, sourceToken, (BFormFunc)Func);
 		}
 		else {
 			FuncNode = this.CreateFuncCallNode(ParentNode, sourceToken, Func.FuncName, Func.GetFuncType());

@@ -90,7 +90,7 @@ import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.BunVarBlockNode;
 import libbun.ast.decl.TopLevelNode;
 import libbun.ast.error.ErrorNode;
-import libbun.ast.expression.BunFormNode;
+import libbun.ast.expression.ApplyMacroNode;
 import libbun.ast.expression.BunFuncNameNode;
 import libbun.ast.expression.FuncCallNode;
 import libbun.ast.expression.GetFieldNode;
@@ -643,7 +643,7 @@ public class AsmJavaGenerator extends LibBunGenerator {
 		}
 	}
 
-	@Override public void VisitFormNode(BunFormNode Node) {
+	@Override public void visitApplyMacroNode(ApplyMacroNode Node) {
 		for(int i = 0; i < Node.GetListSize(); i++) {
 			this.AsmBuilder.PushNode(null, Node.GetListAt(i));
 		}

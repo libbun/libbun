@@ -54,6 +54,16 @@ public final class FuncCallNode extends AbstractListNode {
 		return this.AST[FuncCallNode._Functor];
 	}
 
+	public final GetNameNode getNameNode() {
+		BNode node = this.AST[FuncCallNode._Functor];
+		if(node instanceof GetNameNode) {
+			return (GetNameNode)node;
+		}
+		return null;
+	}
+
+
+
 	@Nullable public final BunFuncNameNode FuncNameNode() {
 		@Var BNode NameNode = this.FunctorNode();
 		if(NameNode instanceof BunFuncNameNode) {
@@ -81,8 +91,8 @@ public final class FuncCallNode extends AbstractListNode {
 		return null;
 	}
 
-	public BunFormNode ToFormNode(BFormFunc FormFunc) {
-		@Var BunFormNode MacroNode = new BunFormNode(this.ParentNode, this.FunctorNode().SourceToken, FormFunc);
+	public ApplyMacroNode ToFormNode(BFormFunc FormFunc) {
+		@Var ApplyMacroNode MacroNode = new ApplyMacroNode(this.ParentNode, this.FunctorNode().SourceToken, FormFunc);
 		@Var int i = 0;
 		while(i < this.GetListSize()) {
 			MacroNode.Append(this.GetListAt(i));

@@ -32,7 +32,7 @@ import libbun.ast.binary.BinaryOperatorNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.TopLevelNode;
 import libbun.ast.error.ErrorNode;
-import libbun.ast.expression.BunFormNode;
+import libbun.ast.expression.ApplyMacroNode;
 import libbun.ast.expression.BunFuncNameNode;
 import libbun.ast.expression.FuncCallNode;
 import libbun.ast.literal.BunAsmNode;
@@ -74,7 +74,7 @@ public abstract class LibBunTypeChecker extends TypeChecker {
 			@Var String Op = Node.GetOperator();
 			@Var BFunc Func = this.Generator.GetDefinedFunc(Op, Node.GetAstType(BinaryOperatorNode._Left), 2);
 			if(Func instanceof BFormFunc) {
-				@Var BunFormNode NewNode = new BunFormNode(Node.ParentNode, Node.SourceToken, (BFormFunc)Func);
+				@Var ApplyMacroNode NewNode = new ApplyMacroNode(Node.ParentNode, Node.SourceToken, (BFormFunc)Func);
 				NewNode.Append(Node.LeftNode());
 				NewNode.Append(Node.RightNode());
 				this.ReturnTypeNode(NewNode, Type);

@@ -59,7 +59,7 @@ public final class LibBunGamma extends SymbolTable {
 	}
 
 	public final BunLetVarNode GetDebugSymbol(String Symbol) {
-		@Var BunLetVarNode Node = this.GetSymbol(Symbol);
+		@Var BunLetVarNode Node = (BunLetVarNode)this.GetSymbol(Symbol);
 		LibBunSystem._PrintLine("GetSymbol: " + Symbol + " => " + Node);
 		return Node;
 	}
@@ -105,7 +105,7 @@ public final class LibBunGamma extends SymbolTable {
 	}
 
 	public final BType GetType(String TypeName, BunToken sourceToken, boolean IsCreation) {
-		@Var BunLetVarNode Node = this.GetSymbol(TypeName);
+		@Var BunLetVarNode Node = (BunLetVarNode)this.GetSymbol(TypeName);
 		if(Node != null) {
 			return Node.DeclType();
 		}

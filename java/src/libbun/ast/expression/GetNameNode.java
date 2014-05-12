@@ -30,6 +30,7 @@ import libbun.common.CommonStringBuilder;
 import libbun.encode.LibBunGenerator;
 import libbun.parser.classic.LibBunVisitor;
 import libbun.parser.common.BunToken;
+import libbun.parser.common.SymbolTable;
 import libbun.util.BField;
 import libbun.util.Nullable;
 import libbun.util.Var;
@@ -69,6 +70,14 @@ public class GetNameNode extends MutableNode {
 
 	@Override public void Accept(LibBunVisitor Visitor) {
 		Visitor.VisitGetNameNode(this);
+	}
+
+	public final String getSimpleName() {
+		return this.GivenName;
+	}
+
+	public final SymbolTable getLocalSymbolTable() {
+		return this.getSymbolTable();  // FIXME: Namespace
 	}
 
 	public final String GetUniqueName(LibBunGenerator Generator) {

@@ -53,21 +53,21 @@ public abstract class DefSymbolNode extends BNode {
 		this.symbolFlag = this.symbolFlag | BunLetVarNode._IsUsed;
 	}
 
-	//	public final BType DeclType() {
-	//		if(this.GivenType == null) {
-	//			if(this.AST[BunLetVarNode._TypeInfo] != null) {
-	//				this.GivenType = this.AST[BunLetVarNode._TypeInfo].Type;
-	//			}
-	//			else {
-	//				this.GivenType = BType.VarType;
-	//			}
-	//		}
-	//		return this.GivenType;
-	//	}
-	//
-	//	public final void SetDeclType(BType Type) {
-	//		this.GivenType = Type;
-	//	}
+	public final BType DeclType() {
+		if(this.GivenType == null) {
+			if(this.AST[BunLetVarNode._TypeInfo] != null) {
+				this.GivenType = this.AST[BunLetVarNode._TypeInfo].Type;
+			}
+			else {
+				this.GivenType = BType.VarType;
+			}
+		}
+		return this.GivenType;
+	}
+
+	public final void SetDeclType(BType Type) {
+		this.GivenType = Type;
+	}
 
 	public final String GetGivenName() {
 		if(this.GivenName == null) {

@@ -26,15 +26,16 @@
 package libbun.parser.common;
 import libbun.ast.BNode;
 import libbun.ast.BunBlockNode;
-import libbun.ast.decl.BunLetVarNode;
+import libbun.ast.decl.DefSymbolNode;
 import libbun.common.CommonMap;
+import libbun.type.BFuncType;
 import libbun.util.BField;
 import libbun.util.Var;
 
 public class SymbolTable {
 	@BField public Namespace          namespace = null;
 	@BField public BunBlockNode       blockNode = null;
-	@BField public CommonMap<BunLetVarNode>  symbolTable = null;
+	@BField public CommonMap<DefSymbolNode>  symbolTable = null;
 
 	public SymbolTable(Namespace namespace) {
 		this.namespace = namespace;
@@ -64,18 +65,18 @@ public class SymbolTable {
 		return null;
 	}
 
-	public final void SetSymbol(String Symbol, BunLetVarNode EntryNode) {
+	public final void SetSymbol(String Symbol, DefSymbolNode EntryNode) {
 		if(this.symbolTable == null) {
-			this.symbolTable = new CommonMap<BunLetVarNode>(null);
+			this.symbolTable = new CommonMap<DefSymbolNode>(null);
 		}
 		this.symbolTable.put(Symbol, EntryNode);
 	}
 
-	public final BunLetVarNode GetSymbol(String Symbol) {
+	public final DefSymbolNode GetSymbol(String Symbol) {
 		@Var SymbolTable table = this;
 		while(table != null) {
 			if(table.symbolTable != null) {
-				@Var BunLetVarNode EntryNode = table.symbolTable.GetValue(Symbol, null);
+				@Var DefSymbolNode EntryNode = table.symbolTable.GetValue(Symbol, null);
 				if(EntryNode != null) {
 					return EntryNode;
 				}
@@ -85,13 +86,27 @@ public class SymbolTable {
 		return null;
 	}
 
-	//	public final void SetDebugSymbol(String Symbol, BunLetVarNode EntryNode) {
+	public DefSymbolNode getSymbol(String funcName, BFuncType funcType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public final void setSymbol(String Symbol, BFuncType funcType, DefSymbolNode EntryNode) {
+		if(this.symbolTable == null) {
+			this.symbolTable = new CommonMap<DefSymbolNode>(null);
+		}
+		this.symbolTable.put(Symbol, EntryNode);
+	}
+
+
+
+	//	public final void SetDebugSymbol(String Symbol, DefSymbolNode EntryNode) {
 	//		this.SetSymbol(Symbol, EntryNode);
 	//		LibBunSystem._PrintLine("SetSymbol: " + Symbol + " @" + this);
 	//	}
 	//
-	//	public final BunLetVarNode GetDebugSymbol(String Symbol) {
-	//		@Var BunLetVarNode Node = this.GetSymbol(Symbol);
+	//	public final DefSymbolNode GetDebugSymbol(String Symbol) {
+	//		@Var DefSymbolNode Node = this.GetSymbol(Symbol);
 	//		LibBunSystem._PrintLine("GetSymbol: " + Symbol + " => " + Node);
 	//		return Node;
 	//	}
@@ -111,15 +126,15 @@ public class SymbolTable {
 	//		return NameIndex;
 	//	}
 	//
-	//	public final void SetRootSymbol(String Symbol, BunLetVarNode EntryNode) {
+	//	public final void SetRootSymbol(String Symbol, DefSymbolNode EntryNode) {
 	//		this.GetRootGamma().SetSymbol(Symbol, EntryNode);
 	//	}
 	//
-	//	public final BunLetVarNode GetLocalVariable(String Name) {
+	//	public final DefSymbolNode GetLocalVariable(String Name) {
 	//		@Var BNode EntryNode = this.GetSymbol(Name);
 	//		//System.out.println("var " + VarName + ", entry=" + Entry + ", Gamma=" + this);
-	//		if(EntryNode instanceof BunLetVarNode) {
-	//			return (BunLetVarNode)EntryNode;
+	//		if(EntryNode instanceof DefSymbolNode) {
+	//			return (DefSymbolNode)EntryNode;
 	//		}
 	//		return null;
 	//	}
@@ -127,7 +142,7 @@ public class SymbolTable {
 	//	// Type
 	//	public final void SetTypeName(String Name, BType Type, @Nullable BunToken sourceToken) {
 	//		//@Var ZTypeNode Node = new ZTypeNode(null, SourceToken, Type);
-	//		@Var BunLetVarNode Node = new BunLetVarNode(null, BunLetVarNode._IsReadOnly, Type, Name);
+	//		@Var DefSymbolNode Node = new DefSymbolNode(null, DefSymbolNode._IsReadOnly, Type, Name);
 	//		Node.SourceToken = sourceToken;
 	//		this.SetSymbol(Name, Node);
 	//	}
@@ -137,7 +152,7 @@ public class SymbolTable {
 	//	}
 	//
 	//	public final BType GetType(String TypeName, BunToken sourceToken, boolean IsCreation) {
-	//		@Var BunLetVarNode Node = this.GetSymbol(TypeName);
+	//		@Var DefSymbolNode Node = this.GetSymbol(TypeName);
 	//		if(Node != null) {
 	//			return Node.DeclType();
 	//		}

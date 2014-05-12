@@ -8,7 +8,7 @@ import libbun.ast.SyntaxSugarNode;
 import libbun.ast.decl.BunFunctionNode;
 import libbun.ast.decl.BunLetVarNode;
 import libbun.ast.decl.TopLevelNode;
-import libbun.ast.expression.BunFormNode;
+import libbun.ast.expression.ApplyMacroNode;
 import libbun.ast.literal.BunAsmNode;
 import libbun.ast.literal.LiteralNode;
 import libbun.ast.unary.BunCastNode;
@@ -184,7 +184,7 @@ public abstract class LibBunSourceGenerator extends LibBunGenerator {
 		this.Source.Append(Node.GetFormText());
 	}
 
-	@Override public void VisitFormNode(BunFormNode Node) {
+	@Override public void visitApplyMacroNode(ApplyMacroNode Node) {
 		@Var String FormText = Node.GetFormText();
 		//		@Var BFuncType FuncType = Node.GetFuncType();
 		@Var int fromIndex = 0;

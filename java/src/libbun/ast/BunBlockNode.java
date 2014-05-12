@@ -60,6 +60,14 @@ public class BunBlockNode extends AbstractListNode {
 		this.bunfyAST(builder, "(block", this.vargStartIndex, ")");
 	}
 
+	public final SymbolTable getBlockSymbolTable() {
+		if(this.NullableGamma == null) {
+			@Var SymbolTable parentTable = this.getSymbolTable();
+			this.NullableGamma = new SymbolTable(parentTable.namespace);
+		}
+		return this.NullableGamma;
+	}
+
 	public final LibBunGamma GetBlockGamma() {
 		if(this.NullableGamma == null) {
 			@Var LibBunGamma Gamma = this.GetGamma();
