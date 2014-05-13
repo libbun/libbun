@@ -74,6 +74,7 @@ import libbun.ast.statement.BunReturnNode;
 import libbun.ast.statement.BunThrowNode;
 import libbun.ast.statement.BunTryNode;
 import libbun.ast.statement.BunWhileNode;
+import libbun.ast.sugar.StringInterpolationNode;
 import libbun.ast.unary.BunCastNode;
 import libbun.ast.unary.BunComplementNode;
 import libbun.ast.unary.BunMinusNode;
@@ -85,6 +86,7 @@ import libbun.parser.classic.LibBunLangInfo;
 import libbun.parser.common.BunLogger;
 import libbun.type.BFuncType;
 import libbun.type.BType;
+import libbun.util.LibBunSystem;
 import libbun.util.Var;
 import libbun.util.ZenMethod;
 
@@ -287,7 +289,12 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitAddNode(BunAddNode Node) {
-		this.GenerateBinaryNode(Node.GetOperator(), Node, null);
+		if(Node.Type.IsStringType()) {
+			this.VisitStringInterpolationNode(StringInterpolationNode._ToStringInterpolationNode(Node));
+		}
+		else {
+			this.GenerateBinaryNode(Node.GetOperator(), Node, null);
+		}
 	}
 
 	@Override public void VisitSubNode(BunSubNode Node) {
@@ -579,7 +586,41 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 
 	}
 
-
-
-
+	protected boolean VisitStringInterpolationNode(StringInterpolationNode Node) {
+		@Var String Format = "";
+		@Var int i = 0;
+		while(i < Node.size()) {
+			if(i % 2 == 0) {
+				if(Node.AST[i] instanceof BunStringNode) {
+					Format = Format + Node.GetStringLiteralAt(i);
+				}
+			}
+			else {
+				@Var BType Type = Node.getTypeAt(i);
+				@Var String Formatter = "~a";
+				if(Type.IsIntType()) {
+					Formatter = "~D";
+				}
+				else if(Type.IsFloatType()) {
+					Formatter = "~F";
+				}
+				Format = Format + Formatter;
+			}
+			i = i + 1;
+		}
+		this.Source.Append("(format nil \"" + Format + "\"");
+		if(Node.size() > 1) {
+			this.Source.Append(" ");
+			i = 1;
+			while(i < Node.size()) {
+				if(i > 2) {
+					this.Source.Append(" ");
+				}
+				this.GenerateExpression(Node.AST[i]);
+				i = i + 2;
+			}
+		}
+		this.Source.Append(")");
+		return true;
+	}
 }
