@@ -1,8 +1,8 @@
 package libbun.encode.devel;
 
 import libbun.ast.AstNode;
-import libbun.ast.LegacyBlockNode;
 import libbun.ast.GroupNode;
+import libbun.ast.LegacyBlockNode;
 import libbun.ast.binary.AssignNode;
 import libbun.ast.binary.BinaryOperatorNode;
 import libbun.ast.binary.BunAddNode;
@@ -301,20 +301,38 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 
 	@Override
 	public void VisitEqualsNode(BunEqualsNode Node) {
-		this.Source.Append("(");
-		this.GenerateExpression(Node.LeftNode());
-		this.Source.Append(" = ");
-		this.GenerateExpression(Node.RightNode());
-		this.Source.Append(")");
+		if(Node.LeftNode().Type.IsFloatType()) {
+			this.Source.Append("(Real.== (");
+			this.GenerateExpression(Node.LeftNode());
+			this.Source.Append(", ");
+			this.GenerateExpression(Node.RightNode());
+			this.Source.Append("))");
+		}
+		else {
+			this.Source.Append("(");
+			this.GenerateExpression(Node.LeftNode());
+			this.Source.Append(" = ");
+			this.GenerateExpression(Node.RightNode());
+			this.Source.Append(")");
+		}
 	}
 
 	@Override
 	public void VisitNotEqualsNode(BunNotEqualsNode Node) {
-		this.Source.Append("(");
-		this.GenerateExpression(Node.LeftNode());
-		this.Source.Append(" <> ");
-		this.GenerateExpression(Node.RightNode());
-		this.Source.Append(")");
+		if(Node.LeftNode().Type.IsFloatType()) {
+			this.Source.Append("(Real.!= (");
+			this.GenerateExpression(Node.LeftNode());
+			this.Source.Append(", ");
+			this.GenerateExpression(Node.RightNode());
+			this.Source.Append("))");
+		}
+		else {
+			this.Source.Append("(");
+			this.GenerateExpression(Node.LeftNode());
+			this.Source.Append(" <> ");
+			this.GenerateExpression(Node.RightNode());
+			this.Source.Append(")");
+		}
 	}
 
 	@Override
@@ -583,7 +601,7 @@ public class SMLSharpGenerator extends LibBunSourceGenerator {
 	}
 
 	private void GenerateArgumentListNode(AstNode VargNode, int startIndex) {
-		if(VargNode.size() == 0) {
+		if(VargNode.size() <= startIndex) {
 			this.Source.Append(" ()");
 		}
 		else {
