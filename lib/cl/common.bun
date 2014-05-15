@@ -23,8 +23,9 @@ define trim "(string-trim '(#\\Space) $[0])": Func<String,String>
 define _ "~(format nil \"~a\" $[0])": Func<α[],String>
 define size "(length $[0])": Func<α[],int>
 define size "(FIXME)": Func<α[],int,void>
-define add "(vector-push $[1])": Func<α[],α,void>
-define pop "(vector-pop $[0])": Func<α[],α>
+define add "(setf $[0] (append $[0] (list $[1])))": Func<α[],α,void>
+define insert "(push $[2] (cdr (nthcdr (1- $[1]) $[0])))": Func<α[],int,α,void>
+define pop "(let* ((_r (reverse $[0]))(_a (car _r)))(prog1 _a (setf $[0] (reverse (cdr _r)))))": Func<α[],α>
 define hasKey "(gethash $[1] $[0])": Func<Map<α>,String,boolean>
 define get "(gethash $[1] $[0])": Func<Map<α>,String,α>
 define _ "~(format nil \"~a\" $[0])": Func<Object,String>

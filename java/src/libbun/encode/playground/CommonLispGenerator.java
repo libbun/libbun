@@ -129,17 +129,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitArrayLiteralNode(BunArrayNode Node) {
-		//		this.Source.Append("(let ((a (make-array 8 :adjustable T :fill-pointer 0 :initial-element 'e)))");
-		this.Source.Append("(let ((a (make-array ");
-		this.Source.AppendInt(Node.size());
-		this.Source.Append(" :initial-element ", this.InitArrayValue(Node));
-		this.Source.Append(" :adjustable T :fill-pointer 0)))");
-		@Var int i = 0;
-		while(i < Node.size()) {
-			this.GenerateExpression(" (vector-push ", Node.get(i), " a)");
-			i = i + 1;
-		}
-		this.Source.Append(" a)");
+		this.GenerateListNode("(list ", Node, 0, " ", ")");
 	}
 
 	private String InitArrayValue(BunArrayNode Node) {
