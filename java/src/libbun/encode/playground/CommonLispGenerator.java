@@ -306,7 +306,20 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitDivNode(BunDivNode Node) {
-		this.GenerateBinaryNode(Node.GetOperator(), Node, null);
+		if(Node.Type.IsIntType()) {
+			this.Source.Append("(floor (/ ");
+			this.GenerateExpression(Node.LeftNode());
+			this.Source.Append(" ");
+			this.GenerateExpression(Node.RightNode());
+			this.Source.Append("))");
+		}
+		else {
+			this.Source.Append("(/");
+			this.GenerateExpression(Node.LeftNode());
+			this.Source.Append(" ");
+			this.GenerateExpression(Node.RightNode());
+			this.Source.Append(")");
+		}
 	}
 
 	@Override public void VisitModNode(BunModNode Node) {
