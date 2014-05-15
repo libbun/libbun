@@ -338,7 +338,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 			this.Source.Append("))");
 		}
 		else {
-			this.Source.Append("(/");
+			this.Source.Append("(/ ");
 			this.GenerateExpression(Node.LeftNode());
 			this.Source.Append(" ");
 			this.GenerateExpression(Node.RightNode());
