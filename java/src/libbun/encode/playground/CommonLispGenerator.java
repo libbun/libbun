@@ -84,6 +84,8 @@ import libbun.ast.unary.UnaryOperatorNode;
 import libbun.encode.LibBunSourceGenerator;
 import libbun.parser.classic.LibBunLangInfo;
 import libbun.parser.common.BunLogger;
+import libbun.type.BClassField;
+import libbun.type.BClassType;
 import libbun.type.BFuncType;
 import libbun.type.BType;
 import libbun.util.LibBunSystem;
@@ -165,10 +167,10 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitNewObjectNode(NewObjectNode Node) {
-		// FIXME
-		this.Source.Append("new ");
+		this.Source.Append("(make-instance '");
 		this.GenerateTypeName(Node.Type);
-		this.GenerateListNode("(", Node, 1, ",", ")");
+		//this.GenerateListNode("(", Node, ",", ")");
+		this.Source.Append(")");
 	}
 
 	@Override public void VisitGroupNode(GroupNode Node) {
@@ -229,8 +231,11 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitGetFieldNode(GetFieldNode Node) {
+		this.Source.Append("(slot-value ");
 		this.GenerateExpression(Node.RecvNode());
-		this.Source.Append(".", Node.GetName());
+		this.Source.Append(" '");
+		this.Source.Append(Node.GetName());
+		this.Source.Append(")");
 	}
 
 	//	@Override public void VisitSetFieldNode(SetFieldNode Node) {
@@ -580,32 +585,52 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 				}
 			}
 			if(this.IsMethod(Node.FuncName(), FuncType)) {
-				//				this.CurrentBuilder.Append(this.NameMethod(FuncType.GetRecvType(), Node.FuncName));
-				//				this.CurrentBuilder.Append(" = ", FuncType.StringfySignature(Node.FuncName));
-				//				this.CurrentBuilder.AppendLineFeed();
+				this.Source.AppendNewLine("(setf " + this.NameMethod(FuncType.GetRecvType(), Node.FuncName()));
+				this.Source.Append(" #'");
+				this.Source.Append(FuncType.StringfySignature(Node.FuncName()));
+				this.Source.Append(")");
 			}
 		}
 	}
 
 
 	@Override public void VisitClassNode(BunClassNode Node) {
-		this.Source.AppendNewLine("class ", Node.ClassName());
+		this.ImportLibrary("@extend");
+
+		this.Source.AppendNewLine("(defclass ", Node.ClassName());
 		if(Node.SuperType() != null) {
-			this.Source.Append(" extends ");
+			this.Source.Append("(");
 			this.GenerateTypeName(Node.SuperType());
+			this.Source.Append(")");
 		}
-		this.Source.OpenIndent(" {");
+		this.Source.OpenIndent("(");
 		@Var int i = 0;
 		while (i < Node.GetListSize()) {
 			@Var BunLetVarNode FieldNode = Node.GetFieldNode(i);
-			this.Source.AppendNewLine("var ", FieldNode.GetGivenName());
-			this.GenerateTypeAnnotation(FieldNode.DeclType());
-			this.Source.Append(" = ");
-			this.GenerateExpression(FieldNode.InitValueNode());
-			this.GenerateStatementEnd(FieldNode);
+			if(!FieldNode.DeclType().IsFuncType()) {
+				this.Source.Append("(" + FieldNode.GetGivenName());
+				//this.GenerateTypeAnnotation(FieldNode.DeclType());
+				this.Source.Append(" :initform ");
+				this.GenerateExpression(FieldNode.InitValueNode());
+				this.GenerateStatementEnd(FieldNode);
+				this.Source.Append(")");
+			}
 			i = i + 1;
 		}
-		this.Source.CloseIndent("}");
+
+		i = 0;
+		while (i < Node.ClassType.GetFieldSize()) {
+			@Var BClassField ClassField = Node.ClassType.GetFieldAt(i);
+			if(ClassField.FieldType.IsFuncType()) {
+				this.Source.Append("(" + ClassField.FieldName);
+				this.Source.Append(" :initform _");
+				this.Source.Append(this.NameClass(Node.ClassType), "_", ClassField.FieldName);
+				this.Source.Append(")");
+			}
+			i = i + 1;
+		}
+
+		this.Source.CloseIndent("))");
 	}
 
 	@Override public void VisitErrorNode(LegacyErrorNode Node) {
