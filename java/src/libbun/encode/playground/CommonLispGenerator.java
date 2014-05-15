@@ -84,6 +84,8 @@ import libbun.ast.unary.UnaryOperatorNode;
 import libbun.encode.LibBunSourceGenerator;
 import libbun.parser.classic.LibBunLangInfo;
 import libbun.parser.common.BunLogger;
+import libbun.type.BClassField;
+import libbun.type.BClassType;
 import libbun.type.BFuncType;
 import libbun.type.BType;
 import libbun.util.LibBunSystem;
@@ -94,6 +96,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	private boolean hasMain = false;
 	public CommonLispGenerator() {
 		super(new LibBunLangInfo("CommonLisp", "cl"));
+		this.LoadInlineLibrary("inline.cl", ";;");
 	}
 
 	@Override
@@ -126,17 +129,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitArrayLiteralNode(BunArrayNode Node) {
-		//		this.Source.Append("(let ((a (make-array 8 :adjustable T :fill-pointer 0 :initial-element 'e)))");
-		this.Source.Append("(let ((a (make-array ");
-		this.Source.AppendInt(Node.size());
-		this.Source.Append(" :initial-element ", this.InitArrayValue(Node));
-		this.Source.Append(" :adjustable T :fill-pointer 0)))");
-		@Var int i = 0;
-		while(i < Node.size()) {
-			this.GenerateExpression(" (vector-push ", Node.get(i), " a)");
-			i = i + 1;
-		}
-		this.Source.Append(" a)");
+		this.GenerateListNode("(list ", Node, 0, " ", ")");
 	}
 
 	private String InitArrayValue(BunArrayNode Node) {
@@ -164,10 +157,10 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitNewObjectNode(NewObjectNode Node) {
-		// FIXME
-		this.Source.Append("new ");
+		this.Source.Append("(make-instance '");
 		this.GenerateTypeName(Node.Type);
-		this.GenerateListNode("(", Node, 1, ",", ")");
+		//this.GenerateListNode("(", Node, ",", ")");
+		this.Source.Append(")");
 	}
 
 	@Override public void VisitGroupNode(GroupNode Node) {
@@ -180,7 +173,12 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 			this.GenerateExpression("(string (aref ", Node.RecvNode(), " ", Node.IndexNode(), "))");
 		}
 		else if(RecvType.IsMapType()) {
-			this.GenerateExpression("(gethash ", Node.IndexNode(), " ", Node.RecvNode(), ")");
+			this.ImportLibrary("@mapget");
+			this.GenerateExpression("(libbun-mapget ",  Node.RecvNode(), " ", Node.IndexNode(), ")");
+		}
+		else if(RecvType.IsArrayType()) {
+			this.ImportLibrary("@arrayget");
+			this.GenerateExpression("(libbun-arrayget ", Node.RecvNode(), " ", Node.IndexNode(), ")");
 		}
 		else {
 			this.GenerateExpression("(nth ", Node.IndexNode(), " ", Node.RecvNode(), ")");
@@ -202,14 +200,32 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitAssignNode(AssignNode Node) {
+		if (Node.LeftNode() instanceof GetIndexNode) {
+			@Var GetIndexNode Indexer = (GetIndexNode)Node.LeftNode();
+			@Var BType RecvType = Indexer.getTypeAt(GetIndexNode._Recv);
+			if (RecvType.IsArrayType()) {
+				this.ImportLibrary("@arrayset");
+				this.GenerateExpression("(libbun-arrayset ", Indexer.RecvNode(), " ", Indexer.IndexNode(), " ");
+				this.GenerateExpression("", Node.RightNode(), ")");
+				return;
+
+			} else if (RecvType.IsMapType()) {
+				this.GenerateExpression("(setf (gethash ", Indexer.IndexNode(), " ", Indexer.RecvNode(), ")");
+				this.GenerateExpression(" ", Node.RightNode(), ")");
+				return;
+			}
+		}
 		this.Source.Append("(setf ");
 		this.GenerateExpression(Node.LeftNode());
 		this.GenerateExpression(" ", Node.RightNode(), ")");
 	}
 
 	@Override public void VisitGetFieldNode(GetFieldNode Node) {
+		this.Source.Append("(slot-value ");
 		this.GenerateExpression(Node.RecvNode());
-		this.Source.Append(".", Node.GetName());
+		this.Source.Append(" '");
+		this.Source.Append(Node.GetName());
+		this.Source.Append(")");
 	}
 
 	//	@Override public void VisitSetFieldNode(SetFieldNode Node) {
@@ -283,9 +299,12 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitInstanceOfNode(BunInstanceOfNode Node) {
+		this.Source.Append("(eq ");
+		this.Source.Append("(type-of ");
 		this.GenerateExpression(Node.LeftNode());
-		this.Source.Append(" instanceof ");
+		this.Source.Append(" ) '");
 		this.GenerateTypeName(Node.TargetType());
+		this.Source.Append(")");
 	}
 
 	@Override public void VisitAddNode(BunAddNode Node) {
@@ -306,7 +325,20 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitDivNode(BunDivNode Node) {
-		this.GenerateBinaryNode(Node.GetOperator(), Node, null);
+		if(Node.Type.IsIntType()) {
+			this.Source.Append("(floor (/ ");
+			this.GenerateExpression(Node.LeftNode());
+			this.Source.Append(" ");
+			this.GenerateExpression(Node.RightNode());
+			this.Source.Append("))");
+		}
+		else {
+			this.Source.Append("(/ ");
+			this.GenerateExpression(Node.LeftNode());
+			this.Source.Append(" ");
+			this.GenerateExpression(Node.RightNode());
+			this.Source.Append(")");
+		}
 	}
 
 	@Override public void VisitModNode(BunModNode Node) {
@@ -481,12 +513,15 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitTryNode(BunTryNode Node) {
+		this.ImportLibrary("@SoftwareFault");
 		this.Source.Append("(unwind-protect ");
 		this.Source.Append("(handler-case ");
 		this.GenerateExpression(Node.TryblockNode());
 		if(Node.HasCatchblockNode()) {
+			this.ImportLibrary("@catch");
 			@Var String VarName = this.NameUniqueSymbol("e");
 			this.Source.AppendNewLine("(error (", VarName, ")");
+			this.Source.AppendNewLine("(setf " + Node.ExceptionName() + " (libbun-catch " + VarName + "))");
 			this.GenerateStmtListNode(Node.CatchblockNode());
 			this.Source.AppendNewLine(")");
 		}
@@ -540,32 +575,52 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 				}
 			}
 			if(this.IsMethod(Node.FuncName(), FuncType)) {
-				//				this.CurrentBuilder.Append(this.NameMethod(FuncType.GetRecvType(), Node.FuncName));
-				//				this.CurrentBuilder.Append(" = ", FuncType.StringfySignature(Node.FuncName));
-				//				this.CurrentBuilder.AppendLineFeed();
+				this.Source.AppendNewLine("(setf " + this.NameMethod(FuncType.GetRecvType(), Node.FuncName()));
+				this.Source.Append(" #'");
+				this.Source.Append(FuncType.StringfySignature(Node.FuncName()));
+				this.Source.Append(")");
 			}
 		}
 	}
 
 
 	@Override public void VisitClassNode(BunClassNode Node) {
-		this.Source.AppendNewLine("class ", Node.ClassName());
+		this.ImportLibrary("@extend");
+
+		this.Source.AppendNewLine("(defclass ", Node.ClassName());
 		if(Node.SuperType() != null) {
-			this.Source.Append(" extends ");
+			this.Source.Append("(");
 			this.GenerateTypeName(Node.SuperType());
+			this.Source.Append(")");
 		}
-		this.Source.OpenIndent(" {");
+		this.Source.OpenIndent("(");
 		@Var int i = 0;
 		while (i < Node.GetListSize()) {
 			@Var BunLetVarNode FieldNode = Node.GetFieldNode(i);
-			this.Source.AppendNewLine("var ", FieldNode.GetGivenName());
-			this.GenerateTypeAnnotation(FieldNode.DeclType());
-			this.Source.Append(" = ");
-			this.GenerateExpression(FieldNode.InitValueNode());
-			this.GenerateStatementEnd(FieldNode);
+			if(!FieldNode.DeclType().IsFuncType()) {
+				this.Source.Append("(" + FieldNode.GetGivenName());
+				//this.GenerateTypeAnnotation(FieldNode.DeclType());
+				this.Source.Append(" :initform ");
+				this.GenerateExpression(FieldNode.InitValueNode());
+				this.GenerateStatementEnd(FieldNode);
+				this.Source.Append(")");
+			}
 			i = i + 1;
 		}
-		this.Source.CloseIndent("}");
+
+		i = 0;
+		while (i < Node.ClassType.GetFieldSize()) {
+			@Var BClassField ClassField = Node.ClassType.GetFieldAt(i);
+			if(ClassField.FieldType.IsFuncType()) {
+				this.Source.Append("(" + ClassField.FieldName);
+				this.Source.Append(" :initform _");
+				this.Source.Append(this.NameClass(Node.ClassType), "_", ClassField.FieldName);
+				this.Source.Append(")");
+			}
+			i = i + 1;
+		}
+
+		this.Source.CloseIndent("))");
 	}
 
 	@Override public void VisitErrorNode(LegacyErrorNode Node) {
@@ -608,7 +663,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 			}
 			i = i + 1;
 		}
-		this.Source.Append("(format nil \"" + Format + "\"");
+		this.Source.Append("(format nil \"" + Format.replaceAll("\"", "\\\\\"") + "\"");
 		if(Node.size() > 1) {
 			this.Source.Append(" ");
 			i = 1;
