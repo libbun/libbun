@@ -673,7 +673,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 			}
 			i = i + 1;
 		}
-		this.Source.Append("(format nil \"" + Format + "\"");
+		this.Source.Append("(format nil \"" + Format.replaceAll("\"", "\\\\\"") + "\"");
 		if(Node.size() > 1) {
 			this.Source.Append(" ");
 			i = 1;
