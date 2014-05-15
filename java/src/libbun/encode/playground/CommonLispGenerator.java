@@ -94,6 +94,7 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	private boolean hasMain = false;
 	public CommonLispGenerator() {
 		super(new LibBunLangInfo("CommonLisp", "cl"));
+		this.LoadInlineLibrary("inline.cl", ";;");
 	}
 
 	@Override
@@ -283,9 +284,12 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitInstanceOfNode(BunInstanceOfNode Node) {
+		this.Source.Append("(eq ");
+		this.Source.Append("(type-of ");
 		this.GenerateExpression(Node.LeftNode());
-		this.Source.Append(" instanceof ");
+		this.Source.Append(" ) '");
 		this.GenerateTypeName(Node.TargetType());
+		this.Source.Append(")");
 	}
 
 	@Override public void VisitAddNode(BunAddNode Node) {
@@ -494,12 +498,15 @@ public class CommonLispGenerator extends LibBunSourceGenerator {
 	}
 
 	@Override public void VisitTryNode(BunTryNode Node) {
+		this.ImportLibrary("@SoftwareFault");
 		this.Source.Append("(unwind-protect ");
 		this.Source.Append("(handler-case ");
 		this.GenerateExpression(Node.TryblockNode());
 		if(Node.HasCatchblockNode()) {
+			this.ImportLibrary("@catch");
 			@Var String VarName = this.NameUniqueSymbol("e");
 			this.Source.AppendNewLine("(error (", VarName, ")");
+			this.Source.AppendNewLine("(setf " + Node.ExceptionName() + " (libbun-catch " + VarName + "))");
 			this.GenerateStmtListNode(Node.CatchblockNode());
 			this.Source.AppendNewLine(")");
 		}
